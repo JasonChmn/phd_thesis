@@ -581,14 +581,15 @@ With setup (b), we perform several tests on basic scenarios with LEAS without co
 
 \begin{figure}
     \centering
-    \begin{subfigure}[t]{0.49\linewidth}
-    \includegraphics[width=\textwidth]{Figures/Chapter_LEAS/learning_curves_P1.png}
-    \caption{}
-    \end{subfigure}
-    \begin{subfigure}[t]{0.49\linewidth}
-    \includegraphics[width=\textwidth]{Figures/Chapter_LEAS/learning_curve_leas_p1.png}
-    \caption{}
-    \end{subfigure}
+    \includegraphics[width=0.6\textwidth]{Figures/Chapter_LEAS/learning_curves_P1.png}
+    %\begin{subfigure}[t]{0.49\linewidth}
+    %\includegraphics[width=\textwidth]{Figures/Chapter_LEAS/learning_curves_P1.png}
+    %\caption{}
+    %\end{subfigure}
+    %\begin{subfigure}[t]{0.49\linewidth}
+    %\includegraphics[width=\textwidth]{Figures/Chapter_LEAS/learning_curve_leas_p1.png}
+    %\caption{}
+    %\end{subfigure}
     \caption{Learning curves of LEAS without contact planner feedback (pure navigation task) with: (a) Control in acceleration (Orange) with delay, (Blue) without delay, on the position update, and (b) the complete learning curve without delay.}
     \label{fig:control_LEAS_learning_curves}
 \end{figure}
@@ -650,7 +651,7 @@ The number of workers performing the contact planning phase is set to 0 when we 
 % - size of network with PPO : 256x128x64
 The PPO actor and critic are two distinct networks with hidden layers of size 128x64x32. Tuning the number of nodes and hidden layers in the machine is empirical and depends on the task to perform. In general, deeper networks with more nodes means better capability to solve very complex tasks and less under-fitting. However, it also means more parameters to train and can be prone to over-fitting. In our experiments on LEAS, we found no noticeable difference between 2 or 3 hidden layers and nodes number ranging from 64-256. However, we increased the network size of 64x64 from the first version of LEAS \cite{LEAS} for more potential scalability in our tests in terms of observations and contact planners.
 
-We train LEAS without a contact planner and evaluate the model after 10 million steps corresponding to around 2 hours of training on a PC with an Intel Core i7-8700 (12 cores, 3.20Ghz, 16GB ram). Learning curves can be seen on figure \ref{fig:control_LEAS_learning_curves}.
+We train LEAS without a contact planner and evaluate the model after 5 million steps corresponding to around 1 hour of training on a PC with an Intel Core i7-8700 (12 cores, 3.20Ghz, 16GB ram). Learning curves can be seen on figure \ref{fig:control_LEAS_learning_curves}.
 
 \subsection{Comparison: design\label{tab:compare_sm_charac}}
 
