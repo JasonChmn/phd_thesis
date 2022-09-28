@@ -1,0 +1,241 @@
+
+%%%%%
+% COLOR COMMANDS
+
+\newcommand{\green}[1]{\color{forestgreen}{#1}}
+\newcommand{\red}[1]{\color{red}{#1}}
+\newcommand{\blue}[1]{\color{blue}{#1}}
+
+%%%%
+
+% Compact figure command: \fig{name-fig}{width-ratio}{caption}
+\newcommand{\ifig}[3]{
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=#2\textwidth]{#1}
+	\caption{#3}
+	\label{fig:#1}
+\end{figure} 
+}
+
+\newcommand{\isubfig}[5]{
+% preliminary
+\sbox\twosubbox{%
+	\resizebox{\dimexpr#5\textwidth-1em}{!}{%
+		\includegraphics[height=3cm]{#1}%
+		\includegraphics[height=3cm]{#3}%
+	}%
+}
+\setlength{\twosubht}{\ht\twosubbox}
+
+% typeset
+
+\centering
+
+\subcaptionbox{#2}{%
+	\includegraphics[height=\twosubht]{#1}%
+}\quad
+\subcaptionbox{#4}{%
+	\includegraphics[height=\twosubht]{#3}%
+}
+}
+
+\newcommand{\isubfigthree}[7]{
+	% preliminary
+	\sbox\twosubbox{%
+		\resizebox{\dimexpr#7\textwidth-1em}{!}{%
+			\includegraphics[height=3cm]{#1}%
+			\includegraphics[height=3cm]{#3}%
+			\includegraphics[height=3cm]{#5}%
+		}%
+	}
+	\setlength{\twosubht}{\ht\twosubbox}
+	
+	% typeset
+	
+	\centering
+	
+	\subcaptionbox{#2}{%
+		\includegraphics[height=\twosubht]{#1}%
+	}\quad
+	\subcaptionbox{#4}{%
+		\includegraphics[height=\twosubht]{#3}%
+	}\quad
+	\subcaptionbox{#6}{%
+	\includegraphics[height=\twosubht]{#5}%
+	}
+}
+
+
+
+\definecolor{darkorange}{RGB}{255,100,0}
+\definecolor{forestgreen}{RGB}{34,139,34}
+
+% \newcommand{\circled}[1]{\raisebox{.5pt}{\textcircled{\raisebox{-.9pt} {#1}}}}
+\newcommand{\circled}[1]{\tikz[baseline=(char.base)]{
+		\node[shape=circle,draw,inner sep=1pt] (char) {#1}; }}
+
+\newcommand{\erf}{\mathit{erf}}
+\newcommand{\mk}{\mkern-1mu}
+\newcommand{\po}{{}^o\mk}
+\newcommand{\ph}{{}^h\mk}
+\newcommand{\pb}{{}^b\mk}
+\newcommand{\pll}{{}^l\mk}
+
+\newcommand{\oTh}{\po \bfT_h}
+\newcommand{\oRh}{\po \bfR_h}
+
+\newcommand{\oTb}{\po \bfT_b}
+\newcommand{\oRb}{\po \bfR_b}
+
+\newcommand{\hTb}{\ph \bfT_b}
+\newcommand{\hRb}{\ph \bfR_b}
+
+\newcommand{\oTi}{\po \bfT_i}
+\newcommand{\oRi}{\po \bfR_i}
+\newcommand{\hTi}{\ph \bfT_i}
+\newcommand{\hRi}{\ph \bfR_i}
+\newcommand{\bTi}{\pb \bfT_i}
+\newcommand{\bRi}{\pb \bfR_i}
+
+\newcommand{\oTl}{\po \bfT_l}
+\newcommand{\oRl}{\po \bfR_l}
+\newcommand{\lTh}{\pll \bfT_h}
+\newcommand{\lRh}{\pll \bfR_h}
+
+%%%%%
+
+\newcommand{\T}[2]{\prescript{#1}{}{\bfT}_{#2}}
+% \newcommand{\Th}[2]{\prescript{#1}{}{\widehat T}_{#2}}  % ?
+\newcommand{\Tbar}[2]{\prescript{#1}{}{\bar{\bfT}}_{#2}}  % ?
+\newcommand{\Tm}[2]{\prescript{#1}{}{\widetilde{\bfT}}_{#2}}
+
+\newcommand{\Rot}[2]{\prescript{#1}{}{\bfR}_{#2}}
+\newcommand{\Rotm}[2]{\prescript{#1}{}{\widetilde{\bfR}}_{#2}}
+\newcommand{\Rothat}[2]{\prescript{#1}{}{\widehat{\bfR}}_{#2}}
+
+
+\newcommand{\noise}{\bfn}
+\newcommand{\bias}{\bfb}
+\newcommand{\biasbar}{\bar{\bfb}}
+
+\newcommand{\posiv}[1]{\underline{\bfp}_{#1}}
+\newcommand{\posi}[2]{\prescript{#1}{}{\bfp}_{#2}}
+\newcommand{\posim}[2]{\prescript{#1}{}{\widetilde{\bfp}}_{#2}}
+\newcommand{\posihat}[2]{\prescript{#1}{}{\widehat{\bfp}}_{#2}}
+\newcommand{\posibar}{\bar{\bfp}}
+
+\newcommand{\velv}[1]{\underline{\bfv}_{#1}}
+\newcommand{\vel}[2]{\prescript{#1}{}{\bfv}_{#2}}
+\newcommand{\velm}[2]{\prescript{#1}{}{\widetilde{\bfv}}_{#2}}
+
+\newcommand{\accv}[1]{\underline{\bfa}_{#1}}
+\newcommand{\acc}[2]{\prescript{#1}{}{\bfa}_{#2}}
+\newcommand{\accm}[2]{\prescript{#1}{}{\widetilde{\bfa}}_{#2}}
+
+\newcommand{\angvelv}[1]{\underline{\pmb{\omega}}_{#1}}
+\newcommand{\angvel}[2]{\prescript{#1}{}{\pmb{\omega}}_{#2}}
+\newcommand{\angvelm}[2]{\prescript{#1}{}{\widetilde{\pmb{\omega}}}_{#2}}
+\newcommand{\angvelbar}{\bar{\pmb{\omega}}}
+
+\newcommand{\forcev}[1]{\underline{\bff}_{#1}}
+\newcommand{\force}[2]{\prescript{#1}{}{\bff}_{#2}}
+\newcommand{\forcem}[2]{\prescript{#1}{}{\widetilde{\bff}}_{#2}}
+\newcommand{\torquev}[1]{\underline{\pmb{\tau}}_{#1}}
+\newcommand{\torque}[2]{\prescript{#1}{}{\bf m}_{#2}}
+\newcommand{\torquem}[2]{\prescript{#1}{}{\widetilde{\bf m}}_{#2}}
+\newcommand{\wrench}[2]{\prescript{#1}{}{\bf \phi}_{#2}}
+\newcommand{\wrenchm}[2]{\prescript{#1}{}{\widetilde{\bf \phi}}_{#2}}
+
+
+\newcommand{\AM}{\mathcal{L}}
+\newcommand{\AMv}{\underline{\mathcal{L}}}
+\newcommand{\AMm}{\widetilde{\mathcal{L}}}
+\newcommand{\dAM}{\mathcal{\dot{L}}}
+\newcommand{\dAMv}{\underline{\mathcal{\dot{L}}}}
+\newcommand{\dAMm}{\widetilde{\mathcal{\dot{L}}}}
+\newcommand{\COM}{\bfc}
+\newcommand{\COMv}{\underline{\bfc}}
+\newcommand{\COMm}{\widetilde{\bfc}}
+\newcommand{\COMd}{\dot{\bfc}}
+\newcommand{\COMdv}{\underline{\dot{\bfc}}}
+\newcommand{\COMdm}{\widetilde{\dot{\bfc}}}
+\newcommand{\Inertia}{\mathcal{I}}
+
+
+\newcommand{\q}{\bfq}
+\newcommand{\vq}{\bfv_q}
+\newcommand{\dvq}{\dot{\bfv}_q}
+\newcommand{\dq}{\dot{\bfq}}
+\newcommand{\ddq}{\ddot{\bfq}}
+\newcommand{\qa}{\bfq_a}
+\newcommand{\dqa}{\dot{\bfq}_a}
+\newcommand{\ddqa}{\ddot{\bfq}_a}
+\newcommand{\qu}{\bfq_u}
+\newcommand{\dqu}{\dot{\bfq}_u}
+\newcommand{\ddqu}{\ddot{\bfq}_u}
+\newcommand{\qlin}{\bfq_{lin}}
+\newcommand{\dqlin}{\dot{\bfq}_{lin}}
+\newcommand{\ddqlin}{\ddot{\bfq}_{lin}}
+\newcommand{\qang}{\bfq_{ang}}
+\newcommand{\dqang}{\dot{\bfq}_{ang}}
+\newcommand{\ddqang}{\ddot{\bfq}_{ang}}
+
+\newcommand{\Cov}{{\bm \Sigma}}
+
+
+\newcommand{\DR}{{\bm \Delta \bfR}}
+\newcommand{\Dv}{{\bm \Delta \bfv}}
+\newcommand{\Dp}{{\bm \Delta \bfp}}
+\newcommand{\D}{{\bfDelta}}
+
+
+\newcommand{\dpp}{{\delta\bfp}}
+\newcommand{\dv}{{\delta\bfv}}
+\newcommand{\dR}{{\delta\bfR}}
+
+
+\newcommand{\grav}{\bfg}
+\newcommand{\gravv}{\underline{\bfg}}
+
+\newcommand{\Gaussian}[2]{\mathcal{N}({#1},{#2})}
+\newcommand{\Ident}{\bfI}
+\newcommand{\Reals}{\mathbb{R}}
+
+
+\newcommand{\fig}{Fig.}
+\newcommand{\eq}{Eq.}
+\newcommand{\tab}{Tab.}
+
+
+\newcommand{\KF}{keyframe}
+\newcommand{\KFs}{keyframes}
+
+\newcommand{\KalmanF}{Kalman Filter }
+\newcommand{\HRP}[1]{HRP-#1}
+\newcommand{\keyframe}{Keyframe}
+\newcommand{\keyframes}{Keyframes}
+\newcommand{\Keyframe}{Keyframe}
+\newcommand{\Keyframes}{Keyframes}
+
+% Absolut humanoid paper
+\newcommand{\bw}{{\bfomega}}
+\newcommand{\bth}{{\bftheta}}
+\newcommand{\bphi}{{\bfphi}}
+\newcommand{\nth}{\norm{\bth}}
+\newcommand{\ab}{{\bfa_b}}
+\newcommand{\wb}{{\bw_b}}
+\newcommand{\Dzero}{{\D^0}}
+\newcommand{\Dth}{{\Delta\bth}}
+\newcommand{\dth}{{\delta\bth}}
+
+\renewcommand{\Adh}[2][]{\mathrm{Ad}_{#2}}
+\renewcommand{\Ad}[2][]{\mathrm{\bf Ad}_{#2}}
+\newcommand{\adh}[1]{{\mathrm{ad}_{#1}}}
+\newcommand{\ad}[1]{{\mathrm{\bf ad}_{#1}}}
+\newcommand{\hhat}{^\wedge}
+\newcommand{\vvee}{^\vee}
+
+\renewcommand{\mjac}[1]{\jac{#1}}
+\newcommand{\apriltag}{AprilTag}
+\newcommand{\apriltags}{AprilTags}

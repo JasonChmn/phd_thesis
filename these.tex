@@ -1,0 +1,67 @@
+\documentclass[english, a4paper, 12pt, twoside]{book}
+
+\usepackage[subpreambles=false]{standalone}
+\usepackage{indentfirst}
+
+\input{preambule}
+
+\newcommand{\stn}[1]{\textcolor{red}{\textbf{ST}: #1}}
+
+
+% %%%%% MARGINS FOR NICOLAS
+% \usepackage{setspace}
+% \doublespacing
+
+% \usepackage{geometry}
+% \geometry{
+% a4paper,
+% lmargin=0.1cm,
+% rmargin=6cm}
+% %%%%%%%%%%%%%%%%%%%
+
+
+%\usepackage[ sorting=nyt, style=alphabetic, backref=true, backend=biber, maxnames=6, backref=true, minnames=1]{biblatex}
+%\addbibresource{bibfiles/these.bib}
+
+\usepackage{lipsum} 
+
+\usepackage{textcmds}
+
+
+\begin{document}
+
+% Create empty page before the toc
+\newpage
+\thispagestyle{empty}
+\mbox{}
+\newpage
+
+\pagenumbering{gobble}
+
+\frontmatter
+
+% create a minitoc at the beginning of each chapter
+\dominitoc
+% insert the toc here
+\tableofcontents
+
+% enter the "main" matter behavior of the book class 
+\mainmatter
+
+\input{abstract.tex}
+
+\input{chap_0_intro/intro.tex}
+\input{chap_1_sota/sota.tex}
+\input{chap_2_leas/leas.tex}
+\input{chap_3_sbcp/sbcp.tex}
+\input{chap_4_mip_sl1m/mip_sl1m.tex}
+
+\input{conclusion.tex}
+\input{appendix.tex}
+
+
+
+\printbibliography
+%\bibliography{bibfiles/these.bib}
+
+\end{document}
