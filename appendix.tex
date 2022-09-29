@@ -24,11 +24,11 @@ The constraint can be formulated as follows:
 \begin{equation}
     \label{eq:equilibrium_constr}
     \begin{aligned}
-        F^{j}_{k-1} (c_{k,\:0}-p_{k-1}) &\leq  f_{k-1}^{j} + M a_{k-1}^{j}\\
-        F^{j}_{k} (c_{k,\:1}-p_{k}) &\leq  f^j_{k} + M a{k}^{j}
+        F_{k-1} (c_{k,\:0}-p_{k-1}) &\leq  f_{k-1}\\% + M a_{k-1}^{j}\\
+        F_{k} (c_{k,\:1}-p_{k}) &\leq  f_{k}% + M a{k}^{j}
     \end{aligned}
 \end{equation}
-where $F_k^j$ and $f_k^j$ are the matrix and vector defining the polygonal shape of the foot at $p_k$ on surface $S^j$, and M .
+where $F_k$ and $f_k$ are the matrix and vector defining the polygonal shape of the foot at $p_k$ (considering the contact lies on flat ground).
 Constraints (\ref{eq:equilibrium_constr}) depends only on the xy coordinates of the COM.
 As a result, by convexity of the static equilibrium regions, the straight lines $[c_{k,\:0}, c_{k,\:1}]$ continuously satisfies the static equilibrium
 constraint, as well as $[c_{k-1,\:1}, c_{k,\:0}]$ and $[c_{k,\:1}, c_{k+1,\:0}]$ as the COM stays above the corresponding support effector.
@@ -39,21 +39,23 @@ A 3D polytope $\mathcal{R}$ is obtained for each effector (feet in our case) via
 The resulting polytope is expressed as follows: $\mathcal{R} : \{c \in \mathbb{R}^3 , \; \! R c \; \leq \; \! r\}$.
 
 For each phase $k$, we consider the orientation of the foot frame constant and equal to $r_{k-1}$.
-We note $\mathcal{R}_k^j$ the rotated polytope associated with contact $p_{k}$, lieing on surface $\mathcal{S}^j$.
-The COM positions $c_{k,\:0}$ and $c_{k,\:1}$ are constrained by the two active contacts $p_{k-1}$ and $p_{k}$:
+We note $\mathcal{R}_k$ the rotated polytope associated with contact $p_{k}$.
+For phase $k$, the contraints on the COM positions $c_{k,\:0}$ and $c_{k,\:1}$ can be formulated as follows:
 \begin{equation}
-    R_{l}^j (c_{l,e} - p_{l}) \leq r_l^j + M a_l^j \;\;\;\; \forall j, \forall l \in \{k-1,k\}
+    %R_{l}^j (c_{l,e} - p_{l}) \leq r_l^j + M a_l^j \;\;\;\; \forall j, \forall l \in \{k-1,k\}
+    R_{l} (c_{l,e} - p_{l}) \leq r_l \;\;\;\; \forall l \in \{k-1,k\}
 \end{equation}
 
 \paragraph{Relative foot position constraints.\label{appendix:foot_pos_constr}}
 Just as for the COM reachability, a 3D polytope $\mathcal{Q}$ is randomly sampled offline (or manually given) to approximate the reachable workspace of each foot with respect to the other. The polytope rotated by $r_{k-1}$ then translated by $p_{k-1}$ can be expressed as $\mathcal{Q}_k: \{ p \in \mathbb{R}^3, Q_k p \leq q_k \}$.
-For $p_{k-1}$ lieing on surface $\mathcal{S}^j$, the constraint on foot positions $p_{k-1}$ and $p_k$ can be formulated as follows:
+For phase $k$, the relative foot position constraints can be formulated as follows:
 \begin{equation}
-    \mathcal{Q}_{k-1}^j (p_k - p_{k-1}) \leq q_{k-1}^j + M a_{k-1}^j \;\;\;\; \forall j
+    %\mathcal{Q}_{k-1}^j (p_k - p_{k-1}) \leq q_{k-1}^j + M a_{k-1}^j \;\;\;\; \forall j
+    \mathcal{Q}_{k-1} (p_k - p_{k-1}) \leq q_{k-1} + M a_{k-1}
 \end{equation}
 
 \section{Complete MIP Formulation \label{appendix:complete_mip_formulation}}
-The complete formulation of the contact-before-motion MIP contact planning problem with the center of mass positions and the feasibility constraints of previous Appendix \ref{appendix:feasibility_constr} is as follows:
+The complete formulation of the contact-before-motion MIP contact planning problem with the center of mass positions and the feasibility constraints of previous Appendix \ref{appendix:feasibility_constr} is:
 
 \begin{align}
     \textrm{\textbf{given}} %\quad & \mathcal{I}=\{p_0^{left}, r_0^{left},p_0^{right}, r_0^{right}\} \nonumber\\
@@ -77,9 +79,14 @@ The complete formulation of the contact-before-motion MIP contact planning probl
                                     \quad & \quad \quad S^j p_i \leq s^j + M a_i^j  \nonumber\\
                                     \quad & \quad \quad (p_i)^{\intercal} \textbf{n}^j = e^j + \beta_i^j \nonumber\\
                                     \quad & \quad \quad ||\beta_i^j||_1 \leq M a_i^j \nonumber\\
-                                    \quad & \quad \quad \textcolor{blue}{F^{j}_{i-1} (c_{i,\:0}-p_{i-1}) \leq  f_{i-1}^{j} + M a_{i-1}^{j} } \nonumber\\
-                                    \quad & \quad \quad \textcolor{blue}{F^{j}_{i} (c_{i,\:1}-p_{i}) \leq  f^j_{i} + M a{i}^{j} }  \nonumber\\
-                                    \quad & \quad \quad \textcolor{blue}{R_{i}^j (c_{i,e} - p_{i}) \leq r_i^j + M a_i^j }  \nonumber\\
-                                    \quad & \quad \quad \textcolor{blue}{R_{i-1}^j (c_{i-1,e} - p_{i-1}) \leq r_{i-1}^j + M a_{i-1}^j } \nonumber\\
-                                    \quad & \quad \quad \textcolor{blue}{\mathcal{Q}_{i-1}^j (p_i - p_{i-1}) \leq q_{i-1}^j + M a_{i-1}^j} \nonumber
+                                    %\quad & \quad \quad \textcolor{blue}{F^{j}_{i-1} (c_{i,\:0}-p_{i-1}) \leq  f_{i-1}^{j} + M a_{i-1}^{j} } \nonumber\\
+                                    %\quad & \quad \quad \textcolor{blue}{F^{j}_{i} (c_{i,\:1}-p_{i}) \leq  f^j_{i} + M a{i}^{j} }  \nonumber\\
+                                    %\quad & \quad \quad \textcolor{blue}{R_{i}^j (c_{i,e} - p_{i}) \leq r_i^j + M a_i^j }  \nonumber\\
+                                    %\quad & \quad \quad \textcolor{blue}{R_{i-1}^j (c_{i-1,e} - p_{i-1}) \leq r_{i-1}^j + M a_{i-1}^j } \nonumber\\
+                                    %\quad & \quad \quad \textcolor{blue}{\mathcal{Q}_{i-1}^j (p_i - p_{i-1}) \leq q_{i-1}^j + M a_{i-1}^j} \nonumber
+                                    \quad & \quad \quad \textcolor{blue}{F_{i-1} (c_{i,\:0}-p_{i-1}) \leq  f_{i-1} + M a_{i-1} } \nonumber\\
+                                    \quad & \quad \quad \textcolor{blue}{F_{i} (c_{i,\:1}-p_{i}) \leq  f_{i} + M a{i} }  \nonumber\\
+                                    \quad & \quad \quad \textcolor{blue}{R_{i} (c_{i,e} - p_{i}) \leq r_i + M a_i }  \nonumber\\
+                                    \quad & \quad \quad \textcolor{blue}{R_{i-1} (c_{i-1,e} - p_{i-1}) \leq r_{i-1} + M a_{i-1} } \nonumber\\
+                                    \quad & \quad \quad \textcolor{blue}{\mathcal{Q}_{i-1} (p_i - p_{i-1}) \leq q_{i-1} + M a_{i-1}} \nonumber
 \end{align}

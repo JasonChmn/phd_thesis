@@ -257,7 +257,7 @@ Indeed, the guide paths can be discretized to obtain a desired discretization $\
 Contrary to the contact planner presented in the previous chapter, one step is made with a cyclic gait for each discretized root configuration along the guide.
 
 % Constraining the feet orientation.
-The footsteps orientation $R$ can follow the root orientation along the guide (blue arrows in Figure \ref{fig:mip:bauzil_guide_surfaces}).
+The footsteps orientation $R$ can follow the robot root orientation (blue arrows in Figure \ref{fig:mip:bauzil_guide_surfaces}).
 With this approach, $R$ can be given as input of the problem (\ref{eq:mbc:mip_complete:rotation}), thus drastically reducing the dimension of the problem.
 
 % Pruning irrelevant contact surfaces
@@ -373,8 +373,9 @@ Learning curves of LEAS without contact planner, referred as LEAS-P1 (Chapter \r
 %The P2 validation increases its probability to meet a terminal condition (i.e. failing the contact planning) and forces LEAS to adapt its behavior to succeed with the contact planner, resulting in a lower average reward per episode.
 The episode rewards of LEAS-P2 are lower than LEAS-P1 due to the contact planning constraints. 
 As described earlier, we discretize the guide so that when moving at the desired velocity $v_{desired}=0.10$ m/s, the discretization step is equal to $\Delta D=28cm$. 
-This value is at the limit of the capability of the TALOS robot on flat ground. 
-As a consequence, our steering method will have to move the robot root slower to succeed the contact planning on more complex terrains, thus resulting in a lower average reward.
+This value is at the limit of the feasiblity constraints $\mathcal{F}$ (Appendix \ref{appendix:feasibility_constr}) of the TALOS robot on flat ground. 
+Consequently, our steering method has to move the robot root slower to succeed the contact planning on more complex terrains, thus resulting in a lower average reward.
+
 
 
 \subsection{LEAS Results}
@@ -395,7 +396,7 @@ As a consequence, our steering method will have to move the robot root slower to
 % For this one, 5 trajectories should suffice.
 % So it's 2 results on the same scene.
 
-We expect LEAS-P2 to find, depending on the terrain, the maximum discretization step $\Delta D$ feasible by the contact planner along the guide for $N=N_{ref}$.
+We expect LEAS-P2 to find, depending on the terrain, the a sufficiently high discretization step $\Delta D$ feasible by the contact planner along the guide for $N=N_{ref}$.
 On difficult terrains such as rubbles and stairs, LEAS should lower the robot root velocity, and thus $\Delta D$, to ensure the success of the contact planning. 
 On contrary, we expect the robot to push this velocity on easy ones such as flat ground.
 
@@ -425,7 +426,7 @@ On contrary, we expect the robot to push this velocity on easy ones such as flat
             \includegraphics[trim={1cm 0cm 0cm 0cm},clip,width=\textwidth,height=4.5cm]{Figures/Chapter_MIP_SL1M/res_mip/stairs_down.png}
         \end{subfigure}
         \begin{subfigure}{0.48\linewidth}
-            \includegraphics[trim={0cm 0cm 2cm 1.8cm}, clip,width=\textwidth,height=4.5cm]{Figures/Chapter_MIP_SL1M/res_mip/MIP_stairs/FIGURE_MIP_STAIRS_DOWN.png}
+            \includegraphics[trim={0cm 0cm 2cm 1.8cm}, clip,width=\textwidth,height=4.5cm]{Figures/Chapter_MIP_SL1M/res_mip/MIP_stairs/FIGURE_MIP_STAIRS_DOWN_2.png}
         \end{subfigure}
         \caption{Stairs (down)}
         \label{fig:mip:minimizing_basic:1}
@@ -446,34 +447,36 @@ On contrary, we expect the robot to push this velocity on easy ones such as flat
 \end{figure}
 We compare LEAS-P1, LEAS-P2 and RB-Kino on the rubbles and stairs up and down scenarios (Figure \ref{fig:mip:minimizing_basic}).
 For each scenario, the initial robot root is oriented toward the goal with a velocity $v_{init}=0.05$ m/s.
-Each Steering Method (SM) controls the root velocity to potentially reach the desired velocity $v_{desired}=0.10$ m/s, which corresponds to a discretization step $\Delta D=28$ cm with $N_{ref}=14$ at the limit of the contact planning feasibility on flat ground.
+Each steering method controls the root velocity to potentially reach the desired velocity $v_{desired}=0.10$ m/s, which corresponds to a discretization step $\Delta D=28$ cm with $N_{ref}=14$ at the edge of the feasibility constraints $\mathcal{F}$ on flat ground.
 
 We test our steering methods for different values of $N$. 
 We keep 1 out of $N$ configurations along the guide ($N \in \{8,20\}$), which permits to cover a wide discretization step range.
 Indeed, increasing the $N$ value implies a higher average $\Delta D$ along the guide and inversely.
 Each value is tested on 30 trajectories per scenario.
-We represent the result of the steering methods with $N=N_{ref}$ by some colored dots, the value LEAS-P2 has been trained on.
+We represent the result of the steering methods for $N=N_{ref}$ by some colored dots, the value LEAS-P2 has been trained on.
 
 We can observe the success rate of the steering methods depending on their average discretization step for each scenario.
 %The stairs scenario is relatively easy for the steering methods (Figure \ref{fig:mip:minimizing_basic:0}).
-On stairs (up) scenario, results show that they always succeed the contact planning for all $\Delta D \leq 27 cm$.
+On stairs scenarios, results show that they always succeed the contact planning for all $\Delta D \leq 27 cm$.
 However, it is not the case for the rubble scenario that is more complex. Indeed, depending on the reduced set of candidate surfaces for each step, no solution may be found satisfying the equilibrium constraints, and thus the problem may be infeasible.
-Interestingly, we can observe that due to the equilibrium constraints in $\mathcal{F}$, it is easier for the contact planner to climb stairs up than to climb them down. \textcolor{blue}{REMOVE THE BIG HM 80, and retry on stairs down.}
+%Interestingly, we can observe that due to the equilibrium constraints in $\mathcal{F}$, it is easier for the contact planner to climb stairs up than to climb them down. \textcolor{blue}{REMOVE THE BIG HM 80, and retry on stairs down.}
 
 LEAS-P1 is trained to follow the reference velocity $v_{desired}$.
 However, it rarely reaches this velocity in complex scenarios, thus resulting in an average $\Delta D \approx 26$ cm with $N_{ref}$.
 RB-Kino is tuned to keep an average constant velocity $v_{desired}$ all along the guide. As a result, its discretization is mostly uniform along it with $\delta D \approx 28$ cm.
 
-With $N_{ref}$, RB-Kino fails our 3 scenarios. This result is expected as its average discretization step draws near the feasibility limits.
+With $N_{ref}$, RB-Kino fails our 3 scenarios. This result is expected as its average discretization step draws near (or out) the limits of feasibility constraints.
 As a consequence, RB-Kino requires a fine-tuning on the guide discretization adapted to each scenario ($N \leq N_{ref}$).
 In comparison, LEAS-P1 navigates the terrain slower and a value $N_{ref}$ is sufficient for the stairs scenarios. 
 However, this value does not hold anymore on the rubbles (only 50\% of success). 
 Consequently, LEAS-P1 also requires a fine-tuning of its discretization to generate feasible guide paths in this scenario.
 
-Our solution LEAS-P2 on the other hand performs well across all scenarios with $N_{ref}$ it has been trained on (green dots).
-Results show that our method succeeds in having a near maximum feasible discretization step to succeed in the MIP contact planning. 
+Our solution LEAS-P2 on the other hand succeeds all scenarios for $N_{ref}$ it has been trained on (green dots).
+Results show that our method always adopt a sufficiently high discretization step to succeed in the MIP contact planning along the guides. %having a near maximum feasible discretization step to succeed in the MIP contact planning. 
 As a result, it does not require further fine-tuning.
-On average, we can see that LEAS-P2 exhibits a value $\Delta D \in [22, 25]$ cm depending on the terrain difficulty. \textcolor{blue}{To modify after I get the expe on flat floor.}
+However, we can observe that LEAS-P2 considers the stairs (down) scenario as difficult.
+This behavior may require further investigation as it could be due to our training arena, or the terrain representation on the height map that will be discussed later on.
+%On average, we can see that LEAS-P2 exhibits a value $\Delta D \in [22, 25]$ cm depending on the terrain difficulty. \textcolor{blue}{To modify after I get the expe on flat floor.}
 
 
 \paragraph{Long scenario.}
@@ -491,7 +494,7 @@ On average, we can see that LEAS-P2 exhibits a value $\Delta D \in [22, 25]$ cm 
     \begin{subfigure}[t]{0.9\linewidth}
         \includegraphics[trim={4cm 0cm 3.5cm 1.65cm}, clip,width=\textwidth]{Figures/Chapter_MIP_SL1M/res_mip/Long_discr_x_axis.png}
     \end{subfigure}
-    \caption{Long scenario with $N_{ref}$. We plot the discretization steps along the guide path of each steering method. The x-axis matches the terrain pictured above. The $\Delta D$ value of LEAS-P2 correlates with the terrain difficulty.}
+    \caption{Example of trajectory on our long scenario with $N_{ref}$. For each steering method, we plot the discretization steps along the guide path. The x-axis matches the terrain pictured above. The $\Delta D$ value of LEAS-P2 correlates with the terrain difficulty.}
     \label{fig:mip:long_range}
 \end{figure}
 
@@ -514,10 +517,11 @@ We tuned RB-Kino to have an average discretization step of $\Delta D \approx 28$
 Just like in the basic scenarios, LEAS-P1 presents an average discretization step $\Delta D \approx 26$ cm.
 As both steering methods do not plan guides in function of the terrain difficulty, they both fail the contact planning on our long-range scenario with $N_{ref}$ (Figure \ref{fig:mip:long_range:res}).
 
-Our solution LEAS-P2 adapts the discretization step for each the terrain traversed, which correlates with the results of the basic scenarios. 
+Our solution LEAS-P2 adapts the discretization step for each the terrain traversed.%, which correlates with the results of the basic scenarios. 
 On average LEAS-P2 has a lower discretization step $\Delta D \approx 24$ cm.
-We can also observe that LEAS-P2 exhibits smaller discretization steps on difficult terrains (rubbles and stairs down), and higher ones on the others (bridge, stairs up, and ground floor).
-Thanks to this capability, LEAS-P2 is the only method to succeed with $N_{ref}$ in our long scenario (Figure \ref{fig:mip:long_range:res}), whereas other methods require further fine-tuning of the guide discretization to be feasible by our MIP contact planner.
+
+We can also observe that it exhibits smaller discretization steps on terrains it deemed difficult (rubbles and stairs down), and higher ones on the others (bridge, stairs up, and ground floor).
+Thanks to this capability, LEAS-P2 can succeed the MIP contact planning with $N_{ref}$ in our long scenario (Figure \ref{fig:mip:long_range:res}), whereas other methods require further fine-tuning of the guide discretization.
 
 
 
@@ -532,12 +536,17 @@ To solve this limitation, we presented a solution using our steering method LEAS
 As a result, it can generate feasible problems for the MIP contact planner, while reducing the number of steps of this locomotion task.
 
 
-\paragraph{Detection of small height variations on the terrain.}
-We added to the states a scalar representing the number of potential candidate surfaces around the robot.
-This state was required as values in the observable height map were not accurate enough to efficiently detect small height variations on scenarios like rubbles.
-However, it is still unclear how this parameter impacts the agent decision, and other solutions could be explored to estimate the terrain traversability \cite{lin_traversability_2018, brandao_multimode_2019}.
+\paragraph{Traversability estimation.}
+As discussed in Chapter \cite{sec:LEAS}, tuning the upper and lower bounds of the z-value in the height map is critical to have a correct terrain representation.
+Trivially, setting wider bounds will permit a better detection of large obstacles. However, it hinders the detection of small height variations on the terrain such as rubbles.
+Several strategies could be explored to fix such problems, such as using convolutional neural networks as previously discussed, or giving as observation a second tighter bounded height map.
 
-\paragraph{Guide path discretization.}
+In this thesis, we kept the height map bounds used in previous chapters and we added to the number of potential candidate surfaces around the robot as an observable state.
+This state permitted to LEAS to better detect difficult terrains, however, it is still unclear how this parameter impacts the agent decision. 
+In the future, other methods could be explored to estimate the terrain traversability \cite{lin_traversability_2018, brandao_multimode_2019}.
+%was required as values in the observable height map were not accurate enough to efficiently detect small height variations on scenarios like rubbles.
+
+\paragraph{Contact planning awareness and guide discretization.}
 We discretize the guide path in input of the contact planner by keeping 1 out of $N_{ref}$ configurations.
 However our RL agent does not know which state corresponds to a step inside the contact planner.
 As a consequence, our steering method only adapts the robot velocity along the guide depending on the terrain, and implicitely the discretizaton steps $\Delta D$.
