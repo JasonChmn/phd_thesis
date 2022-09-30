@@ -51,7 +51,7 @@ Just as for the COM reachability, a 3D polytope $\mathcal{Q}$ is randomly sample
 For phase $k$, the relative foot position constraints can be formulated as follows:
 \begin{equation}
     %\mathcal{Q}_{k-1}^j (p_k - p_{k-1}) \leq q_{k-1}^j + M a_{k-1}^j \;\;\;\; \forall j
-    \mathcal{Q}_{k-1} (p_k - p_{k-1}) \leq q_{k-1} + M a_{k-1}
+    \mathcal{Q}_{k-1} (p_k - p_{k-1}) \leq q_{k-1}
 \end{equation}
 
 \section{Complete MIP Formulation \label{appendix:complete_mip_formulation}}
@@ -84,9 +84,9 @@ The complete formulation of the contact-before-motion MIP contact planning probl
                                     %\quad & \quad \quad \textcolor{blue}{R_{i}^j (c_{i,e} - p_{i}) \leq r_i^j + M a_i^j }  \nonumber\\
                                     %\quad & \quad \quad \textcolor{blue}{R_{i-1}^j (c_{i-1,e} - p_{i-1}) \leq r_{i-1}^j + M a_{i-1}^j } \nonumber\\
                                     %\quad & \quad \quad \textcolor{blue}{\mathcal{Q}_{i-1}^j (p_i - p_{i-1}) \leq q_{i-1}^j + M a_{i-1}^j} \nonumber
-                                    \quad & \quad \quad \textcolor{blue}{F_{i-1} (c_{i,\:0}-p_{i-1}) \leq  f_{i-1} + M a_{i-1} } \nonumber\\
-                                    \quad & \quad \quad \textcolor{blue}{F_{i} (c_{i,\:1}-p_{i}) \leq  f_{i} + M a{i} }  \nonumber\\
-                                    \quad & \quad \quad \textcolor{blue}{R_{i} (c_{i,e} - p_{i}) \leq r_i + M a_i }  \nonumber\\
-                                    \quad & \quad \quad \textcolor{blue}{R_{i-1} (c_{i-1,e} - p_{i-1}) \leq r_{i-1} + M a_{i-1} } \nonumber\\
-                                    \quad & \quad \quad \textcolor{blue}{\mathcal{Q}_{i-1} (p_i - p_{i-1}) \leq q_{i-1} + M a_{i-1}} \nonumber
+                                    \quad & \quad \quad \textcolor{blue}{F_{i-1} (c_{i,\:0}-p_{i-1}) \leq  f_{i-1}} \nonumber\\
+                                    \quad & \quad \quad \textcolor{blue}{F_{i} (c_{i,\:1}-p_{i}) \leq  f_{i}}  \nonumber\\
+                                    \quad & \quad \quad \textcolor{blue}{R_{i} (c_{i,e} - p_{i}) \leq r_i}  \nonumber\\
+                                    \quad & \quad \quad \textcolor{blue}{R_{i-1} (c_{i-1,e} - p_{i-1}) \leq r_{i-1}} \nonumber\\
+                                    \quad & \quad \quad \textcolor{blue}{\mathcal{Q}_{i-1} (p_i - p_{i-1}) \leq q_{i-1}} \nonumber
 \end{align}

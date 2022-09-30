@@ -8,19 +8,19 @@
 
 \textcolor{red}{A revoir apres l'ecriture de la SOT etc}
 In this chapter, we present our method to Learn To Steer a locomotion contact planner \qq{LEAS}, the core module of this thesis. 
-Our steering method answers the question: How to locally navigate complex and unknown terrains subject to validity and collision constraints? 
+Our steering method answers the question: \textit{How to locally navigate complex and unknown terrains subject to validity and collision constraints?}
 % Input / Output
-LEAS takes as input the desired direction and a heightmap of its surrounding terrain, in order to generate a robot root trajectory.
+LEAS takes as input a desired direction and a local heightmap of its surrounding terrain, in order to generate a robot root trajectory.
 As many solutions exist to solve such a task, we provide an insight into our design choices and particularly why we use Reinforcement Learning.
 
 In this section, we focus on the implementation of LEAS, which will be reused and adapted for three different contact planners through Chapters \ref{sec:CP-SB} and \ref{sec:CP-SL1M}.
 
 This chapter is organized as follows: 
 In Section \ref{subsec:leas-motivation} we describe the context and the challenges we want to solve. In Section \ref{subsec:leas-RL} we present the specification of the problem and our solution LEAS \cite{LEAS}. We describe LEAS as an RL agent and explain our design choices for its observation, control, and reward to achieve the desired behaviour.
-In section \ref{subsec:leas-implementation}, we present our implementation regarding the feasibility approximations, the random terrain generation, and the architecture for the learning.
-%additional libraries implemented to optimize the computation time and to create random terrains where to train and evaluate our steering method. 
-In Section \ref{subsec:leas-results}, we evaluate how LEAS can navigate unknown terrains and compare its results to other model-based steering methods.
-Finally, we discuss the advantages, limitations, and potential improvements of our method.
+In section \ref{subsec:leas-implementation}, we present our implementation regarding the feasibility approximations, the random terrain generation, and the learning architecture.
+%additional libraries implemented to optimize the computation time and to create random terrains where to train and evaluate our steering method.
+In Section \ref{subsec:leas-results}, we evaluate how LEAS can navigate unknown terrains under reachability and collision avoidance conditions, and compare its results to other model-based steering methods.
+Finally, we discuss the advantages, limitations, and potential improvements of our local navigation method.
 
 \section{Motivation\label{subsec:leas-motivation}}
 \subsection{Context\label{subsubsec:context}}
@@ -39,10 +39,10 @@ As discussed in the previous chapter, most recent locomotion planners are struct
 The general organization is shown in Figure \ref{fig:pipeline}.
 
 % All pipeline
-A first stage generates a \textit{guide path} (P1), i.e. a trajectory in translation and rotation that we would like to roughly follow with the main body of the robot, referred to as the \textit{root} (i.e. the basis of the torso for Talos). In the second stage, a contact planner (P2) computes the contacts along the guide path. In the last stage, a whole-body controller (P3) computes the control sent to the robot to perform these contacts.
+A first stage generates a \textit{guide path} (P1), i.e. a trajectory in translation and rotation that we would like to follow (roughly ou exactly) with the main robot body, referred to as the \textit{root} (i.e. the basis of the torso for Talos). In the second stage, a contact planner (P2) computes the contacts along the guide path. In the last stage, a whole-body controller (P3) computes the control sent to the robot to perform these contacts.
 
 % What we opt for: motion-before-contact
-The decoupling of $P1$ and $P2$ has proven successful in \cite{Escande2009Guide, bouyarmane} and later on in \cite{loco3d, RB-PRM}, where each sub-task can be solved independently from each other, thus reducing the complexity of the problem and allowing us to experiment and compare different module implementations. 
+The decoupling of $P1$ and $P2$ has proven successful in \cite{Escande2008Guide, bouyarmane2009} and later on in \cite{loco3d, RB-PRM}, where each sub-task can be solved independently from each other, thus reducing the complexity of the problem and allowing us to experiment and compare different module implementations. 
 \stn{il manque le papier de bretl, relis bien mon eta tde l art de these pour avoir lhistorique}
 \textcolor{blue}{answer: Bretl and Hauser are contact-before-motion, they will be already cited in the SOTA.}
 
