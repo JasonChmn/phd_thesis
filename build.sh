@@ -16,6 +16,9 @@ pdflatex these
 # Do not update biblio to save time
 if [ "$nojustin" = false ]
 then
+	echo "============================================================================================================"
+	echo "============================================================================================================"
+	echo "Starting biber..."
     biber these
     pdflatex these
 fi

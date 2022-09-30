@@ -932,7 +932,7 @@ In this test scenario, LEAS reaches the goal under the tested threshold at once 
 For a pure navigation task, LEAS without a contact planner does not need to clearly identify the surfaces of the terrain and solely focus on state validity from the heightmap. 
 However, in the context of contact planning, LEAS may require to identify these surfaces to step.
 In this work we use a simple multilayer perceptron, as done in \cite{RL_RRT, RL_RRT_AUTORL} with 1-D lidar values, that is simple to implement and fast to train for the navigation task. 
-While this terrain representation is sufficient for the task performed in chapter \ref{sec:LEAS} and \ref{sec:CP-SB}, we believe that contact planners of chapter \ref{sec:CP-SL1M} could greatly benefits from convolution neural network architecture to extract features from the heightmap and learn a better representation of the terrain \cite{deepLoco,deepGait,RLOC}.
+While this terrain representation is sufficient for the task performed in chapter \ref{sec:LEAS} and \ref{sec:CP-SB}, we believe that contact planners of chapter \ref{sec:CP-SL1M} could greatly benefits from convolutional neural network architecture to extract features from the heightmap and learn a better representation of the terrain \cite{deepLoco,deepGait,RLOC}.
 
 The diversity of terrains was sufficient to train LEAS for our locomotion task, but more terrains could improve its generalization capabilities. This would require another architecture than our actual Master-Workers for a fully asynchronous one \cite{impala2018, DD_PPO}, and another simulation environment as \textit{RaiSim} \cite{raisim}, allowing us to switch terrain efficiently along with its heightmap.
 

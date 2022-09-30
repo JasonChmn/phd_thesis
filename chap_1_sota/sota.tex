@@ -5,35 +5,20 @@
 \minitoc
 \bigskip
 
-% Short intro
-% Overview of what we explain in every subsection
-Creating contact with the terrain is at the core of legged robots locomotion. 
-%\stn{pas vraiment, dis plutot pourquoi ce st critique} \textcolor{blue}{?}
-A large panel of methods has been proposed to achieve walking. 
-Ranging from simple flat ground scenarios to more complex environments where planning is still challenging \cite{carpentier_survey_locomotion_robot}. 
-%\stn{how challenging} \textcolor{blue}{Rajout de la phrase d'apres pour ca? Mais pas sur que ca soit mieux, ca reste une intro...} Indeed, it is a hard task to determine stable and feasible robot motion. 
 
-%\stn{quel est l objectif de ce sota? dans les lignes qui suivent on va decrire qu il y a telle et telle approche, et justifier qu on est plutot dans cette approche. On va souligner le pb de cette approche et mettre en evidence le besoin de traiter de notre poblem P, pour lequel on testera l hypothese H}
+% INTRO (nico): Definir le pbm de la locomotion. 
+% Ses specificites et difficultes: system instabable + grande dimension + divergence exponentielle mise en evidence par le charriot-sur-la-table, nature discrete des contacts conduisant a une dynamique hybride, robustesse.
+% Noter l'objectif de l'equipe, dans lequel tu t'inscrits: obtenir des methodes realistes qu'on puisse mettre en oeuvre sur le robot reel. Lien avec le CG et la biomech
 
-In this thesis, we want a fast to compute and safe solution for the legged robot locomotion problem in complex environments.
-To that end, we will explore the different strategies in the literature as follows:
+% New intro sota by nico
+Our contribution in this thesis aims at addressing this very complexity of the locomotion problem, where the decision and continuous motion variables and discrete contact locations have to be taken from an intricated process.
+The study of this problem has started more than 50 years now, with very quickly the ambition of getting a complete solution, i.e. a complete motion controller driving the locomotion of a real robot, and later on, dynamic avatar evolving in phyisical simulation subject to realistic constraints.
 
-\begin{itemize}
-    \item Section \ref{sota1} reviews the contributions to achieve whole-body motion on legged characters and robots. The recent breakthroughs in Reinforcement Learning (RL) have yielded impressive results in the field of character locomotion, and more specifically contact agnostic approaches. However, these methods are inherently limited to low variations scenarios. In order to obtain a robust and stable walk in more complex scenarios, current works emphasize the need to plan contact positions.
-    
-    \item Section \ref{sota2} focuses on the contact planning problem, that is a common division of the locomotion task. We review two predominant contact planning strategies that are \textit{contact-before-motion}, that plans the contacts to be performed by a whole-body controller, and \textit{motion-before-contact}, that plans a rough robot base trajectory prior to contact planning along it.
-    %This last strategy promises better computation performances alleviating the combinatorics of the contact planning problem, and relying on a trajectory planner to perform a navigation task.
-    This last strategy relies on a navigation task to generate guide paths.
-    
-    \item Section \ref{sota3} is an overview of the works in navigation at two different scales, global and local. 
-    Their goal is to generate conflict-free trajectories under different performance and optimality criteria in complex environments. %We then review two approaches of local planners, also called \textit{steering methods}.
-    Finally, we see how these navigation planners can be used in the context of legged character locomotion.
-    
-    \item Section \ref{sota4} concludes this chapter with a summary of the different approaches to solve the locomotion problem. We show that dividing it into simpler subproblems such as whole-body control, contact planning, and navigation task is a promising solution for real-time locomotion on legged robots.
-    Finally, we explain our choices and our problem formulation.
-\end{itemize}
-
-
+In this chapter, we will first browse the various approaches that have been historically propose, until recent locomotion controller able to optimize or learn all degrees of freedom at once (Section \ref{sota1}).
+This will help us understand the key aspect of locomotion: the intricated decision of motion and contact.
+We will then focus on one subpart of the locomotion problem: the contact planning (Section \ref{sota2}). In this thesis, we will be interested in one particular approach to tackle this problem called motion-before-contact, that we will argue to be very promising for the main realistic locomotion problems, that we will connect to the problem of navigation.
+In Section \ref{sota3}, we will list the main existing solution to navigate in a 3D environment with legged system.
+Finally, we will conclude the chapter by defining our thesis propositions and explain how they contribute to the state of the art.
 
 
 % ==== THE MAIN PROBLEM =====
@@ -84,17 +69,23 @@ To that end, we will explore the different strategies in the literature as follo
 % Nous on choisit le critere 1 pour l'organisation des sections.
 
 Research on modeling legged robot movements for locomotion is a long searched topic \cite{history_humanoid_robots}.
-The task of determining stable and feasible motions is performed by the \textit{whole body controllers}. They are among the most difficult controllers to engineer due to their numerous stability criteria \cite{Chevallereau_book, kajita_intro_humanoid_robotics}.
+The task of determining stable and feasible motions is performed by the \textit{whole body controllers} (i.e. controller able to take real time decisions about all the robot degrees of freedom whole body). They are among the most difficult controllers to engineer due to their numerous stability criteria \cite{Chevallereau_book, kajita_intro_humanoid_robotics}.
 
-Classical whole-body methods use control laws, which can be based on the principle of optimality. 
-They do not explicitly search for contacts with the environment, and so naturally perform them as a side effect of the robot whole body movement.
-As a result, these control approaches can be separated from \textit{planning} algorithms, that search for contacts or motions to be performed over a fixed horizon.
-Two criteria to categorize these methods can be explored:
+
+% nico:
+We propose here to explore these methods by first obtaining a complete movement on the real robot in a realistic simulator.
+This exploration will help us to understand the importance of planning the future contact of the system in its environments.
+As we will see, while the contact plannign can initially be considered aside the whole body controller, recent avances tends to more effectively consider both problem together
+\textcolor{blue}{Nicolas veut ajouter une footnote (voir latex en dessous), mais je suis vraiment pas sur que ca apporte quelque chose}
+%\footnote{While we acknowledge the completeness of the unified (contact+whole body) locomotion problem, we will argue in Section \Section{sota2} of properly handling the contact planning problem, both for immediate practical resolution and future fundamental understanding of the geometrical complexity it brings to the full locomotion problem}.
+
+We will browse through the panel of existing locomotion controllers, that we can explore following 2 criteria:
 \begin{description}
    \item[(1) Contact decision,] that can be predefined, internal or free.
    \item[(2) Model complexity,] if the model is templated (e.g. Linear inverted pendulum model), reduced or complete.
 \end{description}
-This section is organized following criterion (1) based on the contact decision.
+%This section is organized following criterion (1) based on the contact decision.
+We will use both with their respective importance.
 
 \subsection{Predefined Contacts}
 \begin{figure}[h]
@@ -113,20 +104,11 @@ This section is organized following criterion (1) based on the contact decision.
     \label{fig:mpc_predefined}
     \caption{Whole body controllers performing predefined contacts.}
 \end{figure}
-Given a predefined sequence of contacts, efficient methods exist to compute the corresponding whole-body motion.
+Given a predefined contact sequence, efficient methods exist to compute the corresponding stable whole-body motion.
 % Dynamics / Quasi-static
-Knowing the dynamic state of the robot as well as its current and future contacts, approximation models can be used to plan the whole-body locomotion of legged characters.
+Knowing the dynamic state of the robot (e.g. position and velocity of its basis and all its joints) as well as its current and future contacts, approximation models can be used to plan the whole-body locomotion of legged characters.
 
 \paragraph{Model-based approaches.}
-%Classical controllers of this category use the contact positions to compute either collision-free robot motion \cite{CHOMP_2009, stomp_2011, schulman_2014_collision, perrin_2012, fanny_mip_solo} (Figure \ref{fig:mpc_predefined_0}), or the centroidal dynamics of the robot to achieve locomotion \cite{hauser_prm_motion_planning_2005, lin_motion_planning_2016, prete_featherstone_2017, caron_2018_whole_body, Tonneau2018_2PAC}.
-%In the seminal work, Kajita et al. \cite{kajita2003ZMP} introduce a walking pattern generator, using the zero moment point and the inverted pendulum mode, that allows arbitrary foot placements.
-%\stn{pkoi c est dans predefined contacts => Kajita 2003 = ZMP pour le stepping stone problem.} 
-%They then demonstrate the efficacy of their controller climbing some stairs with a humanoid robot in simulation.
-%From a contact sequence, some works \cite{carpentier2016_versatile_efficient, pierre_alexandre_2021} use a model-predictive controller to compute a stable trajectory for the Center of Mass, coupled with a whole-body controller.
-%In the same fashion, Leziart et al. \cite{pierre_alexandre_2021} use a centroidal model predictive control to compute the contact forces that should be applied by a quadruped robot on the ground.
-%With a different approach, Dantec et al. \cite{ewen_2022} propose a whole body model predictive control to follow predefined footstep on the torque-controlled humanoid robot Talos \cite{talos_robot} (Figure \ref{fig:mpc_predefined_1}).
-
-
 Due to the high complexity of the locomotion problem, classical whole body controllers of this category often rely on simplified dynamic robot models.
 % LIPM
 In the seminal work, Kajita et al. \cite{kajita2003ZMP} introduced some key methods of the robot locomotion field: the linear inverse pendulum and the zero moment point.
@@ -159,7 +141,7 @@ The trained controllers can cope with the system dynamics along with stability c
 However, they require up to several days of training, and are yet to achieve the results of model-based controllers on real humanoid robots.
 
 In this thesis, we will be using Task-Space Inverse Dynamics (TSID)-based controllers, following the methodology introduced in the context of the Loco3D project \cite{loco3d}, yet expecting the coming generation of robot controllers to be rather base on whole body MPC \cite{ewen_2022}.
-In the meantime, we explored RL-based controllers. 
+In the meantime, we explored RL-based controllers.
 While we can hope that future discoveries will lead to to the unification of these different concepts, all are indeed comptatible with the approach discussed in this thesis.
 We will explore in Section \cite{sota2} that what really matters is to characterize their feasibility domain. \textcolor{blue}{I do not talk about it in sec 2, let's see if it changes.}
 
@@ -256,13 +238,12 @@ Whole-body trajectory optimization was successfully applied to real quadruped ro
 The key aspect of these approaches is to consider some piecezise smooth representation of the contact variables. The contact sequence can then evoles continuously on piecewise-smooth world while the motion solver explores various locomotion patterns, in a continuous (optimization-based) manner. Of course, this prevents some world representation such as Mario-style floating plateforms, yet not reducing much the applicative scope. The main limitation comes from the unability of the (convex) optimization solver to handle the non-convex nature of the contact location into a non-flat world. Moreover, this also prevents the solver to discover non-regular gaits, or with some clever but some clever but non generic reformulation \cite{winkler2018GaitOpt}.
 
 
-On the other hand, it has been proposed to explicitely model the discrete nature of the contact sequence by integer variables, hence leading to an optimization problem deciding of a mix of continuous and discrete variables, called Mixed-Integer Programming (MIP) \citep{gurobi_mip}.
+On the other hand, it has been proposed to explicitely model the discrete nature of the contact sequence by integer variables, hence leading to an optimization problem deciding of a mix of continuous and discrete variables, called Mixed-Integer Programming (MIP) \cite{gurobi_mip}.
 With this approach, Aceituno-Cabezas et al. simultaneously optimize contact, gait and motion planner on their quadruped robot on complex terrains \cite{carlos_2019}.
 
 However, MIP does not scale well to these large or non linear problems, hence reducing up to now the impact of these approaches to whole body problems.
 
-\textcolor{blue}{Nicolas voulait parler de deits+sl1m ici mais ce sont des contact planners pour moi. Pour moi ce n'est pas du tout leur place comme j'en parle dans la section d'apres. Il reboucle sur cette partie en disant que SL1M fait du contact + motion en même temps.}
-\textcolor{red}{Nico: veut remplacer la citation de carlos par deits 2014 + parler de SL1M ici: On the other hand, MIP solver are very efficient algorithm if we can keep a linear formulation (SL1M)} \textcolor{blue}{mais du coup c'est plus un MIP solver qu'on utilise si c'est lineaire...} \textcolor{red}{In this thesis, we will capitalize on this approach and show how we can exploit it to generate whole body movements, by connecting it to the notion of feasibility.} \textcolor{blue}{Je comprends pas trop parce que j'ai pas du tout fait ça dans la thèse? Je preferai ne pas parler de deits/sl1m ici et d'en parler plutot comme contact planner vu que c'est comme ça qu'on les utilise. Ensuite on fait le WBC avec autre chose pour suivre les pas...}
+\textcolor{blue}{Nicolas voulait parler de deits+sl1m ici mais ce sont des contact planners pour moi. Pour moi ce n'est pas du tout leur place comme j'en parle dans la section d'apres. Il reboucle sur cette partie en disant que SL1M fait du contact + motion en même temps. Il veut remplacer la citation de carlos par deits 2014 + parler de SL1M ici: \textcolor{red}{On the other hand, MIP solver are very efficient algorithm if we can keep a linear formulation (SL1M). In this thesis, we will capitalize on this approach and show how we can exploit it to generate whole body movements, by connecting it to the notion of feasibility.} \textcolor{blue}{Je comprends pas trop parce... c'est plus un MIP du coup si c'est lineaire + Je suis pas du tout d'accord avec cette phrase. Je preferai ne pas parler de deits/sl1m ici et d'en parler plutot comme contact planner vu que c'est comme ça qu'on les utilise. Ensuite on fait le WBC avec autre chose pour suivre les pas, mais dans la these on a juste supposé que ca existait la.}
 
 \paragraph{Conclusion on internal contact decision.}
 A classical approach for locomotion is to synthesize walking motion while adapting footstep placement on flat ground.
@@ -286,12 +267,12 @@ The contact sequence is then not an explicit variable, but rather a consequence 
 
 \paragraph{Optimal control with differentiable simulation.}
 \textcolor{blue}{Nico a voulu ajouter cette partie en plus. Je n'y comprends pas grand chose, je n'ai pas assez de background dessus et comme c'est encore nouveau: un papier siggraph qui est sorti l'an dernier de dessus + justin carpentier / ledilec qui bosse dessus, je ne sais pas trop ce que ça donne. Je prefere ne pas la mettre honnetement comme je ne la maitriste pas du tout.}
-When optimizing the robot trajectory with fixed contact sequence, the reason why the solver can not decide to change the sequence is because the contact dynamics is set as as non differentiable. Indeed, in robotics and computer graphics, we often consider rigid (stiff) contact solvers, which offers the best trade-off between algorithmic efficiency and realism \citep{pybullet} \textcolor{blue}{citation to set}.
-Yet this leads to non differentiable models that gradient based algorithms can not manipulate. In \citep{Harmaleinen?} \textcolor{blue}{citation to set.} a gradient-free solver is used on top of the rigid (ODE) simulator, leading to contact exploration even if with local exploration range.
-On the other hand, a smooth relaxation of the stiff contact dynamics \citep{Mujoco} \textcolor{blue}{citation to set.} leads also to contact discovery, again with local capabilities.
+When optimizing the robot trajectory with fixed contact sequence, the reason why the solver can not decide to change the sequence is because the contact dynamics is set as as non differentiable. Indeed, in robotics and computer graphics, we often consider rigid (stiff) contact solvers, which offers the best trade-off between algorithmic efficiency and realism \cite{pybullet} \textcolor{blue}{citation to set}.
+Yet this leads to non differentiable models that gradient based algorithms can not manipulate. In \cite{Harmaleinen?} \textcolor{blue}{citation to set.} a gradient-free solver is used on top of the rigid (ODE) simulator, leading to contact exploration even if with local exploration range.
+On the other hand, a smooth relaxation of the stiff contact dynamics \cite{Mujoco} \textcolor{blue}{citation to set.} leads also to contact discovery, again with local capabilities.
 
 \textcolor{blue}{Nico dit: un plan de bilblio à faire sur autres options de traj en simu elastique}
-So far, this direction has not been pushed to realistic robot set up. Current works are mostly on the simulator formulation \citep{bipal 2019?} \textcolor{blue}{citation to set.} or on local smoothing using randomization \citep{tedrake 2021, lelidec 2022} \textcolor{blue}{citation to set.}
+So far, this direction has not been pushed to realistic robot set up. Current works are mostly on the simulator formulation \cite{bipal 2019?} \textcolor{blue}{citation to set.} or on local smoothing using randomization \cite{tedrake 2021, lelidec 2022} \textcolor{blue}{citation to set.}
 \textcolor{blue}{A discuter, je n'ai pas envie de garder ce paragraph. Peut etre mettre juste une phrase en conclu de cette section pour dire que ça existe et que ça peut etre cool pour plus tard?}
 
 
@@ -337,7 +318,7 @@ As they do not require the evaluation of the simulator gradients, they are also 
 \textcolor{blue}{voir si j'enleve.}
 
 % That is where Reinforcement Learning becomes really useful in physics-based sim.
-Reinforcement Learning (RL) in physics-based simulation can be used for character animation \cite{survey_rl_animation_pettre_2022, won2017dragon, seheeOctopus2019, learning_predict_rnn}.
+Reinforcement Learning (RL) in physics-based simulation can be used for character animation \cite{survey_rl_animation_pettre_2022, won2017dragon, learning_predict_rnn}.
 This method permits learning controllers able to cope with the system dynamics.
 %They offer better generalization capabilities to new environments or unexpected events compared to traditional model-based approaches that are highly complex to engineer. 
 Peng et al. learn by reinforcement a terrain-adaptive locomotion controller, outputting target joint angles to compute the torques on 2D biped and quadruped characters \cite{terrain_adaptative_locomotion} (Figure \ref{fig:rl_agnostic_0}). 
@@ -615,8 +596,8 @@ However, their formulation requires predefined convex regions for contact surfac
 \textcolor{blue}{Nico veut enlever ca et dire (voir après)}
 We previously presented a similar continuous approach in Section \ref{par:simul_contact_motion}, planning contact and motion simultaneously.
 We distinguish this strategy from only contact planning, therefore resulting in a lower complexity and reducing the computation time.
-\textcolor{red}{Nico: As discussed in Section \ref{par:simul_contact_motion}, SL1M also xxx with MIP-based locomotion optimization, where the continuous motion and the discrete contacts are optimized together(?? ok y a des variables pour le COM mais...). As SL1M reason with a simplified model inspired from contact planning, it also introduce the notion of feasibility, although with complete guarantee.}
-\textcolor{blue}{Je comprends pas trop pourquoi il classe pas SL1M comme un contact planner, mais comme un motion et contact en meme temps. Je comprends qu'il y a le COM pour la faisabilité ok, mais c'est aussi applicable pour tous les autres contact planner dont je parle dans cette section potentiellement non?}
+\textcolor{red}{Nico: As discussed in Section \ref{par:simul_contact_motion}, SL1M also connects with MIP-based locomotion optimization, where the continuous motion and the discrete contacts are optimized together (???). As SL1M reason with a simplified model inspired from contact planning, it also introduce the notion of feasibility, although with complete guarantee (?).}
+\textcolor{blue}{Je comprends pas trop pourquoi il classe pas SL1M comme un contact planner, mais comme un motion et contact en meme temps. Je comprends qu'il y a le COM pour la faisabilité ok, mais c'est aussi applicable pour tous les autres contact planner dont je parle dans cette section potentiellement non? Je suis pas du tout d'accord avec le phrase. SL1M pour moi c'est un contact planner.}
 
 % Mini conclusion: Most searched strategy in the litterature. Separation of discrete and continuous approaches, with their pros and cons. 
 % Discrete = just need a search graph / PP algo, can be long > 1s. 
