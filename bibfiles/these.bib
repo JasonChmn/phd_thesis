@@ -157,6 +157,15 @@ journal={IEEE Transactions on Robotics 2020}
   YEAR = {2022}
 }
 
+
+@article{tedrake_2022_differentiable,
+  title =    {Do Differentiable Simulators Give Better Policy Gradients?},
+  author =       {Suh, Hyung Ju and Simchowitz, Max and Zhang, Kaiqing and Tedrake, Russ},
+  year =   {2022},
+  publisher =    {PMLR}
+}
+
+
 @article{BangaruMichel2021DiscontinuousAutodiff,
   title = {Systematically Differentiating Parametric Discontinuities},
   author = {Bangaru, Sai and Michel, Jesse and Mu, Kevin and Bernstein, Gilbert and Li, Tzu-Mao and Ragan-Kelley, Jonathan},
@@ -761,6 +770,19 @@ author = {Nicolás Navarro-Guerrero and Cornelius Weber and Pascal Schroeter and
   booktitle={Proceedings. 1998 IEEE/RSJ International Conference on Intelligent Robots and Systems. Innovations in Theory, Practice and Applications (Cat. No.98CH36190)},   
   title={Task-priority formulations for the kinematic control of highly redundant articulated structures},   
   year={1998}
+}
+
+@article {tsid_prete_2016,
+    title = {Implementing Torque Control with High-Ratio Gear Boxes and without Joint-Torque Sensors},
+    booktitle = {Int. Journal of Humanoid Robotics 2016},
+    author = {Andrea Del Prete, Nicolas Mansard, Oscar E Ramos, Olivier Stasse, Francesco Nori}
+}
+
+@software{software_robot_RL,
+  author = {Jason Chemin and Pierre-Alexandre L{\'e}ziart and Ewen Dantec},
+  title = {Environment RL for talos and solo robots},
+  url = {https://github.com/JasonChmn/robots_RL},
+  year = {2022}
 }
 
 % ==================== DeepLoco like
@@ -1389,11 +1411,18 @@ journal = {ACM Trans. Graph. 2009}
   title={MuJoCo: A physics engine for model-based control}
 }
 
-%@article{DART,
-%title = {DART: Dynamic Animation and Robotics Toolkit},
-%author = {Lee, Jeongseok and Grey, Michael and Ha, Sehoon and Kunz, Tobias and Jain, Sumit and Ye, Yuting and Srinivasa, Siddhartha and Stilman, Mike and Liu, Karen},
-%journal = {The Journal of Open Source Software 2018}
-%}
+@article{DART,
+  title = {DART: Dynamic Animation and Robotics Toolkit},
+  author = {Lee, Jeongseok and Grey, Michael and Ha, Sehoon and Kunz, Tobias and Jain, Sumit and Ye, Yuting and Srinivasa, Siddhartha and Stilman, Mike and Liu, Karen},
+  journal = {The Journal of Open Source Software 2018}
+}
+
+@misc{pybullet_coumans2019,
+  author = {Erwin Coumans and Yunfei Bai},
+  title = {PyBullet, a Python module for physics simulation for games, robotics and machine learning},
+  howpublished = {\url{http://pybullet.org}},
+  year = {2016--2019}
+}
 
 @article{HPP,
   TITLE = {{HPP: a new software for constrained motion planning}},
@@ -1409,6 +1438,45 @@ journal = {ACM Trans. Graph. 2009}
     title = {OpenSim: Open-Source Software to Create and Analyze Dynamic Simulations of Movement},
     author = {Delp, Scott L. and Anderson, Frank C. and Arnold, Allison S. and Loan, Peter and Habib, Ayman and John, Chand T. and Guendelman, Eran and Thelen, Darryl G.},
     journal = {IEEE Trans. Biomed. Eng. 2007}
+}
+
+@article{hamalainen_2015,
+  author = {H\"{a}m\"{a}l\"{a}inen, Perttu and Rajam\"{a}ki, Joose and Liu, C. Karen},
+  title = {Online Control of Simulated Humanoids Using Particle Belief Propagation},
+  year = {2015},
+  journal = {ACM Trans. Graph.},
+}
+
+@article{chainqueen_2019,  
+  author={Hu, Yuanming and Liu, Jiancheng and Spielberg, Andrew and Tenenbaum, Joshua B. and Freeman, William T. and Wu, Jiajun and Rus, Daniela and Matusik, Wojciech},  
+  booktitle={2019 International Conference on Robotics and Automation (ICRA)},   
+  title={ChainQueen: A Real-Time Differentiable Physical Simulator for Soft Robotics},   
+  year={2019}
+}
+
+@article{difftaichi_2019,
+  author    = {Yuanming Hu and
+               Luke Anderson and
+               Tzu{-}Mao Li and
+               Qi Sun and
+               Nathan Carr and
+               Jonathan Ragan{-}Kelley and
+               Fr{\'{e}}do Durand},
+  title     = {DiffTaichi: Differentiable Programming for Physical Simulation},
+  journal   = {CoRR},
+  year      = {2019}
+}
+
+@article{werling_2021,
+  author    = {Keenon Werling and
+               Dalton Omens and
+               Jeongseok Lee and
+               Ioannis Exarchos and
+               C. Karen Liu},
+  title     = {Fast and Feature-Complete Differentiable Physics for Articulated Rigid
+               Bodies with Contact},
+  journal   = {CoRR},
+  year      = {2021}
 }
 
 % ====================== OTHER

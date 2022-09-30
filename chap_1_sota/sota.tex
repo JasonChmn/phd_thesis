@@ -140,7 +140,7 @@ Reinforcement learning is another approach to obtain such controllers.
 The trained controllers can cope with the system dynamics along with stability criteria. 
 However, they require up to several days of training, and are yet to achieve the results of model-based controllers on real humanoid robots.
 
-In this thesis, we will be using Task-Space Inverse Dynamics (TSID)-based controllers, following the methodology introduced in the context of the Loco3D project \cite{loco3d}, yet expecting the coming generation of robot controllers to be rather base on whole body MPC \cite{ewen_2022}.
+In this thesis, we will be using Task-Space Inverse Dynamics (TSID)-based controllers \cite{tsid_prete_2016}, following the methodology introduced in the context of the Loco3D project \cite{loco3d}, yet expecting the coming generation of robot controllers to be rather base on whole body MPC \cite{ewen_2022}.
 In the meantime, we explored RL-based controllers.
 While we can hope that future discoveries will lead to to the unification of these different concepts, all are indeed comptatible with the approach discussed in this thesis.
 We will explore in Section \cite{sota2} that what really matters is to characterize their feasibility domain. \textcolor{blue}{I do not talk about it in sec 2, let's see if it changes.}
@@ -266,14 +266,18 @@ The contact sequence is then not an explicit variable, but rather a consequence 
 %This section is an informational overview of works on locomotion with a contact agnostic approach.
 
 \paragraph{Optimal control with differentiable simulation.}
-\textcolor{blue}{Nico a voulu ajouter cette partie en plus. Je n'y comprends pas grand chose, je n'ai pas assez de background dessus et comme c'est encore nouveau: un papier siggraph qui est sorti l'an dernier de dessus + justin carpentier / ledilec qui bosse dessus, je ne sais pas trop ce que ça donne. Je prefere ne pas la mettre honnetement comme je ne la maitriste pas du tout.}
-When optimizing the robot trajectory with fixed contact sequence, the reason why the solver can not decide to change the sequence is because the contact dynamics is set as as non differentiable. Indeed, in robotics and computer graphics, we often consider rigid (stiff) contact solvers, which offers the best trade-off between algorithmic efficiency and realism \cite{pybullet} \textcolor{blue}{citation to set}.
-Yet this leads to non differentiable models that gradient based algorithms can not manipulate. In \cite{Harmaleinen?} \textcolor{blue}{citation to set.} a gradient-free solver is used on top of the rigid (ODE) simulator, leading to contact exploration even if with local exploration range.
-On the other hand, a smooth relaxation of the stiff contact dynamics \cite{Mujoco} \textcolor{blue}{citation to set.} leads also to contact discovery, again with local capabilities.
 
-\textcolor{blue}{Nico dit: un plan de bilblio à faire sur autres options de traj en simu elastique}
-So far, this direction has not been pushed to realistic robot set up. Current works are mostly on the simulator formulation \cite{bipal 2019?} \textcolor{blue}{citation to set.} or on local smoothing using randomization \cite{tedrake 2021, lelidec 2022} \textcolor{blue}{citation to set.}
-\textcolor{blue}{A discuter, je n'ai pas envie de garder ce paragraph. Peut etre mettre juste une phrase en conclu de cette section pour dire que ça existe et que ça peut etre cool pour plus tard?}
+When optimizing the robot trajectory with fixed contact sequence, the reason why the solver can not decide to change the sequence is because the contact dynamics is set as as non differentiable. 
+Indeed, in robotics and computer graphics, we often consider rigid (stiff) contact solvers, which offers the best trade-off between algorithmic efficiency and realism \cite{pybullet_coumans2019}.
+Yet this leads to non differentiable models that gradient based algorithms can not manipulate. 
+In \cite{hamalainen_2015} a gradient-free solver is used on top of the rigid (ODE) simulator, leading to contact exploration even if with local exploration range.
+%On the other hand, a smooth relaxation of the stiff contact dynamics \cite{mujoco} also leads to contact discovery, again with local capabilities.
+
+In order to use gradient based algorithms, finite-differencing can typically used to approximate the gradients such as the physics engine MuJoCo \cite{mujoco}. However, it tends to introduce round-off and discretization errors.
+Recently, some differentiable physics engines have emerged to solve these issues, such as Nimble from Werling et al. supporting complex contact geometry and gradients approximating continuous-time elastic collision \cite{werling_2021}.
+So far, this direction has not been pushed to realistic robot set up. 
+Current works are mostly on the simulator formulation \cite{chainqueen_2019, difftaichi_2019} or on local smoothing using randomization \cite{tedrake_2022_differentiable, carpentier_fix_differentiable_OC}.
+
 
 
 \paragraph{Learning how to locomote.}
@@ -312,13 +316,12 @@ So far, this direction has not been pushed to realistic robot set up. Current wo
 \end{figure}
 
 Similarly to trajectory optimization, RL works by exploring movements that optimize an objective function. Yet they offer unprecedented flexibility in environments and the objective they can tackle. Furthermore, they only require optimization at training time, while the run-time only consists in the execution of the resulting policy.
-
-\textcolor{blue}{Phrase en dessous par nico lie au simu differentielle. Voir si j'enleve, à discuter.}
+% PETTRE SURVEY: RL stands out as a promising approach for character animation because it provides a versatile framework to learn motor skills without the need of labelled data. RL is particularly useful when the dynamic equations of the environment are unknown or non-differentiable, to which conventional gradient-based optimal control algorithms do not apply.
 As they do not require the evaluation of the simulator gradients, they are also less prone to the limitations discusses with trajectory-based solvers related to contact differentiability, and accept classical (stiff) contact formulation.
-\textcolor{blue}{voir si j'enleve.}
+
 
 % That is where Reinforcement Learning becomes really useful in physics-based sim.
-Reinforcement Learning (RL) in physics-based simulation can be used for character animation \cite{survey_rl_animation_pettre_2022, won2017dragon, learning_predict_rnn}.
+Reinforcement Learning (RL) in physics-based simulation can be used for character animation \cite{survey_rl_animation_pettre_2022}.
 This method permits learning controllers able to cope with the system dynamics.
 %They offer better generalization capabilities to new environments or unexpected events compared to traditional model-based approaches that are highly complex to engineer. 
 Peng et al. learn by reinforcement a terrain-adaptive locomotion controller, outputting target joint angles to compute the torques on 2D biped and quadruped characters \cite{terrain_adaptative_locomotion} (Figure \ref{fig:rl_agnostic_0}). 
@@ -455,7 +458,6 @@ Simultaneous motion and contact optimization are promising to generate dynamic a
 However, they remain expensive to compute, thus limiting their use for online planning.
 
 Research in locomotion has seen a lot of interest in contact agnostic approaches using reinforcement learning.
-However, these methods are not mature yet to be feasible on a real human-sized robot.Research in locomotion has seen a lot of interest in contact agnostic approaches using reinforcement learning.
 However, these methods are not mature yet to be feasible on a real human-sized robot.
 
 
@@ -536,7 +538,7 @@ To do this, we will explore contact planners operating at two different scales, 
 % No combinatorial involved when computing the contacts on a very short horizon:
 This approach focuses on computing the immediate next contact (or few contacts) to be performed by the robot, following a given direction.
 
-As one could guess, this approach is particularly fast to compute as it is often based on simple heuristics for foot placement while respecting equilibrium and environment constraints \cite{raibert_heuritics_1986, glide_xie_2021}.
+As one could guess, this approach is particularly fast to compute as it is often based on simple heuristics for foot placement while respecting equilibrium and environment constraints \cite{raibert_heuritics_1986}.
 Using this strategy, Scianca et al. \cite{Scianca_2020} compute the next footstep to be made on flat ground, then adapt and perform it by their whole-body controller on the humanoid robots NAO and HRP-4.
 % Rebulla at darpa => problem of local minima highlighted.
 Rebulla et al. \cite{rebula_2007_little_dog} present a model-based controller for quadruped robots planning only the next footstep to statically walk on rough terrains.
@@ -718,7 +720,7 @@ Contact planning is yet a needed stage to generate, in tractable time, complex m
 This task relies on specific model reduction, to ensure footsteps feasibility, that is combined with dedicated algorithms to tackle the discrete nature of finding contact sequences.
 
 In this section, we categorized contact planners into two categories.
-The \textit{contact-before-motion} approach can lead to local minima on short horizon planning, and become computationally intractable a longer horizon.
+The \textit{contact-before-motion} approach can lead to local minima on short horizon planning, and become computationally intractable on longer horizon.
 That is why our research will focus on \textit{motion-before-contact}, that is promising to alleviate these limitations.
 However, it raises the problem of the non-guaranteed feasibility of the guide path with a given contact planner.
 
