@@ -65,17 +65,17 @@ The complete formulation of the contact-before-motion MIP contact planning probl
                             %\quad & \mathcal{S}=\{\mathcal{S}^0,...,\mathcal{S}^m\}\\%\textrm{, the set of terrain surfaces}\\
                             %\quad & \mathcal{S}^{goal}\\%\textrm{, the goal surface to reach}\\
                             \quad & n, \; \mbox{p}_0, \; r_0, \; \mathcal{S}, \; \mathcal{S}^{goal} \nonumber\\
-    \textrm{\textbf{find}}  \quad & \mbox{P}=[p_1,...,p_n], \; \mbox{p}_i \in \mathbb{R}^{3 \times n} \nonumber\\
-                            \quad & R=[r_1,...,r_n], \; r_i \in \mathbb{R}^{3 \times n} \nonumber\\
+    \textrm{\textbf{find}}  \quad & \mbox{P}=[\mbox{p}_1,...,\mbox{p}_n], \; \mbox{p}_i \in \mathbb{R}^{3 \times n} \nonumber\\
+                            \quad & R=[\mbox{r}_1,...,\mbox{r}_n], \; r_i \in \mathbb{R}^{3 \times n} \nonumber\\
                             \quad & \textcolor{blue}{C=[\mbox{c}_{0,1},c_{1,0},c_{1,1},...,c_{n,0},c_{n,1}]}, \; c_{k,e} \in \mathbb{R}^3 \nonumber\\
-                            \quad & A=[a_1,...,a_n], \; a_i \in \{0,1\}^{m} \nonumber\\
+                            \quad & A=[\mbox{a}_1,...,\mbox{a}_n], \; \mbox{a}_i \in \{0,1\}^{m} \nonumber\\
                             \quad & \beta=[\beta_1,...,\beta_n], \; \beta_i \in \mathbb{R}^{m} \nonumber\\
                             %\quad & \alpha=[\alpha_1,...,\alpha_n] \in \mathbb{R}_{+}^{n}\\
     %\min_{w,b,\xi} \quad & \frac{1}{2}w^{t}w+C\sum_{i=1}^{N}{\xi_{i}}\\
-    \textrm{\textbf{min}}  \quad & l(P,R,\textcolor{blue}{C}) \nonumber\\
+    \textrm{\textbf{min}}  \quad & l(\mbox{P},\mbox{R},\textcolor{blue}{C}) \nonumber\\
     \textrm{\textbf{s.t.}}  \quad & \mbox{p}_n \in \mathcal{S}^{goal} \nonumber\\
                             \quad & \forall i \in \{1,..,n\} : \nonumber\\
-                                \quad & \quad \sum_{j=1}^{m} a_i^j = m-1  \nonumber\\
+                                \quad & \quad \mbox{card}(a_i) = m-1  \nonumber\\
                                 \quad & \quad \forall j \in \{1,..,m\} : \nonumber\\
                                     \quad & \quad \quad S^j \mbox{p}_i \leq s^j + M a_i^j \textbf{1} \nonumber\\
                                     \quad & \quad \quad (p_i)^{\intercal} \textbf{n}^j = e^j + \beta_i^j \nonumber\\
