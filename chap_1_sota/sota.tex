@@ -774,7 +774,7 @@ Recent state-of-the-art implementations for crowd simulation \cite{vantoll_micro
 Section \ref{subsub:nav:overview} has a pedagogic purpose, in which we will present generic algorithms for both global and local navigation.
 Finally, we refer the reader to Section \ref{subsub:nav:legged} for the use of these algorithms in the context of legged robot navigation.
 
-\subsection{Overview: navigation methods\label{subsub:nav:overview}}
+\subsection{Overview: Navigation Methods\label{subsub:nav:overview}}
 We propose to explore the algorithms used in the broad context of navigation.
 These algorithms can be categorized depending on the scale they operate in.
 
@@ -1018,7 +1018,7 @@ Furthermore, they can generalize well to unexpected events and partially known e
 
 
 
-\subsection{Navigation task for legged robot locomotion\label{subsub:nav:legged}}
+\subsection{Navigation Task for Legged Robot Locomotion\label{subsub:nav:legged}}
 \begin{figure}[h]
     \centering
     \captionsetup[subfigure]{justification=centering}
@@ -1104,7 +1104,7 @@ Conversely, considering only a small range of motion can increase the guide succ
 %In a model predictive control fashion, Risbourg et al. \cite{fanny_mip_solo}  use a guide to obtain candidate contact surfaces and allow a real-time for short horizon footstep planning with a MIP method on the quadruped Solo.
 
 
-\paragraph{Conclusion on legged robot navigation.}
+\paragraph{Conclusion on Legged Robot Navigation.}
 % Norby: The global planner is critical to this pipeline due to its place at the top of the planning stack. A good global planner must have an accurate idea of what the robot can and cannot do to ensure that the other layers can resolve the motion, but also must have a long enough horizon to avoid local minima which is difficult to achieve in real time. 
 In motion-before-contact, guide planning is critical due to its place at the top of the planning stack as stated by Norby et al. \cite{norby_skd_2022}.
 Such guide paths must take into account the robot capabilities, and ensure the success of the contact planning.
@@ -1172,7 +1172,7 @@ However, generating feasible guide paths for a given contact planner remains yet
 
 
 % Formulation de la these en exploitant en exploitant les idees de la SOTA centrales.
-\subsection{Thesis formulation.}
+\subsection{Thesis Formulation.}
 % "It goes beyond merely summarizing or describing to stake out an interpretation or position that’s not obvious, and others could challenge for good reasons. It’s also arguable in the literal sense that it can be argued, or supported through a thoughtful analysis of your sources. If your argument lacks evidence, readers will think your thesis statement is an opinion or belief as opposed to an argument."
 
 % TOPIC: L'integration d'une tache de navigation dans le contexte du contact planning.
