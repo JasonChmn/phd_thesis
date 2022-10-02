@@ -11,14 +11,14 @@
 % Noter l'objectif de l'equipe, dans lequel tu t'inscrits: obtenir des methodes realistes qu'on puisse mettre en oeuvre sur le robot reel. Lien avec le CG et la biomech
 
 % New intro sota by nico
-Our contribution in this thesis aims at addressing this very complexity of the locomotion problem, where the decision and continuous motion variables and discrete contact locations have to be taken from an intricated process.
-The study of this problem has started more than 50 years now, with very quickly the ambition of getting a complete solution, i.e. a complete motion controller driving the locomotion of a real robot, and later on, dynamic avatar evolving in phyisical simulation subject to realistic constraints.
+Our contribution in this thesis aims at addressing this very complexity of the locomotion problem, where the decision and continuous motion variables and discrete contact locations have to be taken from an intricate process.
+The study of this problem started more than 50 years now, with very quickly the ambition of getting a complete solution, i.e. a complete motion controller driving the locomotion of real robots, and later on, dynamic avatars evolving in physical simulation subject to realistic constraints.
 
-In this chapter, we will first browse the various approaches that have been historically propose, until recent locomotion controller able to optimize or learn all degrees of freedom at once (Section \ref{sota1}).
+In this chapter, we will first browse the various approaches that have been historically proposed, until recent locomotion controllers able to optimize or learn all degrees of freedom at once (Section \ref{sota1}).
 This will help us understand the key aspect of locomotion: the intricated decision of motion and contact.
-We will then focus on one subpart of the locomotion problem: the contact planning (Section \ref{sota2}). In this thesis, we will be interested in one particular approach to tackle this problem called motion-before-contact, that we will argue to be very promising for the main realistic locomotion problems, that we will connect to the problem of navigation.
+We will then focus on one subpart of the locomotion problem: contact planning (Section \ref{sota2}). In this thesis, we will be interested in one particular approach to tackle this problem called motion-before-contact, that we will argue to be very promising for the main realistic locomotion problems, that we will connect to the problem of navigation.
 In Section \ref{sota3}, we will list the main existing solution to navigate in a 3D environment with legged system.
-Finally, we will conclude the chapter by defining our thesis propositions and explain how they contribute to the state of the art.
+Finally, we will conclude the chapter by defining our thesis propositions and explaining how they contribute to the state of the art.
 
 
 % ==== THE MAIN PROBLEM =====
@@ -69,20 +69,20 @@ Finally, we will conclude the chapter by defining our thesis propositions and ex
 % Nous on choisit le critere 1 pour l'organisation des sections.
 
 Research on modeling legged robot movements for locomotion is a long searched topic \cite{history_humanoid_robots}.
-The task of determining stable and feasible motions is performed by the \textit{whole body controllers} (i.e. controller able to take real time decisions about all the robot degrees of freedom whole body). They are among the most difficult controllers to engineer due to their numerous stability criteria \cite{Chevallereau_book, kajita_intro_humanoid_robotics}.
+The task of determining stable and feasible motions is performed by the \textit{whole body controllers} (i.e. controller able to take real-time decisions about all the robot degrees of freedom whole body). They are among the most difficult controllers to engineer due to their numerous stability criteria \cite{Chevallereau_book, kajita_intro_humanoid_robotics}.
 
 
 % nico:
 We propose here to explore these methods by first obtaining a complete movement on the real robot in a realistic simulator.
-This exploration will help us to understand the importance of planning the future contact of the system in its environments.
-As we will see, while the contact plannign can initially be considered aside the whole body controller, recent avances tends to more effectively consider both problem together
+This exploration will help us to understand the importance of planning the future contact of the system in its environment.
+As we will see, while contact planning can initially be considered aside from the whole body controller, recent advances tend to more effectively consider both problems together
 \textcolor{blue}{Nicolas veut ajouter une footnote (voir latex en dessous), mais je suis vraiment pas sur que ca apporte quelque chose}
 %\footnote{While we acknowledge the completeness of the unified (contact+whole body) locomotion problem, we will argue in Section \Section{sota2} of properly handling the contact planning problem, both for immediate practical resolution and future fundamental understanding of the geometrical complexity it brings to the full locomotion problem}.
 
 We will browse through the panel of existing locomotion controllers, that we can explore following 2 criteria:
 \begin{description}
-   \item[(1) Contact decision,] that can be predefined, internal or free.
-   \item[(2) Model complexity,] if the model is templated (e.g. Linear inverted pendulum model), reduced or complete.
+   \item[(1) Contact decision,] that can be predefined, internal, or free.
+   \item[(2) Model complexity,] if the model is templated (e.g. Linear inverted pendulum model), reduced, or complete.
 \end{description}
 %This section is organized following criterion (1) based on the contact decision.
 We will use both with their respective importance.
@@ -109,29 +109,29 @@ Given a predefined contact sequence, efficient methods exist to compute the corr
 Knowing the dynamic state of the robot (e.g. position and velocity of its basis and all its joints) as well as its current and future contacts, approximation models can be used to plan the whole-body locomotion of legged characters.
 
 \paragraph{Model-based approaches.}
-Due to the high complexity of the locomotion problem, classical whole body controllers of this category often rely on simplified dynamic robot models.
+Due to the high complexity of the locomotion problem, classical whole-body controllers of this category often rely on simplified dynamic robot models.
 % LIPM
 In the seminal work, Kajita et al. \cite{kajita2003ZMP} introduced some key methods of the robot locomotion field: the linear inverse pendulum and the zero moment point.
-This contribution is at the basis of numerous works based mainly on the study of the centroidal dynamics for walking robot \cite{Tonneau2018_2PAC, caron_2018_whole_body}.
+This contribution is the basis of numerous works based mainly on the study of the centroidal dynamics for walking robots \cite{Tonneau2018_2PAC, caron_2018_whole_body}.
 Given a contact sequence, some Model-Predictive Control (MPC) methods permit to compute a trajectory for the robot center of mass, while ensuring its dynamics consistency \cite{carpentier2016_versatile_efficient, pierre_alexandre_2021}.
 % IK
 From the simplified model estimations, a whole body motion can then be generated over a short horizon, following it as a reference \cite{felix_and_avadesh_2019}.
-Carpentier et al. \cite{loco3d} use a second order inverse kinematic to follow a reference centroidal trajectory, previously generated by their optimization method.
+Carpentier et al. \cite{loco3d} use a second-order inverse kinematic to follow a reference centroidal trajectory, previously generated by their optimization method.
 Also, the inverse kinematics can be used to compute collision-free robot motion, such as Risbourg et al. \cite{fanny_mip_solo} who adapt the end-effector trajectory of the quadruped robot SOLO to avoid its collision with the environment (Figure \ref{fig:mpc_predefined_0}). %\cite{CHOMP_2009, stomp_2011, schulman_2014_collision, perrin_2012, fanny_mip_solo}
 % Autre comme ewen
-Alternatively, other approaches exist to achieve all in one whole body MPC. Dantec et al. \cite{ewen_2022} propose a DDP-base MPC taking into account the whole body model to achieve dynamic locomotion on the torque-controlled humanoid robot Talos over predifined footsteps (\ref{fig:mpc_predefined_1}). Their control directly computes the optimal torque to be applied on the robot without any additional trajectory or estimation.
+Alternatively, other approaches exist to achieve all in one whole body MPC. Dantec et al. \cite{ewen_2022} propose a DDP-base MPC taking into account the whole body model to achieve dynamic locomotion on the torque-controlled humanoid robot Talos over predefined footsteps (\ref{fig:mpc_predefined_1}). Their control directly computes the optimal torque to be applied on the robot without any additional trajectory or estimation.
 
 
 
 \paragraph{Learning whole-body controllers.}
-Such whole body controllers can also be learned by reinforcement in simulation \cite{ALLSTEPS_2020}.
+Such whole-body controllers can also be learned by reinforcement in simulation \cite{ALLSTEPS_2020}.
 Peng et al. \cite{deepLoco} train a biped character in simulation to follow predefined footsteps, and achieve walking in mostly flat environments.
 Following this idea, Tsounis et al. \cite{deepGait} learn a whole-body controller in simulation for quadruped locomotion on more complex terrains. 
 Gangapurwala et al. \cite{RLOC} learn whole-body motion tracking and recovery controllers for improved robustness, accounting for changes in the dynamics of the robot and perturbations. Their policy is then performed on a real quadruped robot.
 Combining model-based and RL approaches, Xie et al. \cite{glide_xie_2021} learn by reinforcement how to control the accelerations of a centroidal model, then used to compute ground reaction forces translated to joint torques applied on the robot.
 Their method, combined with simple heuristics for footstep placement, demonstrates robust walking in complex scenes on the quadruped robot Laikago. %\textcolor{blue}{Is glide set in the right section ? For me yes.}
 
-To these days, such controllers are mostly applied in real-world to quadruped robots and have yet to be performed on humanoid robots \cite{papier_rohan_wbc_rl_2022}.
+To these days, such controllers are mostly applied in the real-world to quadruped robots and have yet to be performed on humanoid robots \cite{papier_rohan_wbc_rl_2022}.
 
 \paragraph{Conclusion on predefined contacts.}
 Most of the works in the literature focus on whole-body controllers generating motions over predefined contact sequences.
@@ -142,7 +142,7 @@ However, they require up to several days of training, and are yet to achieve the
 
 In this thesis, we will be using Task-Space Inverse Dynamics (TSID)-based controllers \cite{tsid_prete_2016}, following the methodology introduced in the context of the Loco3D project \cite{loco3d}, yet expecting the coming generation of robot controllers to be rather base on whole body MPC \cite{ewen_2022}.
 In the meantime, we explored RL-based controllers.
-While we can hope that future discoveries will lead to to the unification of these different concepts, all are indeed comptatible with the approach discussed in this thesis.
+While we can hope that future discoveries will lead to the unification of these different concepts, all are indeed compatible with the approach discussed in this thesis.
 We will explore in Section \cite{sota2} that what really matters is to characterize their feasibility domain. \textcolor{blue}{I do not talk about it in sec 2, let's see if it changes.}
 
 \subsection{Internal Contact Decision}
@@ -192,7 +192,7 @@ Such a strategy permits fast online planning \cite{hurst_2018} as well as the op
 %Another strategy is to consider a nominal reference motion on flat ground, then make it robust enough to be performed on complex terrains.
 This strategy naturally extends when the motion on flat ground is robust enough to be performed on complex terrains.
 It can be bone by simplifying the robot dynamics model with templated models to generate a nominal reference motion considering a flat ground.
-This motion is then performed by the whole body controller that adapt it for complex and rough terrains.
+This motion is then performed by the whole body controller that adapts it for complex and rough terrains.
 Rezazadeh et al. \cite{rezazadeh_hurst_atrias_2020} include a reflex-based control scheme to walk blindly on uneven terrain with the biped robot Atrias.
 Building upon this work, Gong et al. \cite{Cassie_feedback_control_2018} adapt motions from a gait library and demonstrate various locomotion tasks on the biped robot Cassie including walking in the sand (Figure \ref{fig:walking_task_0}) or balancing on uneven moving surfaces.
 
@@ -210,7 +210,7 @@ They then demonstrate walking in the real world in very rough scenarios (Figure 
 Learning residual control is another method to bridge the reality gap. Duan et al. directly learn how to modify the reference motion with residual actions to obtain a more robust bipedal walking \cite{residual_rl_cassie_2021}.
 
 While these works demonstrated some capabilities to walk in uneven terrains, they remain limited in more complex scenarios. 
-Indeed, such "blind" controllers are performing a control only in reaction to impacts on the environment. They are on the opposite anticipating proper contact creation, or breafly taking advantage of more advanced knowledge about the environment surrounding. As a consequence, they are irremediably prone to collisions (and falls) on terrains such as stairs.
+Indeed, such "blind" controllers are performing a control only in reaction to impacts on the environment. They are on the opposite anticipating proper contact creation, or briefly taking advantage of more advanced knowledge about their environment. As a consequence, they are irremediably prone to collisions (and falls) on terrains such as stairs.
 
 \paragraph{Simultaneous motion and contact optimization.\label{par:simul_contact_motion}}
 %\stn{reprends la structure du sota du journal de daeun, elle est tres bien pour differencier les 2. Tu dois surtout expliquer la logique. Le truc clef c est pas la taille du modele. C est de dire on smooth un pb discret en un probleme continu. Les papiers se situent par rapport a cette frontiere. Tu dois mettre ca en chapeau. Les premiers papiers en ont pas besoin parce qu hyothese simpificatrice, les autres si. Donc c est ca ta distinction: comment tu formule le contact de maniere continu. Soit en reduisant l espace de recherche, soit en lissant la dynamique}
@@ -235,28 +235,28 @@ Whole-body trajectory optimization was successfully applied to real quadruped ro
 %However, as the size of the model used and the complexity of the terrain increase, this approach suffers from high computation time (up to several seconds per footstep), limiting its application for real-time planning. 
 %Some promising works solve this limitation \cite{ponton_righetti_2020, hutter_last_work_nmpc}, but they rely on a separate planner to find the next contact surface to step on.
 
-The key aspect of these approaches is to consider some piecezise smooth representation of the contact variables. The contact sequence can then evoles continuously on piecewise-smooth world while the motion solver explores various locomotion patterns, in a continuous (optimization-based) manner. Of course, this prevents some world representation such as Mario-style floating plateforms, yet not reducing much the applicative scope. The main limitation comes from the unability of the (convex) optimization solver to handle the non-convex nature of the contact location into a non-flat world. Moreover, this also prevents the solver to discover non-regular gaits, or with some clever but some clever but non generic reformulation \cite{winkler2018GaitOpt}.
+The key aspect of these approaches is to consider some piecewise-smooth representation of the contact variables. The contact sequence can then evolve continuously on a piecewise-smooth world while the motion solver explores various locomotion patterns, in a continuous (optimization-based) manner. Of course, this prevents some world representations such as Mario-style floating platforms, yet not reducing much the applicative scope. The main limitation comes from the inability of the (convex) optimization solver to handle the non-convex nature of the contact location in a non-flat world. Moreover, this also prevents the solver to discover non-regular gaits, or with some clever but some clever but non generic reformulation \cite{winkler2018GaitOpt}.
 
 
-On the other hand, it has been proposed to explicitely model the discrete nature of the contact sequence by integer variables, hence leading to an optimization problem deciding of a mix of continuous and discrete variables, called Mixed-Integer Programming (MIP) \cite{gurobi_mip}.
+On the other hand, it has been proposed to explicitly model the discrete nature of the contact sequence by integer variables, hence leading to an optimization problem deciding of a mix of continuous and discrete variables, called Mixed-Integer Programming (MIP) \cite{gurobi_mip}.
 With this approach, Aceituno-Cabezas et al. simultaneously optimize contact, gait and motion planner on their quadruped robot on complex terrains \cite{carlos_2019}.
 
-However, MIP does not scale well to these large or non linear problems, hence reducing up to now the impact of these approaches to whole body problems.
+However, MIP does not scale well to these large or non-linear problems, hence reducing up to now the impact of these approaches to whole body problems.
 
 \textcolor{blue}{Nicolas voulait parler de deits+sl1m ici mais ce sont des contact planners pour moi. Pour moi ce n'est pas du tout leur place comme j'en parle dans la section d'apres. Il reboucle sur cette partie en disant que SL1M fait du contact + motion en même temps. Il veut remplacer la citation de carlos par deits 2014 + parler de SL1M ici:} \textcolor{red}{On the other hand, MIP solver are very efficient algorithm if we can keep a linear formulation (SL1M). In this thesis, we will capitalize on this approach and show how we can exploit it to generate whole body movements, by connecting it to the notion of feasibility.} \textcolor{blue}{Je comprends pas trop parce... c'est plus un MIP du coup si c'est lineaire + Je suis pas du tout d'accord avec cette phrase. Je preferai ne pas parler de deits/sl1m ici et d'en parler plutot comme contact planner vu que c'est comme ça qu'on les utilise. Ensuite on fait le WBC avec autre chose pour suivre les pas, mais dans la these on a juste supposé que ca existait la.}
 
 \paragraph{Conclusion on internal contact decision.}
 A classical approach for locomotion is to synthesize walking motion while adapting footstep placement on flat ground.
-Generalizing these approaches to uneven terrains is feasible but limited, as such controllers consider the terrain variations as errors during the motion that need to be fixed.
+Generalizing these approaches to uneven terrains is feasible but limited, as such controllers consider the terrain variations as errors during the motion that needs to be fixed.
 %Finally, trajectory optimization is promising to plan safe walking motion on complex terrains. However, these methods are still expensive to compute.
 For more complex scenarios, numerical solvers fail to globalize the exploration and discover interesting locomotion patterns.
-We better understand the complexity of the search when explicitely formulation it as a MIP problem, then boiling down to a combinatorial exploration.
+We better understand the complexity of the search when explicitly formulating it as a MIP problem, then boiling down to a combinatorial exploration.
 
 \subsection{Contact Agnostic}
 Whole-body controllers previously presented implicitly or explicitly reason about contact placement on the terrain.
-Another strategy is to employ a contact agnostic approach, where the controllers are not given any reference motion, or contact sequence.
+Another strategy is to employ a contact agnostic approach, where the controllers are not given any reference motion or contact sequence.
 %, and are provided with little to no info about the terrain.
-The contact sequence is then not an explicit variable, but rather a consequence of the whole body actions, often locally based on its surrounding environment knowledge.
+The contact sequence is then not an explicit variable, but rather a consequence of the whole-body actions, often locally based on its surrounding environment knowledge.
 
 %They have to answer the following question: \textit{can we generate walking motion without reasoning about contact placements on the terrain?}
 
@@ -267,32 +267,20 @@ The contact sequence is then not an explicit variable, but rather a consequence 
 
 \paragraph{Optimal control with differentiable simulation.}
 
-When optimizing the robot trajectory with fixed contact sequence, the reason why the solver can not decide to change the sequence is because the contact dynamics is set as as non differentiable. 
-Indeed, in robotics and computer graphics, we often consider rigid (stiff) contact solvers, which offers the best trade-off between algorithmic efficiency and realism \cite{pybullet_coumans2019}.
-Yet this leads to non differentiable models that gradient based algorithms can not manipulate. 
-In \cite{hamalainen_2015} a gradient-free solver is used on top of the rigid (ODE) simulator, leading to contact exploration even if with local exploration range.
+When optimizing the robot trajectory with fixed contact sequence, the reason why the solver can not decide to change the sequence is that the contact dynamics are set as non-differentiable. 
+Indeed, in robotics and computer graphics, we often consider rigid (stiff) contact solvers, which offer the best trade-off between algorithmic efficiency and realism \cite{pybullet_coumans2019}.
+Yet this leads to non-differentiable models that gradient-based algorithms can not manipulate. 
+In \cite{hamalainen_2015} a gradient-free solver is used on top of the rigid (ODE) simulator, leading to contact exploration even if with a local exploration range.
 %On the other hand, a smooth relaxation of the stiff contact dynamics \cite{mujoco} also leads to contact discovery, again with local capabilities.
 
-In order to use gradient based algorithms, finite-differencing can typically used to approximate the gradients such as the physics engine MuJoCo \cite{mujoco}. However, it tends to introduce round-off and discretization errors.
+In order to use gradient-based algorithms, finite-differencing can typically use to approximate the gradients such as the physics engine MuJoCo \cite{mujoco}. However, it tends to introduce round-off and discretization errors.
 Recently, some differentiable physics engines have emerged to solve these issues, such as Nimble from Werling et al. supporting complex contact geometry and gradients approximating continuous-time elastic collision \cite{werling_2021}.
-So far, this direction has not been pushed to realistic robot set up. 
+So far, this direction has not been pushed to a realistic robot setup. 
 Current works are mostly on the simulator formulation \cite{chainqueen_2019, difftaichi_2019} or on local smoothing using randomization \cite{tedrake_2022_differentiable, carpentier_fix_differentiable_OC}.
 
 
 
 \paragraph{Learning how to locomote.}
-% First I talk how in graphics they used to simulation locomotion (kinematics).
-% MOVED TO UNEVEN TERRAINS
-%In a purely kinematic simulation, learning a controller from data has long been used to produce a natural and plausible walking motion \cite{learned_motion_matching, pfnn}.
-%Given a some motion capture datas, the control policy finds the most suitable motion to perform in function of its situation and a user control. In these approaches, the next foot position is computed directly from the chosen motion, transposing its location on the terrain.
-%Such control from data is traditionally done by building a motion graph and selecting the next motion to perform \cite{Kovar2002, jehee_lee_2002, jehee_lee_2006, motion_matching}. 
-% Then how machine learning helped for that (PFNN etc).
-%To cope with the huge amount of data available, recent works in machine learning have shown impressive results to synthesize character motion replacing graphs by neural networks \cite{learned_motion_matching, learning_predict_rnn}. 
-%Learning a policy mapping user input and gait of motion with a motion database, Holden et al. produce a natural locomotion on bipedal character over uneven terrains \cite{pfnn}, later extended to quadruped \cite{pfnn_wolf}.
-% But it's all in kinematic and can not cope with the dynamics of the system.
-% MOVES TO UNEVEN TERRAINS
-%However, data-driven strategies often require a large amount of motion capture data and can not adapt to the dynamics variations in the robot (or character) states inherent to physics-based simulations and the real world.
-%\textcolor{blue}{I am not sure if talking about ML approach is pertinent. Let's see if it's too much at the end. I'll just have to remove everything above in this paragraph and keep only RL (bellow).}
 \begin{figure}[h]
     \centering
     \captionsetup[subfigure]{justification=centering}
@@ -315,9 +303,9 @@ Current works are mostly on the simulator formulation \cite{chainqueen_2019, dif
     \caption{Works on reinforcement learning for legged characters locomotion.}
 \end{figure}
 
-Similarly to trajectory optimization, RL works by exploring movements that optimize an objective function. Yet they offer unprecedented flexibility in environments and the objective they can tackle. Furthermore, they only require optimization at training time, while the run-time only consists in the execution of the resulting policy.
+Similarly to trajectory optimization, RL works by exploring movements that optimize an objective function. Yet they offer unprecedented flexibility in environments and the objective they can tackle. Furthermore, they only require optimization at training time, while the run-time only consists of the execution of the resulting policy.
 % PETTRE SURVEY: RL stands out as a promising approach for character animation because it provides a versatile framework to learn motor skills without the need of labelled data. RL is particularly useful when the dynamic equations of the environment are unknown or non-differentiable, to which conventional gradient-based optimal control algorithms do not apply.
-As they do not require the evaluation of the simulator gradients, they are also less prone to the limitations discusses with trajectory-based solvers related to contact differentiability, and accept classical (stiff) contact formulation.
+As they do not require the evaluation of the simulator gradients, they are also less prone to the limitations discussed with trajectory-based solvers related to contact differentiability, and accept classical (stiff) contact formulation.
 
 
 % That is where Reinforcement Learning becomes really useful in physics-based sim.
@@ -356,12 +344,7 @@ Diverse sim-to-real methods have appeared to bridge the reality gap such as rand
 While those methods alleviate the reality gap problem, they do not compensate totally for the environment model inaccuracy in simulation. 
 That is why such trained controllers could require additional fine-tuning on the real robot.
 
-% Previously in the other chapter
-To alleviate this gap, some strategies can also quickly adapt to the real-world.
-% Mouret with robot that can adapt like animal => Hard to place
-With a small hexapod robot, Mouret et al. \cite{Mouret_adapt_like_animals_2014} learn in simulation a behavior map using evolutionary algorithms, then composed of thousands of walking behaviors. At runtime on the real robot, this map can be efficiently searched using optimization algorithms. Their result demonstrate that the robot can select the best walking behavior among this map in a few trials, to compensate for its body damages and to adapt to its environment.
-
-Despite some recent success, the sim-to-real transfer is mostly a matter of robustness, that we can now improve at the cost of longer training and less optimality. One of the stake in reinforcement learning is to rather adapt the learning to the real robot dynamics.
+Despite some recent success, the sim-to-real transfer is mostly a matter of robustness, that we can now improve at the cost of longer training and less optimality. One of the stakes in reinforcement learning is to rather adapt the learning to the real robot dynamics.
 
 
 
@@ -403,6 +386,11 @@ Later on, as the RL algorithms and robot designs improved, learning locomotion f
 Another limitation of learning in the real world is that during the training (up to several hours or days), the human will have to manually reset the robot position as it falls over, bumps into a wall, or reaches the edge of the terrain.
 % Safety: recovery policy (Tan 2022)
 Yang et al. \cite{yang2022safe} alleviate this limitation by lowering the number of falls. They propose a safe recovery policy to take over the control when the learning agent violates some safety constraints, thus decreasing the need for human intervention while improving the safety of the robot.
+% Previously in the other chapter
+Finally, some strategies can use knowledge from a simulation to quickly learn how to adapt to the real world.
+% Mouret with robot that can adapt like animal => Hard to place
+With a small hexapod robot, Mouret et al. \cite{Mouret_adapt_like_animals_2014} learn in simulation a behavior map using evolutionary algorithms, then composed of thousands of walking behaviors. At runtime on the real robot, this map can be efficiently searched using optimization algorithms. 
+Their results demonstrate that the robot can learn to select the best walking behavior among this map in a few trials, to compensate for its body damage and to adapt to its environment.
 
 % But it's long and high risk to break the robot => Still a research topics and not feasible at all on biped for now.
 Applying RL in the wild is an exciting research direction. But it is for now limited in the context of locomotion to small robots that require constant human intervention during training, and which has only been applied to flat ground so far.
@@ -418,7 +406,7 @@ Works on this topic demonstrated impressive results to generate robust walking m
 Nowadays, learning robot locomotion (and other skills) in the wild is yet limited to small robots for safety and cost reasons.
 Learning from simulation remains the best way to ensure the safety of the robot and its surroundings.
 It also permits to easily reset the robot state, and bypass the poor data efficiency of learning on real systems \cite{atrias_rl_sim_to_real} (i.e. tedious collection process of data). 
-However, learning a safe and robust walking on biped robots without specifying a reference motion or contacts is still difficult.
+However, learning safe and robust walking on biped robots without specifying a reference motion or contacts is still difficult.
 Finally, the search for more accurate simulations or efficient sim-to-real methods remains.
 
 %Furthermore, contact agnostic approaches are inherently limited due to their blind nature which irremediably leads to a high number of collisions in more complex environments as well as potentially strong impacts on the terrain.
@@ -449,10 +437,10 @@ Finally, the search for more accurate simulations or efficient sim-to-real metho
 % Explicit contact decision: limited to flat ground, and when applied to more complex terrains => Not stable/collision or too expensive to compute.
 % As a result, to fastest and prefered solution to generate a walking motion is still to rely on a prior contact decision. This contact sequence can be given by the user, but we desire to automatize this task. So we have to see the contact planning.
 
-In summary, we can classify the existing locomotion controllers in 3 categories, wether they can not decided the contact variables, or explicitely optimize them as continuous or partly discrete values, or agnostically decide the contacts as a consequence of the movements.
+In summary, we can classify the existing locomotion controllers in 3 categories, whether they can not decide the contact variables, or explicitly optimize them as continuous or partly discrete values, or agnostically decide the contacts as a consequence of the movements.
 
 %Contact decision is thus still required to generate a safe and robust walking motion.
-Implicitly optimizing the contact position along with the motion are mostly limited to flat ground scenarios.
+Implicitly optimizing the contact position along with the motion is mostly limited to flat ground scenarios.
 While recent whole-body controllers can demonstrate good generalization to uneven terrains, they are still inherently limited due to their blind nature.
 Simultaneous motion and contact optimization are promising to generate dynamic and safe locomotion. 
 However, they remain expensive to compute, thus limiting their use for online planning.
@@ -464,7 +452,7 @@ However, these methods are not mature yet to be feasible on a real human-sized r
 %Following predefined contacts is still the most efficient way to synthesize locomotion. 
 %To that end, efficient whole-body controllers exist to perform this task \cite{carpentier2016_versatile_efficient, pierre_alexandre_2021, ewen_2022}.
 
-For now, all these meethods fail to properly generalize to some kind of complexity in the locomotion scenarios (e.g. handrail grasping), to the more unstable bipeds or to efficient robot deployment.
+For now, all these methods fail to properly generalize to some kind of complexity in the locomotion scenarios (e.g. handrail grasping), to the more unstable bipeds, or to efficient robot deployment.
 In general, the best strategy in all these cases is to rely on an external algorithm to decide or guide the contact decision \cite{carpentier2016_versatile_efficient, pierre_alexandre_2021, ewen_2022}.
 
 Now we are left with one question: \textit{How to obtain these contacts ?}
@@ -484,14 +472,14 @@ Manually defining them is a solution for fixed scenarios, but to obtain a more g
 % Motion-before-contact: A lot less know, consists in computing a rough root trajectory for the root of the robot (motion) before computing the contacts relative to this trajectory. This method constraints the exploration of the combinatorics of the contact planning only along this root trajectory, alleviating the combinatorics probem.
 
 A contact planner finds a sequence of contact positions that the robot has to perform to go through the terrain.
-It is expected that the produced contact sequence does not come with a complete whole body trajectory, altough some of its elements may be computed as well depending on the underlying algorithm.
+It is expected that the produced contact sequence does not come with a complete whole body trajectory, although some of its elements may be computed as well depending on the underlying algorithm.
 \textcolor{blue}{Nico dit d'ajouter une figure? Voir si j'en trouve une.}
 As stated by Chestnutt et al. \cite{chestnutt_2009_interactive_guide}, planning footsteps rather than whole body motion allows the robot to reason about contact with the environment to ensure safe and stable support. This also reduces the planning state space to a dimensionality computationally tractable for online walking.
 From a sequence of predefined contacts, efficient whole body controllers exist for motion planning \cite{carpentier2016_versatile_efficient, caron_2018_whole_body, pierre_alexandre_2021, ewen_2022}.
 The division of whole-body control and contact planning greatly lowers the complexity of the locomotion problem. Indeed, it relies on simplifications and assumptions on the robot dynamics to efficiently compute a feasible sequence of contacts.
 However, it also comes at the cost of the non-guarantee of the feasibility of the contact plans. 
 
-The question of the feasibility is of the main importance here, as we will show in this this section: given a contact sequence in a given environment, can we guarantee that there exists a corresponding whole body trajectory that follow it? 
+The question of feasibility is of the main importance here, as we will show in this section: given a contact sequence in a given environment, can we guarantee that there exists a corresponding whole-body trajectory that follows it? 
 This feasibility question is irrelevant for the previously presented methods which compute motion and contacts simultaneously \cite{Winkler2017_TO, carlos_2019}.
 
 In this section, we classify contact planners of the literature into two categories as described by Bretl et al. \cite{bretl2006}:
@@ -543,7 +531,7 @@ Using this strategy, Scianca et al. \cite{Scianca_2020} compute the next footste
 % Rebulla at darpa => problem of local minima highlighted.
 Rebulla et al. \cite{rebula_2007_little_dog} present a model-based controller for quadruped robots planning only the next footstep to statically walk on rough terrains.
 
-Reinforcement learning has also been used to choose the next few contact positions to be performed by the robot \cite{deepGait, RLOC} (Figure \ref{fig:cp_bm_0}). However, those often requires complex reward design, long learning time (tens of hours) and the learned policies are specific to each robot model.
+Reinforcement learning has also been used to choose the next few contact positions to be performed by the robot \cite{deepGait, RLOC} (Figure \ref{fig:cp_bm_0}). However, they often require complex reward design, long learning time (tens of hours), and the learned policies are specific to each robot model.
 
 % These works provide very short horizon footstep planners, that are not subject to the combinatorics but can lead to local minima, where we are not sure of the feasibility of the future planning, where the choice of a footstep can lead to a deadlock.
 Short horizon contact planners are fast to compute (a few milliseconds per step) but are by definition not designed for global planning, as they can not guarantee the completeness of the planning to reach a distant goal. 
@@ -561,7 +549,7 @@ However, those characteristics make them particularly suited for the locomotion 
 % Question: is there a reason for planning several footsteps ahead ? If a solution exist, searching the combinatorics is more likely to find it rather than short horizon planners.
 This approach solves a global contact planning problem in order to reach a distant goal. 
 %In most cases, an infinity of contact placement combinations potentially exists to perform this task.
-Of course, as,we have no mean to know in advance the number of required steps for that, it often leads to long discrete sequence of decision with potential underlying combinatorics.
+Of course, as, we have no means to know in advance the number of required steps for that, it often leads to long discrete sequences of decisions with potential underlying combinatorics.
 As a consequence contact planning on a long horizon is a combinatorial problem that takes longer to solve, but that should offer guarantees of optimality and completeness (i.e. it must find a solution if one exists) given enough computation time.
 % On longer horizon planning (i.e. to reach a distant target), the combinatorics can be solved in several ways.
 We identify two approaches in the literature to solve this problem: discrete and continuous.
@@ -720,11 +708,11 @@ Contact planning is yet a needed stage to generate, in tractable time, complex m
 This task relies on specific model reduction, to ensure footsteps feasibility, that is combined with dedicated algorithms to tackle the discrete nature of finding contact sequences.
 
 In this section, we categorized contact planners into two categories.
-The \textit{contact-before-motion} approach can lead to local minima on short horizon planning, and become computationally intractable on longer horizon.
+The \textit{contact-before-motion} approach can lead to local minima on short horizon planning, and become computationally intractable on a longer horizon.
 That is why our research will focus on \textit{motion-before-contact}, that is promising to alleviate these limitations.
 However, it raises the problem of the non-guaranteed feasibility of the guide path with a given contact planner.
 
-The motion-before-contact approach in turn implies guide planning, that is separately handled as a legged navigation task.
+The motion-before-contact approach in turn implies guide planning, separately handled as a legged navigation task.
 
 
 %About these walking strategies, an interrogation we would like to raise and that has not been totally answered is: \textit{Is there a real benefits for longer horizon over short horizon contact planning in most scenarios ?}
@@ -786,13 +774,13 @@ Recent state-of-the-art implementations for crowd simulation \cite{vantoll_micro
 \end{itemize}
 
 Section \ref{subsub:nav:overview} has a pedagogic purpose, in which we will present generic algorithms for both global and local navigation.
-Finally, we refer the reader to Section \ref{subsub:nav:legged} for the use of these algorithms in the context of legged robots navigation.
+Finally, we refer the reader to Section \ref{subsub:nav:legged} for the use of these algorithms in the context of legged robot navigation.
 
 \subsection{Overview: navigation methods\label{subsub:nav:overview}}
 We propose to explore the algorithms used in the broad context of navigation.
 These algorithms can be categorized depending on the scale they operate in.
 
-\paragraph{Global navigation in known environment.}\mbox{}\\
+\paragraph{Global navigation in known environments.}\mbox{}\\
 \begin{figure}[h]
     \centering
     \captionsetup[subfigure]{justification=centering}
@@ -821,7 +809,7 @@ We will explore the two main strategies for path planning that are \textit{graph
 These methods were previously introduced to solve the discrete contact planning problem (Section \ref{subsub:contact-before-motion}).
 %and to solve a navigation task in the context of motion-before-contact strategy. 
 Here we will present these path planning algorithms for a wide range of navigation applications.
-Due to the global scale they operate on, most path planning algorithms do not consider the kinetics and kinodynamics of the system (e.g. maximum acceleration, velocity and steering angle). 
+Due to the global scale they operate on, most path planning algorithms do not consider the kinetics and kinodynamics of the system (e.g. maximum acceleration, velocity, and steering angle). 
 Indeed it would result in burdensome computation time. 
 These constraints are considered by the local motion planners that will be presented in the next Section \ref{subsub:nav:local}.\\
 
@@ -941,28 +929,7 @@ This definition has been used in other works \cite{DIMT, move3d_lamiraux_2001} s
 A broader definition is a local planner that \qq{follows the rough path while adhering to certain local rules} (e.g. collision-avoidance) \cite{van_toll_crowd_sim_2012}. 
 Adherence to these rules can imply some reactive behaviors from observations of the terrain such as the presence of obstacles. % Pas obligatoirement
 This definition is used in navigation \cite{ondrej_pettre_steering_vision_2010,prm_rl_2019} where the characters or vehicles are often steered toward waypoints obtained by global path planning algorithms, but may not reach them exactly. 
-% https://arxiv.org/pdf/1902.09458.pdf Page 4
-%Such definition also matches the \textit{base local planner} controller of the ROS navigation stack \cite{ROS_software} using a non-exact steering method (dynamic window approach \cite{}).
-
-%In the context of character navigation as in this thesis, we use the broader definition that is more relevant.
-In this thesis, we will use the broader definition that is more relevant in the context of legged robot navigation.\\
-%Indeed, in most scenarios, we do not need the character to reach exactly the sub-goal positions but just a small radius around it.
-%Finally, not considering the obstacles during the local planning presents a fast computation time with a purely model-based approach that however needs to rely heavily on conflict checking inside the higher level path planning algorithms, and inversely for a steering method with terrain-aware capabilities.
-%For the sake of simplicity, we will employ this definition for both terms \textit{steering method} and \textit{local planner}.% while keeping in mind that we use them in the context of legged character locomotion.
-
-% Focus on the "steering": Most of these works uses path planning that uses a steer function, and most of the time, it's model-based: linear interpolation in SE2 or SE3, or subject to constraints on the acceleration (DIMT=Kino).
-% But we can also take some inspiration from "control" methods for navigation.
-% Many works working on the steering for autonomous vehicles 2D, where RL-RRT is kinda the same. Then there is all the work on crowd sim that solves a sligthly different problems but use similar controls (mostly in 2D, using rays or velocity fields).
-% Terrain-aware: heightmap, voxel map and grid map.
-% Notion of traversability (Lin and Hutter) to know if a path is easy to take or not. It's mostly in their work to chose between walking mode, multicontact or safe footstep planning, but it kinda attempt to solve the feasibility problem with the contact planner.
-
-% I will put the potential field here, see the paper corridor map that explains it very well.
-% Indicative Routes for Path Planning and Crowd Simulation : "In general, reactive steering is based on variants of potential field methods (...) but stuck in local minima"
-% Talk about CMM and ICM yes.
-
-% I will have to talk about the divisions, see the survey of yang 2016
-% Difference in computation between maths and other methods ? what's the best ?
-% Also how do we define what is an "obstacle" in 3D. In 2D it's simple, but 3D no. See thier prm for "ground robots".
+In this thesis, we will use the broader definition that we deem more relevant in the context of legged robot navigation.\\
 
 
 \noindent\textbf{Terrain-free steering methods.}
@@ -1010,7 +977,7 @@ Time-elastic-band \cite{elastic_band_2013} optimizes a robot trajectory generate
 
 % Velocity field => crowd sim multi char
 % ORCA
-The crowd simulation field has also developed methods for local collision-avoidance behaviors between autonomous agents and their environment. One of them is the Optimal Reciprocal Collision Avoidance (ORCA) algorithm \cite{orca_2011} selecting the best action to compute collision-free motions for thousands of characters in real time (Figure \ref{fig:local_nav_1}). 
+The crowd simulation field has also developed methods for local collision-avoidance behaviors between autonomous agents and their environment. One of them is the Optimal Reciprocal Collision Avoidance (ORCA) algorithm \cite{orca_2011} selecting the best action to compute collision-free motions for thousands of characters in real-time (Figure \ref{fig:local_nav_1}). 
 These methods solve a particular problem that is the collision-avoidance in highly dynamic environments, subject to different criteria (e.g. social distances or group behaviors). Those are not applied in the context of this thesis, but we refer the reader to the survey of Toll et al. \cite{vantoll_microscopic_crowd_2021} for further details.\\
 
 
@@ -1217,7 +1184,7 @@ Particularly, we want to fix the critical limitation that is the \textbf{feasibi
 We formulate our problem as follows: \textit{Can we plan paths more likely feasible by a contact planner?}
 
 % CLAIM: We can see that it helps in accelerating the solving of the contact planning problem, but it raises a critical limitation that is the feasibility of the guide by the contact planner.
-Previous works approach the problem with by approximating the contact planner capabilities, such as the \textbf{reachability} condition \cite{RB-PRM} or other manually design heuristics.
+Previous works approach the problem by approximating the contact planner capabilities, such as the \textbf{reachability} condition \cite{RB-PRM} or other user-designed heuristics.
 Then, they plan paths considering these approximations.
 Arguably, they can often be insufficient or too complex to engineer depending on the contact planning strategy \cite{AcyclicCP, winkler_2014}.
 %do not necessarily implies that a contact sequence can be planned.
@@ -1227,7 +1194,7 @@ Arguably, they can often be insufficient or too complex to engineer depending on
 Thereon, we believe we should learn how to generate feasible paths by collecting data directly from the contact planner results.
 
 %From path and contact planning data, we should be able to learn how to generate more likely feasible paths.
-We choose \textbf{reinforcement learning} to learn such navigation task.
+We choose \textbf{reinforcement learning} to learn such a navigation task.
 This choice is motivated by the fact that we have no method to generate sufficiently diverse paths to learn from. Therefore, we deemed supervised learning not suitable for this task.
 
 Our work find some inspiration in some recent works on reinforcement learning navigation \cite{prm_rl_2019, jaedong_2018_crowd_rl}. 
