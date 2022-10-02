@@ -153,12 +153,13 @@ The interaction sequence can be modeled as a Markov Decision Process (MDP) that 
     \item $\mu$ is the initial state distribution.
     \item $\gamma \in [0,1]$ a discount factor.
 \end{itemize}
+As the full environment state is often not observable by our agent, we can use partially observable MDP like in this thesis, where our steering method only uses local observations to navigate through the environment.
 
 The agent starts an episode in an initial state $s_0$ sampled according to $\mu$.
 Depending on the agent state $s_t \in S$, the objective of the policy $\pi$ is to make the agent perform an action $a=\pi(s)$ in its environment, while maximizing its future cumulative rewards $J(\pi) = \mathbb{E}[\sum_{k=t}^{\infty} \gamma^k r_{t+k} | \pi]$.
 We denote the optimal policy $\pi^* = \underset{\pi}{\mbox{arg max}} \; J(\pi)$.
 
-In this work, we will use a partially observable MDP as our steering method is only local and can not observe to the entire state space.
+
 
 
 \section{LEAS: a RL Steering Method\label{subsec:leas-RL}}
