@@ -28,7 +28,7 @@ The constraint can be formulated as follows:
         F_{k} (\mbox{c}_{k,\:1}-\mbox{p}_{k}) &\leq  f_{k}% + M a{k}^{j}
     \end{aligned}
 \end{equation}
-where $F_k$ and $f_k$ are the matrix and vector defining the polygonal shape of the foot at $\mbox{p}_k$ (considering the contact lies on flat ground).
+where $F_k$ and $f_k$ are the matrix and vector defining the foot polygonal shape at position $\mbox{p}_k$ (considering the contact lies on flat ground).
 Constraints (\ref{eq:equilibrium_constr}) depends only on the xy coordinates of the COM.
 As a result, by convexity of the static equilibrium regions, the straight lines $[\mbox{c}_{k,\:0}, \mbox{c}_{k,\:1}]$ continuously satisfies the static equilibrium
 constraint, as well as $[\mbox{c}_{k-1,\:1}, \mbox{c}_{k,\:0}]$ and $[\mbox{c}_{k,\:1}, \mbox{c}_{k+1,\:0}]$ as the COM stays above the corresponding support effector.
@@ -36,7 +36,7 @@ constraint, as well as $[\mbox{c}_{k-1,\:1}, \mbox{c}_{k,\:0}]$ and $[\mbox{c}_{
 \paragraph{Reachability constraints.}
 We also use the center of mass positions $\mbox{c}_{k,\:0}$ and $\mbox{c}_{k,\:1}$ to guarantee kinematic reachability.
 A 3D polytope $\mathcal{R}$ is obtained for each effector (feet in our case) via offline random sampling, approximating the reachable COM workspace.
-The resulting polytope is expressed as follows: $\mathcal{R} : \{\mbox{c} \in \mathbb{R}^3 , \; \! R \mbox{c} \; \leq \; \! r\}$.
+The resulting polytope is expressed as follows: $\mathcal{R} : \{\mbox{c} \in \mathbb{R}^3 , \; \! R \mbox{c} \; \leq \; \! r\}$, where $R$ and $r$ are the matrix and vector defining the polytope.
 
 For each phase $k$, we consider the orientation of the foot frame constant and equal to $r_{k-1}$.
 We note $\mathcal{R}_k$ the rotated polytope associated with contact $\mbox{p}_{k}$.
@@ -47,33 +47,26 @@ For phase $k$, the contraints on the COM positions $\mbox{c}_{k,\:0}$ and $\mbox
 \end{equation}
 
 \paragraph{Relative foot position constraints.\label{appendix:foot_pos_constr}}
-Just as for the COM reachability, a 3D polytope $\mathcal{Q}$ is randomly sampled offline (or manually given) to approximate the reachable workspace of each foot with respect to the other. The polytope rotated by $r_{k-1}$ then translated by $\mbox{p}_{k-1}$ can be expressed as $\mathcal{Q}_k: \{ p \in \mathbb{R}^3, Q_k p \leq q_k \}$.
+Just as for the COM reachability, a 3D polytope $\mathcal{Q}$ is randomly sampled offline (or manually given) to approximate the reachable workspace of each foot with respect to the other. The polytope rotated by $r_{k-1}$ then translated by $\mbox{p}_{k-1}$ can be expressed as $\mathcal{Q}_k: \{ \mbox{p} \in \mathbb{R}^3, Q_k \mbox{p} \leq q_k \}$, where $Q_k$ and $q_k$ are the matrix and vector defining the rotated polytope.
 For phase $k$, the relative foot position constraints can be formulated as follows:
 \begin{equation}
     %\mathcal{Q}_{k-1}^j (p_k - \mbox{p}_{k-1}) \leq q_{k-1}^j + M a_{k-1}^j \;\;\;\; \forall j
     \mathcal{Q}_{k-1} (\mbox{p}_k - \mbox{p}_{k-1}) \leq q_{k-1}
 \end{equation}
-\textcolor{blue}{Explain each term one by one. Same for all above.}
 
 \section{Complete MIP Formulation \label{appendix:complete_mip_formulation}}
 The complete formulation of the contact-before-motion MIP contact planning problem with the center of mass positions and the feasibility constraints of previous Appendix \ref{appendix:feasibility_constr} is:
 
 \begin{align}
-    \textrm{\textbf{given}} %\quad & \mathcal{I}=\{p_0^{left}, r_0^{left},p_0^{right}, r_0^{right}\} \nonumber\\
-    %\textrm{, the initial foot position}\\
-                            %\quad & n\\%\textrm{, the desired number of contacts}\\
-                            %\quad & \mathcal{S}=\{\mathcal{S}^0,...,\mathcal{S}^m\}\\%\textrm{, the set of terrain surfaces}\\
-                            %\quad & \mathcal{S}^{goal}\\%\textrm{, the goal surface to reach}\\
-                            \quad & n, \; \mbox{p}_0, \; r_0, \; \mathcal{S}, \; \mathcal{S}^{goal} \nonumber\\
     \textrm{\textbf{find}}  \quad & \mbox{P}=[\mbox{p}_1,...,\mbox{p}_n], \; \mbox{p}_i \in \mathbb{R}^{3 \times n} \nonumber\\
                             \quad & R=[\mbox{r}_1,...,\mbox{r}_n], \; r_i \in \mathbb{R}^{3 \times n} \nonumber\\
-                            \quad & \textcolor{blue}{C=[\mbox{c}_{0,1},c_{1,0},c_{1,1},...,c_{n,0},c_{n,1}]}, \; c_{k,e} \in \mathbb{R}^3 \nonumber\\
+                            \quad & \textcolor{blue}{\mbox{C}=[\mbox{c}_{0,1},\mbox{c}_{1,0},\mbox{c}_{1,1},...,\mbox{c}_{n,0},\mbox{c}_{n,1}], \; \mbox{c}_{k,e} \in \mathbb{R}^3} \nonumber\\
                             \quad & A=[\mbox{a}_1,...,\mbox{a}_n], \; \mbox{a}_i \in \{0,1\}^{m} \nonumber\\
                             \quad & \beta=[\beta_1,...,\beta_n], \; \beta_i \in \mathbb{R}^{m} \nonumber\\
                             %\quad & \alpha=[\alpha_1,...,\alpha_n] \in \mathbb{R}_{+}^{n}\\
     %\min_{w,b,\xi} \quad & \frac{1}{2}w^{t}w+C\sum_{i=1}^{N}{\xi_{i}}\\
-    \textrm{\textbf{min}}  \quad & l(\mbox{P},\mbox{R},\textcolor{blue}{C}) \nonumber\\
-    \textrm{\textbf{s.t.}}  \quad & \mbox{p}_n \in \mathcal{S}^{goal} \nonumber\\
+    \textrm{\textbf{min}}  \quad & l(\mbox{P},\mbox{R},\textcolor{blue}{\mbox{C}}) \nonumber\\
+    \textrm{\textbf{s.t.}}  \quad & \{\mbox{P},\mbox{R},\textcolor{blue}{\mbox{C}}\} \in \mathcal{I} \cap \mathcal{G} \nonumber\\
                             \quad & \forall i \in \{1,..,n\} : \nonumber\\
                                 \quad & \quad \mbox{card}(a_i) = m-1  \nonumber\\
                                 \quad & \quad \forall j \in \{1,..,m\} : \nonumber\\
