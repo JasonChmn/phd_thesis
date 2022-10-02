@@ -762,7 +762,8 @@ author = {Nicolás Navarro-Guerrero and Cornelius Weber and Pascal Schroeter and
 @article{prete_static_equilibrium_2016,  
     title={Fast algorithms to test robust static equilibrium for legged robots},
     author={Del Prete, Andrea and Tonneau, Steve and Mansard, Nicolas},  
-    booktitle={IEEE-ICRA 2016}
+    journal={IEEE ICRA},
+    year={2016}
 }
 
 @INPROCEEDINGS{IK_robot_locomotion,  
@@ -772,17 +773,18 @@ author = {Nicolás Navarro-Guerrero and Cornelius Weber and Pascal Schroeter and
   year={1998}
 }
 
-@article {tsid_prete_2016,
-    title = {Implementing Torque Control with High-Ratio Gear Boxes and without Joint-Torque Sensors},
-    booktitle = {Int. Journal of Humanoid Robotics 2016},
-    author = {Andrea Del Prete, Nicolas Mansard, Oscar E Ramos, Olivier Stasse, Francesco Nori}
-}
-
 @software{software_robot_RL,
   author = {Jason Chemin and Pierre-Alexandre L{\'e}ziart and Ewen Dantec},
   title = {Environment RL for talos and solo robots},
   url = {https://github.com/JasonChmn/robots_RL},
   year = {2022}
+}
+
+@article{tsid_prete,
+  TITLE = {{Implementing Torque Control with High-Ratio Gear Boxes and without Joint-Torque Sensors}},
+  AUTHOR = {del Prete, Andrea and Mansard, Nicolas and Ramos Ponce, Oscar Efrain and Stasse, Olivier and Nori, Francesco},
+  JOURNAL = {{International Journal of Humanoid Robotics}},
+  YEAR = {2016}
 }
 
 % ==================== DeepLoco like
@@ -1010,14 +1012,14 @@ author = {Nicolás Navarro-Guerrero and Cornelius Weber and Pascal Schroeter and
 
 % ==================== Graphics
 
-%@article{openai2019dota,
-%  title={Dota 2 with Large Scale Deep Reinforcement Learning},
-%  author={OpenAI and Christopher Berner and Greg Brockman and Brooke Chan and Vicki Cheung and Przemysław Dębiak and Christy Dennison and David Farhi and Quirin Fischer and Shariq Hashme and Chris Hesse and Rafal Józefowicz and Scott Gray and Catherine Olsson and Jakub Pachocki and Michael Petrov and Henrique Pondé de Oliveira Pinto and Jonathan Raiman and Tim Salimans and Jeremy Schlatter and Jonas Schneider and Szymon Sidor and Ilya Sutskever and Jie Tang and Filip Wolski and Susan Zhang},
-%  year={2019},
-%  eprint={1912.06680},
-%  archivePrefix={arXiv},
-%  url={https://arxiv.org/abs/1912.06680}
-%}
+@article{openai2019dota,
+  title={Dota 2 with Large Scale Deep Reinforcement Learning},
+  author={OpenAI and Christopher Berner and Greg Brockman and Brooke Chan and Vicki Cheung and Przemysław Dębiak and Christy Dennison and David Farhi and Quirin Fischer and Shariq Hashme and Chris Hesse and Rafal Józefowicz and Scott Gray and Catherine Olsson and Jakub Pachocki and Michael Petrov and Henrique Pondé de Oliveira Pinto and Jonathan Raiman and Tim Salimans and Jeremy Schlatter and Jonas Schneider and Szymon Sidor and Ilya Sutskever and Jie Tang and Filip Wolski and Susan Zhang},
+  year={2019},
+  eprint={1912.06680},
+  archivePrefix={arXiv},
+  url={https://arxiv.org/abs/1912.06680}
+}
 
 %@article{Kovar2002,
 %author = {Kovar, Lucas and Gleicher, Michael and Pighin, Fr\'{e}d\'{e}ric},
@@ -1121,67 +1123,90 @@ journal = {ACM Trans. Graph. 2009}
   
 % =================== RL
 
-%@ARTICLE{RL_delayed,
-%    title={Markov decision processes with delays and asynchronous cost collection},
-%    author={Katsikopoulos, K.V. and Engelbrecht, S.E.},  
-%    journal={IEEE Transactions on Automatic Control 2003}
-%}
+@ARTICLE{RL_delayed,
+    title={Markov decision processes with delays and asynchronous cost collection},
+    author={Katsikopoulos, K.V. and Engelbrecht, S.E.},  
+    journal={IEEE Transactions on Automatic Control 2003}
+}
 
-%@inproceedings{RL_delayed_explanation,
-%    title = {Planning and Learning in Environments with Delayed Feedback},
-%    author = {Walsh, Thomas J. and Nouri, Ali and Li, Lihong and Littman, Michael L.},
-%    journal = {ECML 2007}
-%}
+@inproceedings{RL_delayed_explanation,
+    title = {Planning and Learning in Environments with Delayed Feedback},
+    author = {Walsh, Thomas J. and Nouri, Ali and Li, Lihong and Littman, Michael L.},
+    journal = {ECML 2007}
+}
 
-%@inproceedings{RL_that_matters,
-%    author = {Henderson, Peter and Islam, Riashat and Bachman, Philip and Pineau, Joelle and Precup, Doina and Meger, David},
-%    title = {Deep Reinforcement Learning That Matters},
-%    journal = {AAAI 2018}
-%}
+@inproceedings{RL_that_matters,
+    author = {Henderson, Peter and Islam, Riashat and Bachman, Philip and Pineau, Joelle and Precup, Doina and Meger, David},
+    title = {Deep Reinforcement Learning That Matters},
+    journal = {AAAI 2018}
+}
 
-%@article{RL_that_matters_OnPolicy,
-%  author    = {Marcin Andrychowicz and
-%               Anton Raichuk and
-%               Piotr Stanczyk and
-%               Manu Orsini and
-%               Sertan Girgin and
-%               Rapha{\"{e}}l Marinier and
-%               L{\'{e}}onard Hussenot and
-%               Matthieu Geist and
-%               Olivier Pietquin and
-%               Marcin Michalski and
-%               Sylvain Gelly and
-%               Olivier Bachem},
-%  title     = {What Matters In On-Policy Reinforcement Learning? {A} Large-Scale
-%               Empirical Study},
-%  journal   = {CoRR 2020}
-%}
+@article{RL_that_matters_OnPolicy,
+  author    = {Marcin Andrychowicz and
+               Anton Raichuk and
+               Piotr Stanczyk and
+               Manu Orsini and
+               Sertan Girgin and
+               Rapha{\"{e}}l Marinier and
+               L{\'{e}}onard Hussenot and
+               Matthieu Geist and
+               Olivier Pietquin and
+               Marcin Michalski and
+               Sylvain Gelly and
+               Olivier Bachem},
+  title     = {What Matters In On-Policy Reinforcement Learning? {A} Large-Scale
+               Empirical Study},
+  journal   = {CoRR 2020}
+}
 
-%@misc{stable-baselines,
-%  author = {Hill, Ashley and Raffin, Antonin and Ernestus, Maximilian and Gleave, Adam and Kanervisto, Anssi and Traore, Rene and Dhariwal, Prafulla and Hesse, Christopher and Klimov, Oleg and Nichol, Alex and Plappert, Matthias and Radford, Alec and Schulman, John and Sidor, Szymon and Wu, Yuhuai},
-%  title = {Stable Baselines},
-%  year = {2018},
-%  journal = {GitHub repository},
-%  howpublished = {\url{https://github.com/hill-a/stable-baselines}},
-%}
+@misc{stable-baselines,
+  author = {Hill, Ashley and Raffin, Antonin and Ernestus, Maximilian and Gleave, Adam and Kanervisto, Anssi and Traore, Rene and Dhariwal, Prafulla and Hesse, Christopher and Klimov, Oleg and Nichol, Alex and Plappert, Matthias and Radford, Alec and Schulman, John and Sidor, Szymon and Wu, Yuhuai},
+  title = {Stable Baselines},
+  year = {2018},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/hill-a/stable-baselines}},
+}
 
-%@inproceedings{impala2018,
-%  title={IMPALA: Scalable Distributed Deep-RL with Importance Weighted Actor-Learner Architectures},
-%  author={Espeholt, Lasse and Soyer, Hubert and Munos, Remi and Simonyan, Karen and Mnih, Volodymir and Ward, Tom and Doron, Yotam and Firoiu, Vlad and Harley, Tim and Dunning, Iain and others},
-%  booktitle={ICML 2018}
-%}
+@article{DD_PPO,
+  title     = {Decentralized Distributed {PPO:} Solving PointGoal Navigation},
+  author    = {Erik Wijmans and
+               Abhishek Kadian and
+               Ari Morcos and
+               Stefan Lee and
+               Irfan Essa and
+               Devi Parikh and
+               Manolis Savva and
+               Dhruv Batra},
+  journal   = {CoRR},
+  year={2019}
+}
 
-%@ARTICLE{compare_PPO_TD3_SAC_DDPG,
-%TITLE={Comparing Deep Reinforcement Learning Algorithms’ Ability to Safely Navigate Challenging Waters},
-%AUTHOR={Larsen, Thomas Nakken and Teigen, Halvor Ødegård and Laache, Torkel and Varagnolo, Damiano and Rasheed, Adil},   
-%JOURNAL={Frontiers in Robotics and AI 2021}
-%}
+@article{raisim,
+  title={Per-contact iteration method for solving contact dynamics},
+  author={Hwangbo, Jemin and Lee, Joonho and Hutter, Marco},
+  journal={IEEE-RAL},
+  year={2018}
+}
 
-%@article{curriculum_learning_survey,
-%  title={Curriculum learning for reinforcement learning domains: A framework and survey},
-%  author={Narvekar, Sanmit and Peng, Bei and Leonetti, Matteo and Sinapov, Jivko and Taylor, Matthew E and Stone, Peter},
-%  journal={Journal of Machine Learning Research 2020}
-%}
+@inproceedings{impala2018,
+  title={IMPALA: Scalable Distributed Deep-RL with Importance Weighted Actor-Learner Architectures},
+  author={Espeholt, Lasse and Soyer, Hubert and Munos, Remi and Simonyan, Karen and Mnih, Volodymir and Ward, Tom and Doron, Yotam and Firoiu, Vlad and Harley, Tim and Dunning, Iain and others},
+  booktitle={ICML 2018}
+}
+
+@ARTICLE{compare_PPO_TD3_SAC_DDPG,
+  TITLE={Comparing Deep Reinforcement Learning Algorithms’ Ability to Safely Navigate Challenging Waters},
+  AUTHOR={Larsen, Thomas Nakken and Teigen, Halvor Ødegård and Laache, Torkel and Varagnolo, Damiano and Rasheed, Adil},   
+  JOURNAL={Frontiers in Robotics and AI},
+  year={2021}
+}
+
+@article{curriculum_learning_survey,
+  title={Curriculum learning for reinforcement learning domains: A framework and survey},
+  author={Narvekar, Sanmit and Peng, Bei and Leonetti, Matteo and Sinapov, Jivko and Taylor, Matthew E and Stone, Peter},
+  journal={Journal of Machine Learning Research},
+  year={2020}
+}
 
 @article{ppo_rich_locomotion,
     title     = {Emergence of Locomotion Behaviours in Rich Environments},
@@ -1217,27 +1242,6 @@ journal = {ACM Trans. Graph. 2009}
     title = {How to Train Your Dragon: Example-Guided Control of Flapping Flight},
     journal = {ACM Trans. Graph. 2017}
 }
-
-@article{sehee_octopus_2019,
-    author = {Sehee Min, Jungdam Won, Seunghwan Lee, Jungnam Park, and Jehee Lee},
-    title = {SoftCon: Simulation and Control of Soft-Bodied Animals with Biomimetic Actuators},
-    journal = {ACM Trans. Graph. 2019}
-}
-
-
-%@article{Optimizing_rl_long_time_scale_RNN,
-%    title     = {Optimizing Agent Behavior over Long Time Scales by Transporting Value},
-%    author    = {Chia{-}Chun Hung and
-%               Timothy P. Lillicrap and
-%               Josh Abramson and
-%               Yan Wu and
-%               Mehdi Mirza and
-%               Federico Carnevale and
-%               Arun Ahuja and
-%               Greg Wayne},
-%    journal   = {CoRR 2018}
-%}
-
 
 @article{learning_predict_rnn,
     author = {Park, Soohwan and Ryu, Hoseok and Lee, Seyoung and Lee, Sunmin and Lee, Jehee},
