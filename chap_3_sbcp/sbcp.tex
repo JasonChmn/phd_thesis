@@ -63,7 +63,7 @@ We use the following syntax:
 
 % In this section we present an overview of SBCP, then we expose the feasibility problem with the guide path planner (P1).
 
-\subsection{Overview of the contact planner}
+\subsection{Overview of the Contact Planner}
 
 %\textcolor{red}{I need to introduce N (samples), Robustness, MAX\_TRIES for repositioning}
 
@@ -150,7 +150,7 @@ Our solution to solve such a feasibility problem is to learn with LEAS how to va
 %More specifically, we want to plug SBCP to LEAS to learn by reinforcement how to generate guide paths better fitting this contact planner.
 
 
-\subsection{Trade-off in the parameters \label{subsub:cp-sb:tradeoff}}
+\subsection{Trade-off in the Parameters \label{subsub:cp-sb:tradeoff}}
 %\textcolor{blue}{Nicolas: Failure modes of the contact planner}
 
 %We presented the overall concept of SBCP and the problem we are trying to solve in this section.
@@ -233,7 +233,7 @@ We then propose to formulate it as a maximization of the success likelihood of t
 
 % ========================================================================
 
-\section{Implementation design\label{sub:cp-sb:leas_coupling}}
+\section{Implementation Details\label{sub:cp-sb:leas_coupling}}
 % Explain the motivation and clearly state what we want to do and hope.
 %Our sample-based contact planner presents several limitations due to the separation with the guide path planner P1. We observe on our previous steering methods RB-Lin and RB-Kino plugged to SBCP a drop in the success rate of the contact planning, highlighting the difficulty to design efficient but general enough heuristics that works well on most problems.
 
@@ -742,7 +742,7 @@ Finally, we will resume our contribution to this work.
 
 \textcolor{blue}{Nicolas wants me to remove (or reformulate?) this small intro.}
 
-\subsection{Implementation choices}
+\subsection{Implementation Choices}
 % === Behaviour and experiments
 \begin{figure}[h]
     \centering
@@ -809,7 +809,7 @@ However, having a variable discretization depending on the terrain is the most p
 % We can add a reward function of the robustness, it's close to the traversability kinda saying that a guide/path is difficult or not. And it would require more reward engineering.
 % We can use a sparse reward just to learn how to cross a link, far less general and would require other methods as HER etc.
 % E - Pretraining for demonstration with trajectories of LEAS-P1. Catastrophic forgetting with PPO => Imitation learning, Continual learning, learning from demonstration etc...
-\subsection{Learning strategy}
+\subsection{Learning Strategy}
 % Is pruning the failing trajectory really the best choice for learning.
 To learn how to generate guide paths fitting the contact planner, one could ask if the strategy of pruning the failing part of the trajectory is the best and if some alternatives exist.
 We thought of several reward designs to learn from the feedback of SBCP:

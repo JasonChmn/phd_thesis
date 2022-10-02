@@ -162,7 +162,7 @@ We denote the optimal policy $\pi^* = \underset{\pi}{\mbox{arg max}} \; J(\pi)$.
 
 
 
-\section{LEAS: a RL Steering Method\label{subsec:leas-RL}}
+\section{LEAS: an RL Steering Method\label{subsec:leas-RL}}
 % What behaviour do we want for the SM ?
 Given initial and goal configurations, we learn by reinforcement a steering method generating a guide path in a given direction while respecting both collision and reachability constraints. 
 To that end, we designed LEAS \cite{LEAS}, an RL agent that learns by trial and error how to perform this task and to generalize to unknown environments. An overview of our method is presented in figure \ref{fig:LEAS}. The main idea behind LEAS is that for each action taken in the environment, the configuration in $SE(3)$ of the robot will be modified and stored in a list: the guide path.
@@ -358,7 +358,7 @@ That is why for the sake of clarity, we separate these two rewards.
 An advantage of this separation is that we can increase $w_{alive}$, relative to the other reward weights, to force the agent to act carefully and to stay away from dangerous situations as staying too close to an obstacle. 
 In our experiments, keeping $w_{alive}=1$ is sufficient to get the desired behavior (C), but setting it too high as $w_{alive}=2$ makes the agent act too safely and stay idle instead of crossing difficult obstacles.
 
-\section{Implementation details\label{subsec:leas-implementation}}
+\section{Implementation Details\label{subsec:leas-implementation}}
 
 % Problem with using HPP like that:
 % - HPP is made for scenarios on small scenes with a low number of surfaces
@@ -376,7 +376,7 @@ While it is possible to have several clients of HPP on the same machine, this so
 To that end, we implemented a python library to extract a height map from the meshes of the scene, and we present two main tools to be implemented in HPP later on: an approximation of the collision and reachability constraints from the height map, and a random terrain generator. 
 Finally, we present an asynchronous version of the RL algorithm PPO to perform the contact planning sequence externally with a master-worker architecture.
 
-\subsection{Validity approximation\label{subsub:validity_approximation}}
+\subsection{Validity Approximation\label{subsub:validity_approximation}}
 % Explain how it is done in HPP
 % Why the need to approximate it => Remove dependencies with HPP that was made for smaller scenes + Faster and simplified, enough for LeaS.
 % I approximated the ROM => bounds for each point on the rel HM. Easier to tune it, without needing to cut the ROM files.
@@ -477,7 +477,7 @@ In the context of RL performing millions of steps, such approximation with $\til
 While the gains in computation can not be fairly compared due to their difference in programming language and optimization, our implementation resulted in an average of 20 times faster computation time compared to the full constraints $\mathcal{R}$ and $\mathcal{C}$, thus allowing us to train and test more models.
 
 
-\subsection{Terrain generator\label{subsub:terrain_generator}}
+\subsection{Terrain Generator\label{subsub:terrain_generator}}
 % Originally made by daeun, and adapted by me to produce arenas of size NxM
 % That is somehow a huge part of my work that was needed for LeaS.
 % Give a link to the code as well, but say that some fix need to be made.
@@ -528,7 +528,7 @@ In our experiments, terrains of dimension 5x30 are the maximum we could have in 
  In a first test, we ran several agents during the training on different terrains following such a curriculum learning, starting with a flat ground, then stairs, and finally, a 5x30 terrain randomly generated (section \ref{subsub:terrain_generator}). However, it did not further improve the learning time, as our agent is able to learn quickly without these methods from only one 5x30 scene for all our agents.
  
  
-\subsection{Master-Workers architecture: asynchronous contact planners\label{subsub:leas:master_worker}}
+\subsection{Master-Workers Architecture: Asynchronous contact planners\label{subsub:leas:master_worker}}
 
 % Why did I pick PPO (online) and not an offline RL algo
 Several state-of-the-art RL algorithms are available and can be separated into different groups, each presenting some pros and cons, and that can lead to various results depending on the hyperparameters used and the task to perform \cite{RL_that_matters, RL_that_matters_OnPolicy}. As a consequence, it can be difficult to judge which algorithm to use for a given task other than empirically. However, some comparisons are available to guide our choice \cite{compare_PPO_TD3_SAC_DDPG}.
@@ -671,7 +671,7 @@ The PPO actor and critic are two distinct networks with hidden layers of size 12
 
 We train LEAS without a contact planner and evaluate the model after 5 million steps corresponding to around 1 hour of training on a PC with an Intel Core i7-8700 (12 cores, 3.20Ghz, 16GB ram). Learning curves can be seen on figure \ref{fig:control_LEAS_learning_curves}.
 
-\subsection{Comparison: design\label{tab:compare_sm_charac}}
+\subsection{Comparison: Steering Method Designs\label{tab:compare_sm_charac}}
 
 \begin{center}
 \begin{tabular}{ |c|c|c|c| }
@@ -748,7 +748,7 @@ In this work, LEAS can navigate the same waypoints computed by the RRT with RB-K
 
 Finally, we recall the main advantage of LEAS over our previous steering methods which is the use of Reinforcement learning, that through the trajectory validation with the contact planner can alter its behavior to fit it.
 
-\subsection{Test scenarios\label{subsub:leas:test_scenarios}}
+\subsection{Test Scenarios\label{subsub:leas:test_scenarios}}
 
 As LEAS does not connect exactly with the goal position, we consider the goal as reached when the distance from the last state on the guide path to the goal is lower than a distance threshold $\epsilon$ set to $20$ cm for all our scenarios.
 
@@ -942,7 +942,7 @@ In this test scenario, LEAS reaches the goal under the tested threshold at once 
 
 % Difficult to define good bounds for the height map to best represent small and high height variations. Using a second height map is a possibility but it increases the number of states and we want to avoid it. We could use a non linear, as a square function on values of the relative height map to better capture small variations near the robot's feet while ensuring height elevation detection for stairs, obstacles and void.
 %\textbf{Surface detection}: 
-\subsection{Future improvements}
+\subsection{Future Improvements}
 
 For a pure navigation task, LEAS without a contact planner does not need to clearly identify the surfaces of the terrain and solely focus on state validity from the height map. 
 However, in the context of contact planning, LEAS may require to identify these surfaces to step.
