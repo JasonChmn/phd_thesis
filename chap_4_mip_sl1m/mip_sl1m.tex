@@ -20,7 +20,7 @@ In this chapter, we will use two contact planners formulated with a Mixed-Intege
 
 The sampling contact planner presented in previous section relies on heuristics to search for contacts in the robot environment.
 While it can efficiently solve the contact planning problem, its sampling approach can not guarantee its completeness.
-On the other hand, optimization-based approaches are an appealing approach to solve this limitation. However they have to handle both the discrete choice of contact surfaces and the continuous optimization of placing contacts on them.
+On the other hand, optimization-based approaches are an appealing approach to solve this limitation. However, they have to handle both the discrete choice of contact surfaces and the continuous optimization of placing contacts on them.
 Previous works on contact planning \cite{deits2014FootPlanMI, sl1m_v2} solved this problem using a MIP approach or its relaxed form respectively.
 We will explain both approaches and further investigate if our method LEAS can improve them through its guide paths generation.
 %such contact planners have been used to solve both the discrete choice of selecting a sequence of surfaces to step on, and the continuous problem of placing contacts on these surfaces.
@@ -62,7 +62,7 @@ Across this chapter, we use similar notations to the previous work \cite{sl1m_v2
     $\alpha_i^j$       & positive real slack variable for $j$-th surface in $i$-th footstep \\ 
     $\beta_i^j$        & real slack variable for $j$-th surface in $i$-th footstep \\
     %$card(a)$          & number of non-zero entries in vector $a$ \\
-	$\mathcal{I}, \mathcal{G}$      & initial and goal constraint sets \\
+    $\mathcal{I}, \mathcal{G}$      & initial and goal constraint sets \\
     $\mathcal{F}$      & feasibility constraint set \\
     %\hline
     q              & virtual robot root configuration in $SE(3)$\\
@@ -124,11 +124,11 @@ As the condition p$_i \in \mathcal{S}$ is represented by inequality constraints(
 Where $\textbf{1}$ is a vector of appropriate size filled with ones.
 We introduce the slack variables $a_i^j$ and $\beta_i^j$:
 \begin{itemize}
-	\item If $a_i^j = 0$, the corresponding surface $\mathcal{S}^j$ is selected and the $i$-th foot position $\mbox{p}_i$ lies on it, thus implying that $\beta_i^j = 0$.
-	\item If $a_i^j = 1$, the constraints relative to the surface $\mathcal{S}^j$ always have a solution and can be ignored.
+    \item If $a_i^j = 0$, the corresponding surface $\mathcal{S}^j$ is selected and the $i$-th foot position $\mbox{p}_i$ lies on it, thus implying that $\beta_i^j = 0$.
+    \item If $a_i^j = 1$, the constraints relative to the surface $\mathcal{S}^j$ always have a solution and can be ignored.
 \end{itemize}
 The big-M method introduces a sufficiently large scalar $M$ to solve our problem, but small enough to not hinder its convergence \cite{big_M_danger}.
-The cardinality function (\ref{eq:cbm:surf:card}) counts the number of non-zero entires in a vector. 
+The cardinality function (\ref{eq:cbm:surf:card}) counts the number of non-zero entries in a vector. 
 It enforces the foot position p$_i$ to lie on exactly one surface in $\mathcal{S}$.
 
 \paragraph{Contact-before-motion formulation.\label{par:cbm:formulation}}
@@ -292,7 +292,7 @@ Our goal is to adapt the discretization steps $\Delta D_i$ for each step along g
 The number $n$ of discretized configurations $\mbox{q}_i$ on the guide must then produce feasible problems for the contact planner.
 To do so, we use our steering method LEAS to generate such guide paths by adapting its velocity, hence the $\Delta D_i$ values along.
 
-In this work, we use Gurobi solver \cite{gurobi} with its presolvers and heuristics to solve the MIP formulation for contact planning (Section \ref{par:mip:mbc:formulation}).
+In this work, we use Gurobi solver \cite{gurobi} with its presolver and heuristics to solve the MIP formulation for contact planning (Section \ref{par:mip:mbc:formulation}).
 
 \paragraph{RL policy.}
 We employ the exact same network architecture, actions, rewards, and hyperparameters as described in chapter \ref{sec:LEAS}. We set the number of asynchronous workers computing contacts with the MIP planner to 6.
@@ -318,7 +318,7 @@ The small size of the height map (80x80 cm) may lower the number of candidate su
 However, it also constrains the footstep placements in the guide vicinity, as well as lowering the problem complexity by reducing the number of candidate surfaces.
 We will further discuss this implementation choice and its alternatives in Section \ref{subsub:mip:discussion:candidate_surfaces}.
 
-It is important to note that compare to the sampling contact planner of previous section, the MIP planner generates contact sequences that do not follow exactly the guide.
+It is important to note that compare to the sampling contact planner of the previous section, the MIP planner generates contact sequences that do not follow exactly the guide.
 While the root trajectory could be used as a part of the cost to optimize, in this work, it is solely used to collect candidate surfaces along it.
 
 
@@ -330,9 +330,9 @@ Our goal is to get a sufficiently high discretization step $\Delta D_i$ for each
 
 In this chapter, we aim for a maximum $\Delta \overline{D} =28$ cm. 
 This value corresponds to the near maximum step length that the Talos robot could possibly perform.
-To do so, we further discretize the guide in input of our MIP contact planner by only keeping 1 out of $N_{ref}=14$ configurations on it.
+To do so, we further discretize the guide in the input of our MIP contact planner by only keeping 1 out of $N_{ref}=14$ configurations on it.
 Depending on the terrain, LEAS may not be able to generate feasible guide paths with this maximum value (i.e. navigate the terrain at the desired velocity).
-As a result, LEAS has to learn how to adapt the robot root velocity and implicitely $\Delta D_i$ along the guide to succeed the contact planning.
+As a result, LEAS has to learn how to adapt the robot root velocity and implicitly $\Delta D_i$ along the guide to succeed in the contact planning.
 
 
 \paragraph{Contact planning choices.}
@@ -361,7 +361,7 @@ However, it is prone to local minima.
 This limitation is avoided in their implementation by solving the problem with a regularization cost in $l(\mbox{P},\mbox{R})$, but at the cost of a longer computation time than a feasibility problem.
 
 In this work, we want to avoid adding such costs for computation efficiency purposes. 
-Moreover, a short-horizon planning can not guarantee completeness, which is not desirable for our task.
+Moreover, short-horizon planning can not guarantee completeness, which is not desirable for our task.
 That is why, we choose the first strategy, solving the long-horizon contact planning problem along the whole guide path.
 
 %The contact planner then searches for a sequence of surfaces among these candidates as well as contact placement on it to reach a distant objective.
@@ -382,8 +382,8 @@ Learning curves of LEAS without contact planner, referred as LEAS-P1, and LEAS-P
 %The P2 validation increases its probability to meet a terminal condition (i.e. failing the contact planning) and forces LEAS to adapt its behavior to succeed with the contact planner, resulting in a lower average reward per episode.
 The episode rewards of LEAS-P2 are lower than LEAS-P1 due to the contact planning constraints. 
 As described earlier, we discretize the guide so that when moving at the desired velocity $v_{desired}=0.10$ m/s, the discretization step is equal to $\Delta D=28cm$. 
-This value is at the limit of the feasiblity constraints $\mathcal{F}$ (Appendix \ref{appendix:feasibility_constr}) of the TALOS robot on flat ground. 
-Consequently, our steering method has to move the robot root slower to succeed the contact planning on more complex terrains, thus resulting in a lower average reward.
+This value is at the limit of the feasibility constraints $\mathcal{F}$ (Appendix \ref{appendix:feasibility_constr}) of the TALOS robot on flat ground. 
+Consequently, our steering method has to move the robot root slower to succeed in the contact planning on more complex terrains, thus resulting in a lower average reward.
 
 
 
@@ -405,7 +405,7 @@ Consequently, our steering method has to move the robot root slower to succeed t
 % For this one, 5 trajectories should suffice.
 % So it's 2 results on the same scene.
 
-We expect LEAS-P2 to find, depending on the terrain, some sufficiently high discretization steps $\Delta D_i$ between each foostep along the guide with the parameter $N_{ref}$, that are feasible by the contact planner.
+We expect LEAS-P2 to find, depending on the terrain, some sufficiently high discretization steps $\Delta D_i$ along the guide with the parameter $N_{ref}$, that are feasible by the contact planner.
 On difficult terrains such as rubbles and stairs, LEAS should lower the robot root velocity, and thus $\Delta D_i$, to ensure the contact planning success. 
 On contrary, we expect the robot to move with a higher velocity on easy ones such as flat ground.
 
@@ -457,7 +457,7 @@ On contrary, we expect the robot to move with a higher velocity on easy ones suc
 we will first show the impact of the average $\Delta \overline{D}$ value along the guide on the MIP contact planning success. 
 It will permit us to evaluate the difficulty of our basic scenarios (stairs and rubbles on Figure \ref{fig:mip:minimizing_basic}). 
 
-We compare the results of LEAS-P1, LEAS-P2 and RB-Kino.
+We compare the results of LEAS-P1, LEAS-P2, and RB-Kino.
 For each scenario, the initial robot root is oriented toward the goal with a velocity $v_{init}=0.05$ m/s.
 Each steering method acts on the root velocity to potentially reach the desired velocity $v_{desired}=0.10$ m/s, which corresponds to a discretization step $\Delta \overline{D}=28$ cm with $N_{ref}=14$ at the edge of the feasibility constraints $\mathcal{F}$ on flat ground.
 
@@ -470,7 +470,6 @@ We can observe the success rate of the steering methods depending on their avera
 %The stairs scenario is relatively easy for the steering methods (Figure \ref{fig:mip:minimizing_basic:0}).
 On stairs scenarios, results show that they always succeed the contact planning for all $\Delta \overline{D} \leq 27 cm$ (Figures \ref{fig:mip:minimizing_basic:0} and \ref{fig:mip:minimizing_basic:1}).
 However, it is not the case for the rubble scenario that is more complex (Figure \ref{fig:mip:minimizing_basic:2}). Indeed, depending on the reduced set of candidate surfaces for each step, no solution may be found satisfying the equilibrium constraints, and thus the problem may be infeasible.
-%Interestingly, we can observe that due to the equilibrium constraints in $\mathcal{F}$, it is easier for the contact planner to climb stairs up than to climb them down. \textcolor{blue}{REMOVE THE BIG HM 80, and retry on stairs down.}
 
 LEAS-P1 is trained to follow the reference velocity $v_{desired}$.
 However, it rarely reaches this velocity in complex scenarios, thus resulting in an average $\Delta \overline{D} \approx 26$ cm with $N_{ref}$.
@@ -482,11 +481,11 @@ In comparison, LEAS-P1 navigates the terrain slower and a value $N_{ref}$ is suf
 However, this value does not hold anymore on the rubbles (only 50\% of success). 
 Consequently, LEAS-P1 also requires a fine-tuning of its discretization to generate feasible guide paths in this scenario.
 
-Our solution LEAS-P2 on the other hand succeeds all scenarios for $N_{ref}$ it has been trained on (green dots).
-Results show that our method always adopt a sufficiently high discretization step to succeed in the MIP contact planning along the guides. %having a near maximum feasible discretization step to succeed in the MIP contact planning. 
+Our solution LEAS-P2 on the other hand succeeds in all scenarios for $N_{ref}$ it has been trained on (green dots).
+Results show that our method always adopts a sufficiently high discretization step to succeed in the MIP contact planning along the guides. %having a near maximum feasible discretization step to succeed in the MIP contact planning. 
 As a result, it does not require further fine-tuning.
 However, we can observe that LEAS-P2 considers the stairs (down) scenario as difficult.
-This behavior may require further investigation as it could be due to our training arena that contains much steeper stairs (requiring a low velocity to succeed contact planning), or the terrain representation on the height map that will be discussed later on.
+This behavior may require further investigation as it could be due to our training arena that contains much steeper stairs (requiring a low velocity to succeed in contact planning), or the terrain representation on the height map that will be discussed later on.
 %On average, we can see that LEAS-P2 exhibits a value $\Delta D \in [22, 25]$ cm depending on the terrain difficulty. \textcolor{blue}{To modify after I get the expe on flat floor.}
 
 \begin{figure}[h!]
@@ -511,7 +510,7 @@ This behavior may require further investigation as it could be due to our traini
     \label{fig:mip:minimizing_basic:time}
 \end{figure}
 
-While a small $\Delta \overline{D}$ increases the contact planning success, it also increases its computation time (Figure \ref{fig:mip:minimizing_basic:time}). As previously disccussed, the computation grows exponentially with the number of steps $n$ and their number of candidate surfaces as we can observe on the rubbles.
+While a small $\Delta \overline{D}$ increases the contact planning success, it also increases its computation time (Figure \ref{fig:mip:minimizing_basic:time}). As previously discussed, the computation grows exponentially with the number of steps $n$ and their number of candidate surfaces as we can observe on the rubbles.
 On contrary, the contact planning time remains relatively low on our stairs scenarios for the tested discretization step range (less than $100$ ms). 
 As we can expect, LEAS-P2 for $N_{ref}$ always exhibits an average discretization step with a low computation time, while being successful with the MIP contact planner.
 
@@ -565,16 +564,12 @@ We tuned RB-Kino to have an average discretization step of $\Delta \overline{D} 
 Just like in the basic scenarios, LEAS-P1 presents an average discretization step $\Delta \overline{D} \approx 26$ cm.
 As both steering methods do not plan guides in function of the terrain difficulty, they both fail the contact planning on our long-range scenario for $N_{ref}$ (Figure \ref{fig:mip:long_range_success_time:success}).
 
-Our solution LEAS-P2 adapts the discretization step for each terrain traversed (Figure \ref{fig:mip:long_range}), which correlates with the the basic scenarios results. 
+Our solution LEAS-P2 adapts the discretization step for each terrain traversed (Figure \ref{fig:mip:long_range}), which correlates with the results of the basic scenarios. 
 We can observe that it exhibits smaller discretization steps on terrains it deemed difficult (rubbles and stairs down), and higher ones on the others (bridge, stairs up, and ground floor).
-Thanks to its adaptability, LEAS-P2 can succeed the MIP contact planning for $N_{ref}$ in our long scenario (Figure \ref{fig:mip:long_range_success_time:success}), whereas other methods require further fine-tuning of the guide discretization.
+Thanks to its adaptability, LEAS-P2 can succeed in the MIP contact planning for $N_{ref}$ in our long scenario (Figure \ref{fig:mip:long_range_success_time:success}), whereas other methods require further fine-tuning of the guide discretization.
 
 Finally, we can observe that the MIP contact planner with guide path can compute more than a hundred footsteps at once in relatively short time when the number of steps is optimized (Figure \ref{fig:mip:long_range_success_time:time}).
-Just like in the basic scenarios, LEAS-P2 can generate feasible guides paths with the contact planner while exhibiting a sufficiently high discretization between each step. Hence, it permits a tolerable contact planning time, relative to the number of steps planned and the terrain traversed.
-
-\textcolor{red}{Faut donner des temps / des nombres d exploration. }
-\textcolor{blue}{Fixed; J'ai rajouté les temps. Par contre je ne peux pas donner de nombre d'exploration parce que sur les scenarios basique il n'y en a souvent pas (heuristics de gurobi que j'arrive pas à virer meme avec le param à 0). Ca rejoint ce que vous dites dans le second papier SL1M, il n'y en a souvent pas avec le guide (pour des pbm de faisabilité). Parler de temps de calcul me parait plus pertinent.}
-
+Just like in the basic scenarios, LEAS-P2 can generate feasible guide paths with the contact planner while exhibiting a sufficiently high discretization between each step. Hence, it permits a tolerable contact planning time, relative to the number of steps planned and the terrain traversed.
 
 \subsection{Conclusion and Discussion}
 \label{subsub:mip:discussion}
@@ -583,7 +578,7 @@ We explained the formulation for contact planning with a continuous approach usi
 Then we explained the benefits of using a guide path in this formulation, as done in the previous work \cite{sl1m_v2}.
 The main limitation of their approach was the required fine-tuning of the guide discretization.
 
-To solve this limitation, we presented a solution using our steering method LEAS to automatically generate guide path with a suitable discretization step along it, depending on the terrain difficulty.
+To solve this limitation, we presented a solution using our steering method LEAS to automatically generate a guide path with a suitable discretization step along it, depending on the terrain difficulty.
 As a result, it can generate feasible problems for the MIP contact planner while reducing the number of steps, hence the overall contact planning time.
 
 \textcolor{blue}{En vrai tous les scenarios que j'ai presente sont faisable avec une discretisation moyenne de 20-22cm, pour des temps de calcul similaire. Comment je peux tourner ca en quelque chose de plus positifs? On me posera forcement des questions dessus.}
@@ -591,7 +586,7 @@ As a result, it can generate feasible problems for the MIP contact planner while
 
 \paragraph{Traversability estimation.}
 As discussed in Chapter \cite{sec:LEAS}, tuning the upper and lower bounds of the z-value in the height map is critical to have a correct terrain representation.
-Trivially, setting wider bounds will permit a better detection of large obstacles, or differentiate stairs and void. However, it hinders the detection of small height variations on the terrain such as rubbles.
+Trivially, setting wider bounds will permit better detection of large obstacles, or differentiate stairs and void. However, it hinders the detection of small height variations on the terrain such as rubbles.
 Several strategies could be explored to fix such problems, such as using convolutional neural networks as previously discussed, or giving as observation a second tighter bounded height map.
 
 In this thesis, we keep the height map bounds used in previous chapters and we add to the number of potential candidate surfaces around the robot as an observable state.
@@ -600,15 +595,16 @@ In the future, other methods could be explored to estimate the terrain traversab
 %was required as values in the observable height map were not accurate enough to efficiently detect small height variations on scenarios like rubbles.
 
 \paragraph{Contact planning awareness and guide discretization.}
-We discretize the guide path in input of the contact planner by keeping 1 out of $N_{ref}$ configurations.
-However our RL agent does not know which state corresponds to a step inside the contact planner.
-As a consequence, our steering method only adapts the robot velocity along the guide depending on the terrain, and implicitely the discretizaton steps $\Delta D$.
-In another experiment, we added another observable scalar representing a counter before the next step to be perform as well as the distance and local height map from the previous step. However, it did not improve LEAS results.
+We discretize the guide path in the input of the contact planner by keeping 1 out of $N_{ref}$ configurations.
+However, our RL agent does not know which state corresponds to a step inside the contact planner.
+As a consequence, our steering method only adapts the robot velocity along the guide depending on the terrain, and implicitly the discretization steps $\Delta D$.
+In another experiment, we added another observable scalar representing a counter before the next step to be performed as well as the distance and local height map from the previous step. However, it did not improve LEAS results.
 
 Another option is for LEAS to output directly the next root configuration $q$ from which a contact is to be made.
-This approach can remove the need to filter the guide path in input of the contact planner ($N=1$).
-This control could potentially permit the agent to directly control the discretization step and to accurately select suitable candidate surfaces $\mathcal{S}_i$.
-In our experiments, we implemented such an approach by raising the timestep $T$ and controlling LEAS in velocity (instead of acceleration). However as discussed in Chapter \ref{sec:CP-SB}, it was not achievable in practice regarding the learning stability, because of the large actions the RL agent does.
+This approach can remove the need to filter the guide path ($N=1$).
+Hence, this control could potentially permit the agent to directly control the discretization step and to accurately select suitable candidate surfaces $\mathcal{S}_i$.
+In our experiments, we implemented such an approach by raising the timestep $T$ and controlling LEAS in velocity (instead of acceleration). 
+However as discussed in Chapter \ref{sec:CP-SB}, it was not achievable in practice regarding the learning stability, because of the large actions the RL agent does.
 
 \paragraph{Pruning candidates surfaces.\label{subsub:mip:discussion:candidate_surfaces}}
 %\begin{figure}[t]
@@ -628,12 +624,12 @@ In our experiments, we implemented such an approach by raising the timestep $T$ 
 %    \label{fig:mip:flat:constrained_or_not}
 %\end{figure}
 % La HM est petite 80x80. C'etait necessaire pour contraindre la recherche de pas autour. Autrement 
-In this thesis, we obtain the candidate surfaces for each step from a height map centered around the robot root configuration. While the height map size could be enlarged to offer more possibilites and thus increase the problem feasibility.
+In this thesis, we obtain the candidate surfaces for each step from a height map centered around the robot root configuration. While the height map size could be enlarged to offer more possibilities and thus increase the problem feasibility.
 We choose such a small size to constrain the search for contacts only in the guide path vicinity.
 
 Other strategies are available to obtain the candidate surfaces $\mathcal{S}_i$.
 In the previous work \cite{sl1m_v2}, Song et al. use the range of motion of the robot legs (See constraint $\mathcal{C}$ in Chapter \ref{sec:LEAS}).
-If an intersection exists between this range of motion at $\mbox{q}_i$ and a surface $\mathcal{S}^j$, then the entiere surface is added to the set $\mathcal{S}_i$.
+If an intersection exists between this range of motion at $\mbox{q}_i$ and a surface $\mathcal{S}^j$, then the entire surface is added to the set $\mathcal{S}_i$.
 Adding the complete reachable surfaces $\mathcal{S}^j$ sure increases the feasibility of the problem. 
 However, it may not constrain enough the search for footsteps around the guide, which can be a limitation depending on the locomotion task.
 
@@ -642,14 +638,14 @@ However, it may not constrain enough the search for footsteps around the guide, 
 % Does the RL really solves a combinatorics problem here ? No real control on the problem.
 % He just say the number of steps in the end...
 
-We emphasize on the fact that the mixed-integer programming contact planner solves the discrete choice of contact surfaces, that is a combinatorial problem.
+We emphasize the fact that the MIP contact planner solves the discrete choice of contact surfaces, which is a combinatorial problem.
 %Indeed, the problems we presented are solved along all the trajectory at once, as opposed to a short horizon planning approach \cite{fanny_mip_solo}.
-Our steering method adapts the robot velocity along the guide path depending on the terrain, than then composes the problem to solve. 
+Our steering method adapts the robot velocity along the guide path depending on the terrain, that then composes the problem to solve. 
 However, LEAS can not observe the past trajectory. 
 As a consequence, it is not directly (or not at all) aware of its combinatorial aspect. 
 
 As discussed in the previous work \cite{sl1m_v2}, pruning surfaces along the guide can be seen as a MIP presolve routine (cuts) specific to contact planning.
-This strategy often leads small feasibility problem to be solved with only few to no exploration of the combinatorics when using a presolver \cite{presolve_gurobi_2020}.
+This strategy often leads to small feasibility problems to be solved with only a few to no exploration of the combinatorics when using a presolver \cite{presolve_gurobi_2020}.
 However, this is not the case for more complex scenarios in which contact planning time increases due to the computation of the branch-and-bound algorithm that handles the combinatorial aspect of the problem (i.e. selection of surfaces).
 
 While we demonstrate the efficacy of this approach with Gurobi solver \cite{gurobi}, the contact planning time highly depends on the MIP solver used, as well as its various methods and heuristics employed.
@@ -683,7 +679,7 @@ It is the objective of the reformulation called SL1M \cite{sl1m_v1} presented in
 % Two ways: use a MIP for a branch&bound, or use only some LP but lose the guarantee of completeness.
 % Put the results here for relaxation.
 In the previous work \cite{sl1m_v1}, a relaxation of the MIP formulation for contact planning is proposed.
-The relaxed formulation with guide path is as follows:
+The relaxed formulation using a guide path is as follows:
 \begin{align}
     \textrm{\textbf{given}} %\quad & \mathcal{I}=\{p_0^{left}, \mbox{r}_0^{left},p_0^{right}, \mbox{r}_0^{right}\} \nonumber\\
     %\textrm{, the initial foot position}\\
@@ -711,7 +707,7 @@ Contrary to the MIP formulation, the integrality constraint on the slack variabl
 As a result, the problem can be solved with a linear or quadratic solver.
 
 The most important change is the reformulation of the feasibility problem into a cardinality minimization problem. The cardinality constraint of the MIP formulation is replaced by a $l1$-norm minimization (\ref{eq:mbc:sl1m:norm_l1}).
-Indeed, $l1$-norm minimization has long been used in optimization problem to induce sparsity (i.e. encourage the convergence of the slack variables to 0) \cite{boyd2004convex}. 
+Indeed, $l1$-norm minimization has long been used in optimization problems to induce sparsity (i.e. encourage the convergence of the slack variables to 0) \cite{boyd2004convex}. 
 In this formulation for contact planning, having an $\alpha_i^j$ with a 0 value means that the candidate surface $\mathcal{S}_i^j$ has been selected for the $i$-th footstep. 
 As a result, the $l1$-norm encourages the selection of surfaces for each step.
 In the next Section \ref{subsub:insight_l1}, we will provide further insight on the $l1$-norm to visually understand how it encourages this sparsity in the contact planning context.
@@ -743,7 +739,7 @@ They then test all the combinations for the remaining free variables until eithe
 % Now I focus on the first step, the relaxation of the integer variables.
 % I will show the gradient in function of surfaces + cost in function of foot position + relation between the different groups (phases)
 % Can we further improve it with LEAS?
-To better understand how the $l1$-norm encourages the surface selection, we propose several scenarios with a visual understanding of SL1M solutions.
+To better understand how the $l1$-norm encourages surface selection, we propose several scenarios with a visual understanding of SL1M solutions.
 
 \paragraph{Big-M method and $l1$-norm without constraints.}
 \begin{figure}[ht]
@@ -801,10 +797,10 @@ Results for different surfaces sample are shown in Figure \ref{fig:sl1m:no_const
 Black rectangles represent the terrain surfaces $\mathcal{S}^j$.
 We represent the $l1$-norm cost (\ref{eq:mbc:sl1m:no_constr_l1}) on a 2D map, where the gradient changes from bright to dark to represent higher and lower cost value respectively.
 In the top right figure, we highlight in pink the delimitation between the different gradient cost areas (i.e. where the gradient of the $l1$-norm changes in strength or direction).
-These delimitations show that there always exist a change of gradient on the edges of the surfaces, which already hints how the sparsity is encouraged in SL1M.
+These delimitations show that there always exists a change of gradient on the edges of the surfaces, which already hints at how sparsity is encouraged in SL1M.
 
 In the solution (\ref{eq:mbc:sl1m:no_constr_l1}), each $\alpha^j$ measure the distance between the point position p and the closest edge of surface $\mathcal{S}^j$.
-We now want to understand what are the consequence of such a formulation in the context of contact planning.
+We now want to understand what is the consequence of such a formulation in the context of contact planning.
 
 
 \paragraph{Scenario A.}
@@ -819,18 +815,18 @@ We do so to have a better visual understanding of SL1M relative to these simple 
 
 In both scenarios (Figures \ref{fig:sl1m:a11} and \ref{fig:sl1m:a12}), the robot from its initial right foot position p$_1$ (yellow dots) has to reach the surface $\mathcal{S}^4$ in two steps. 
 To do so, we arbitrarily assign to the step position p$_2$ the candidate surfaces of indices 2 and 3 (i.e. $\mathcal{S}^2$ and $\mathcal{S}^3$).
-We plot the $l1$-norm cost map for the first step only, as it is the only one given multiple surface candidates.
+We plot the $l1$-norm cost map for this step only, as it is the only one given multiple surface candidates.
 
 In scenario A.1 (Figure \ref{fig:sl1m:a11}), the feet positions p$_2$ and p$_3$ computed by SL1M relaxation both lies at the edges of their respective constraints. 
 This is expected as we are solving a linear problem using the simplex algorithm, which explores the edges of the feasibility constraints.
-Also, the first feet position p$_2$ is attracted by the $l1$-norm minimum area between the surface $\mathcal{S}^2$ and $\mathcal{S}^3$. 
+Also, the feet position p$_2$ is attracted by the $l1$-norm minimum area between the surface $\mathcal{S}^2$ and $\mathcal{S}^3$. 
 In this scenario, the problem is solved after the first relaxation as one surface has been selected for each step.
 
-In scenario A.2 (Figure \ref{fig:sl1m:a12}), the result shows that the first foot position p$_2$ still lies at the edge of the foot constraint, and is placed in the minimum $l1$-norm minimum area. 
+In scenario A.2 (Figure \ref{fig:sl1m:a12}), the result shows that the foot position p$_2$ still lies at the edge of the foot constraint, and is placed in the minimum $l1$-norm minimum area. 
 However, it does not lie on a surface ($\alpha_1^2 > 0$ and $\alpha_1^2 > 0$), and so our problem is not solved.
 As discussed in Section \ref{par:sl1m:solution_relaxed_heuristics}, we can use some heuristics to explore the combinatorics. 
-The heuristics previously presented generates 2 sub-problems as p$_1$ has 2 candidate surfaces.
-The first combination tested is $p_1 \in \mathcal{S}^2$, its closest surface.
+The heuristics previously presented generate 2 sub-problems as p$_2$ has 2 candidate surfaces.
+The first combination tested is $p_2 \in \mathcal{S}^2$, its closest surface.
 In this scenario, the heuristics is successful with the first combination (Figure \ref{fig:sl1m:a12:1}).
 
 \begin{figure}[ht]
@@ -904,7 +900,7 @@ In this scenario, the heuristics is successful with the first combination (Figur
     \caption{With heuristics.}
     \label{fig:sl1m:a12:1}
     \end{subfigure}
-    \caption{Scenario A.2: (a) the robot has to reach $\mathcal{S}^4$ in two steps, (b) SL1M does not solve the problem as p$_1$ does not lie on a surface, and (c) the heuristics succeeds the sub-problem with $\mathcal{S}^2$, nearest surface to p$_1$.}
+    \caption{Scenario A.2: (a) the robot has to reach $\mathcal{S}^4$ in two steps, (b) SL1M does not solve the problem as p$_1$ does not lie on a surface, and (c) the heuristics succeeds the sub-problem with $\mathcal{S}^2$, the nearest surface to p$_1$.}
     \label{fig:sl1m:a12}
 \end{figure}
 
@@ -927,7 +923,7 @@ As a consequence, they will be more attracted toward their minimal cost area tha
 In this scenario, SL1M selects some surfaces for $p_2 \in \mathcal{S}^2$, $p_3 \in \mathcal{S}^5$, and obviously $p_6 \in \mathcal{S}^{10}$ that is a hard constraint. 
 However, it does not solve the problem as $p_4$ and $p_5$ do not belong to any surface.
 As a consequence, the heuristics generates 36 sub-problems as $p_4$ and $p_5$ can potentially lie on 6 different surfaces each. 
-By testing all lowest cost combinations first, the heuristics succeeds in finding a solution after 5 explorations (Figure \ref{fig:sl1m:final:1}).
+By testing all lowest cost combinations first, the heuristics finds a feasible solution after 5 explorations (Figure \ref{fig:sl1m:final:1}).
 
 \begin{figure}[h!]
     \centering
@@ -992,24 +988,23 @@ We have seen that the $l1$-norm cost encourages the sparsity among the slack var
 %However, the formulation of the problem comes with limitations depending on the terrain geometry.
 
 SL1M outputs foot positions that are attracted toward their minimal cost area formed by their candidate surfaces.
-As the cost gradients generally operate at the edges of surfaces, the foot positions are encouraged to lie on it.
+As the cost gradients generally operate at the edges of surfaces, the foot positions are encouraged to lie on them.
 In synergy with the foot constraints as well as the cost balancing between each step, it permits to find a sufficient approximation in our test scenarios.
 
 However, we have also seen that SL1M rarely solves the problem directly. 
-It often requires the use of heuristics to explore the combinatorics for undecided steps, that can grow exponentially with the number of footsteps and surface candidates \cite{sl1m_v1}.
+It often requires the use of heuristics to explore the combinatorics for undecided steps, which can grow exponentially with the number of footsteps and surface candidates \cite{sl1m_v1}.
 
 Moreover, the heuristics presently used can lead to unfeasible problems. 
-Indeed, fixing selected surfaces in SL1M solution further constrains our set of possibilities. While lowering the combinatorics to explore, it can also lead to unfeasible sub-problems. As a consequence, we may lose the guarantee of completeness.
-At the moment, we do not have better heuristics or solution other than the branch-and-bound algorithm to fix this limitation.
+Indeed, fixing selected surfaces in the SL1M solution further constrains our set of possibilities. While lowering the combinatorics to explore, it can also lead to unfeasible sub-problems. As a consequence, we may lose the guarantee of completeness.
+At the moment, we do not have better heuristics or solutions other than the branch-and-bound algorithm to fix this limitation.
 
 Another important remark is that the constraints have been simplified in the previous examples.
 The full set of kinematic and dynamic constraints $\mathcal{F}$ (Appendix \ref{appendix:feasibility_constr}) further reduces the feasibility spaces, which irremediably makes the combinatorial exploration with the heuristics less likely to succeed.
-\textcolor{red}{Steve: ??? plus tu contrains, plus t'as de chance que ca converge.} \textcolor{blue}{Pas vraiment... Exemple sur un de mes scenarios avec les debris: (a) SL1M sans contrainte sur le COM = 19 succes sur 20 tests, et (b) avec contraintes 17/20.*
-Comme tu fixes des surfaces avec l'heuristics, t'as des chances qu'elle rende le probleme totalement infaisable. Si en plus tu mets encore plus de contraintes de faisabilité, tu vas encore plus echouer.
-C'est pour ça que je t'ai posé la question sur les slack à l'intérieur des contraintes de faisabilité. Je pensais qu'elles pouvaient potentiellement aider ce probleme?}
+%\textcolor{red}{Steve: ??? plus tu contrains, plus t'as de chance que ca converge.} \textcolor{blue}{Pas vraiment... Exemple sur un de mes scenarios avec les debris: (a) SL1M sans contrainte sur le COM = 19 succes sur 20 tests, et (b) avec contraintes 17/20.*
+%Comme tu fixes des surfaces avec l'heuristics, t'as des chances qu'elle rende le probleme totalement infaisable. Si en plus tu mets encore plus de contraintes de faisabilité, tu vas encore plus echouer. C'est pour ça que je t'ai posé la question sur les slack à l'intérieur des contraintes de faisabilité. Je pensais qu'elles pouvaient potentiellement aider ce probleme?}
 
 To fix these limitations, we explore a lead from the previous work \cite{sl1m_v2}, that is the impact of the guide path and its discretization on the SL1M problem.
-In their result, they notice that its tuning is critical to generate easier SL1M problem.
+In their result, they notice that its tuning is critical to generate easier SL1M problems.
 Indeed, as shown in the previous section on MIP, we need sufficiently small discretization steps $\Delta D$ for the problem to be feasible. 
 However, SL1M introduces a new dimension to the problem with its formulation, in regard to the $l1$-norm.
 We thus conduct several experiments to answer the following question: \textit{Can we generate guide paths further helping SL1M relaxation?}
@@ -1024,7 +1019,7 @@ We thus conduct several experiments to answer the following question: \textit{Ca
 %                               Effect of having more or less steps?
 %                               Adding some weights on the surfaces (This is more an experiment, use the map I did for that).
 
-We aim to increase the success rate of SL1M contact planner, with as few combinatorial exploration as possible using the heuristics.
+We aim to increase the success rate of SL1M contact planner, with as little combinatorial exploration as possible using the heuristics.
 This objective is also related to the work in the previous Section \ref{subsub:mip:implementation_details}. 
 Indeed, if a problem is not feasible by the MIP contact planner, then it is not feasible by SL1M, its relaxed form.
 To achieve this objective, we tested the exact same approaches we had with LEAS and the other contact planners.
@@ -1034,11 +1029,11 @@ To achieve this objective, we tested the exact same approaches we had with LEAS 
 First, we trained LEAS to follow a desired velocity $v_{desired}=0.10$ m/s. 
 Then, we aimed for an average discretization step $\Delta D=20$ cm along the guide given to SL1M, value for which MIP contact planning is nearly always feasible (See Section \ref{subsub:mip:results}).
 LEAS-P2 was trained for two modes, with and without feedback from SL1M. Just as with the MIP contact planner, we perform a dichotomic search of the last successful step along the guide, feedbacked during the training.
-However, this experiments was not successful as both RL policies did not converge.
-In our training area, the policy was making the robot idle on ground floor to accumulate positive rewards, without crossing any transition tile. 
+However, this experiment was not successful as both RL policies did not converge.
+In our training area, the policy was making the robot idle on flat ground to accumulate positive rewards, without crossing any transition tile. 
 Indeed, the policy deemed the transition tiles (rubbles, stairs, bridge) too difficult to be crossed with the contact planner SL1M for both modes.
-As a result it prefered, staying idle on flat ground with only one candidate surface on it per step, the flat ground surface under the robot.
-This strategy thus avoids the difficulty of SL1M contact planning and does not permit to achieve our navigation task.
+As a result, it preferred staying idle on flat ground with only one candidate surface on it per step, the flat ground surface under the robot.
+This strategy thus avoids the difficulty of SL1M contact planning and does not permit us to achieve our navigation task.
 
 
 \paragraph{Sanity check with a sparse reward.}
@@ -1061,15 +1056,15 @@ That is why in this simple scenario, we performed it without its heuristics to a
 As LEAS-P2 rarely reaches the objectives with the following reward, the network was pretrained using trajectories generated by LEAS-P1 to guide its exploration.
 We increased the discount factor $\gamma$ from $0.97$ to $0.995$ to encourage LEAS-P2 in reaching the objective with SL1M in the least feasible number of steps, without modifying the sparse reward.
 
-After training, we observed some improvements in SL1M success rate, but with an unexpected behaviour.
+After training, we observed some improvements in SL1M success rate, but with unexpected behavior.
 LEAS-P2 was making the robot sidewalk at the maximum feasible discretization step (when sidewalking) up to the objective.
-This result correlates with our previous experiment on the sampling based contact planner (Chapter \ref{sec:CP-SB}), where sidewalking is a prefered walking strategy in regard to the robot equilibrium constraints.
+This result correlates with our previous experiment on the sampling-based contact planner (Chapter \ref{sec:CP-SB}), where sidewalking is a preferred walking strategy in regard to the robot equilibrium constraints.
 
 To avoid sidewalking behavior, we thus forced the robot orientation toward the goal.
-After training, the average episode return was lower than without this orientation enforcing.
-The resulting policy moved the robot to reach the target in the least step as possible.
-This strategy makes sense as by reducing the size of the problem, we possibly reduce the number of footsteps not lieing on a surface.
-However, it was not the results we expected, and we did not see any other meaningfull behavior.
+After training, the success rate was lower than without the orientation enforcement.
+The policy learned that the best strategy was to reach the target in the least number of steps possible.
+This strategy makes sense as by reducing the size of the problem, we possibly reduce the number of footsteps not lying on a surface.
+However, it was not the results we expected, and we did not see any other meaningful behavior.
 
 \paragraph{Conclusion and Prospective}
 
@@ -1079,9 +1074,9 @@ The guide path does impact the problem to solve, but its control over it is limi
 
 LEAS can not accurately select the candidate surfaces for each step. However, those are at the core of SL1M formulation (Section \ref{subsub:insight_l1}). 
 Indeed, each problem is characterized by the number of steps, as well as the number and geometry of candidate surfaces for each step.
-In addition to optimizing the discretization step along the guide for a solution to exist, SL1M solution is also much more dependent on the past trajectory compared to the MIP contact planner.
+In addition to optimizing the discretization step along the guide for a solution to exist, the SL1M solution is also much more dependent on the past trajectory compared to the MIP contact planner.
 
-As previously discussed, LEAS is not aware of the past trajectory and candidates surfaces when controlling the robot root. 
+As previously discussed, LEAS is not aware of the past trajectory and candidate surfaces when controlling the robot root. 
 In its actual state, LEAS can generate feasible problems. However, it can not further help SL1M formulation.
 An approach could be to investigate the use of recurrent neural networks in LEAS to permit an internal representation of this past trajectory.
 
@@ -1091,5 +1086,5 @@ An idea could be to add weights to the slack variables in function of the surfac
 This way, the $l1$-norm minimal area would be more attracted toward these surfaces. 
 However, it is difficult problem to decide how to assign these weights, and machine learning could be useful for it.
 
-In a future work, further exploring how to improve this formulation is an exciting direction. 
+In future work, further exploring how to improve this formulation is an exciting direction. 
 Finally, this also encompasses a broader range of applications not specific to contact planning which all aim to solve more efficiently Mixed-Integer Programming problems.
