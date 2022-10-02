@@ -716,11 +716,11 @@ In this formulation for contact planning, having an $\alpha_i^j$ with a 0 value 
 As a result, the $l1$-norm encourages the selection of surfaces for each step.
 In the next Section \ref{subsub:insight_l1}, we will provide further insight on the $l1$-norm to visually understand how it encourages this sparsity in the contact planning context.
 
-However, this formulation also implies that for each step $i$, all surfaces in $\mathcal{S}_i$ must be disjoint:
-\begin{equation}
-    \forall i \in \{1,...,n\},\; \cap^m_{j=1} \mathcal{S}^j_i = 0
-\end{equation}
-In other words, it is impossible for a footstep to lie on two surfaces at the same time. This condition is required, otherwise the foot position $\mbox{p}_i$ will automatically lie at the intersection between these surfaces to miminize the $l1$-norm.
+%However, this formulation also implies that for each step $i$, all surfaces in $\mathcal{S}_i$ must be disjoint:
+%\begin{equation}
+%    \forall i \in \{1,...,n\},\; \cap^m_{j=1} \mathcal{S}^j_i = 0
+%\end{equation}
+%In other words, it is impossible for a footstep to lie on two surfaces at the same time. This condition is required, otherwise the foot position $\mbox{p}_i$ will automatically lie at the intersection between these surfaces to miminize the $l1$-norm.
 
 
 \paragraph{Solution to the relaxed problem.\label{par:sl1m:solution_relaxed_heuristics}}
