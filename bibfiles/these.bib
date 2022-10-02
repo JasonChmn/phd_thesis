@@ -494,14 +494,6 @@ journal={IEEE Transactions on Robotics 2020}
 }
 
 
-
-%@article{kajita2001LIP,
-%  author={Kajita, S. and Kanehiro, F. and Kaneko, K. and Yokoi, K. and Hirukawa, H.},
-%  booktitle={IEEE-RSJ International Conference on Intelligent Robots and Systems 2001}, 
-%  title={The 3D linear inverted pendulum mode: a simple modeling for a biped walking pattern generation}, 
-%  year={2001}
-%}
-
 @article{kajita2002LIP2,  
     author={Kajita, S. and Kanehiro, F. and Kaneko, K. and Fujiwara, K. and Yokoi, K. and Hirukawa, H.},  
     journal={IEEE ICRA},   
@@ -543,10 +535,11 @@ journal={IEEE Transactions on Robotics 2020}
   journal   = {CoRR 2020}
 }
 
-@book{Chevallereau_book,
-  author    = {Westervelt, E.R., Grizzle, J.W., Chevallereau, C., Choi, J.H., and Morris, B.},
+@BOOK{chevallereau_book,
+  author    = {Westervelt, E.R. and Grizzle, J.W., and Chevallereau, C. and Choi, J.H. and Morris, B.},
   title     = {Feedback Control of Dynamic Bipedal Robot Locomotion},
-  date      = {2007}
+  date      = {2007},
+  publisher = {Taylor & Francis/CRC}
 }
 
 @article{grizzle_chevallereau_2010,
@@ -561,7 +554,7 @@ journal = {IFAC Symposium on Nonlinear Control Systems 2010}
     journal = {I. J. Humanoid Robotics 2004}
 }
 
-@Inbook{Wieber2016,
+@BOOK{Wieber2016,
 	author="Wieber, Pierre-Brice
 	and Tedrake, Russ
 	and Kuindersma, Scott",
@@ -569,10 +562,7 @@ journal = {IFAC Symposium on Nonlinear Control Systems 2010}
 	and Khatib, Oussama",
 	title="Modeling and Control of Legged Robots",
 	bookTitle="Springer Handbook of Robotics",
-	year="2016",
-	publisher="Springer International Publishing",
-	pages="1203--1234",
-	abstract="The promise of legged robots over wheeled robots is to provide improved mobility over rough terrain. Unfortunately, this promise comes at the cost of a significant increase in complexity. We now have a good understanding of how to make legged robots walk and run dynamically, but further research is still necessary to make them walk and run efficiently in terms of energy, speed, reactivity, versatility, and robustness. In this chapter, we will discuss how legged robots are usually modeled, how their stability analysis is approached, how dynamic motions are generated and controlled, and finally summarize the current trends in trying to improve their performance. The main problem is avoiding to fall. This can prove difficult since legged robots have to rely entirely on available contact forces to do so. The temporality of leg motions appears to be a key aspect in this respect, as current control solutions include continuous anticipation of future motion (using some form of model predictive control), or focusing more specifically on limit cycles and orbital stability."
+	year="2016"
 }
 
 @phdthesis{carpentier_thesis_2017,
@@ -583,7 +573,9 @@ journal = {IFAC Symposium on Nonlinear Control Systems 2010}
 }
 
 @ARTICLE{Chevallereau_2008_zmp,  
-    author={Chevallereau, Christine and Djoudi, Dalila and Grizzle, Jessy W.},  journal={IEEE Transactions on Robotics 2008},   
+    author={Chevallereau, Christine and Djoudi, Dalila and Grizzle, Jessy W.},  
+    journal={IEEE Transactions on Robotics},
+    year={2008},
     title={Stable Bipedal Walking With Foot Rotation Through Direct Regulation of the Zero Moment Point}
 }
 
@@ -593,8 +585,8 @@ journal = {IFAC Symposium on Nonlinear Control Systems 2010}
     title={Adaptive gait pattern control of a quadruped locomotion robot}
 }
 
-@book{kajita_intro_humanoid_robotics,
-    author = {Shuuji Kajita, Hirohisa Hirukawa, Kensuke Harada, Kazuhito Yokoi},
+@BOOK{kajita_intro_humanoid_robotics,
+    author = {Shuuji Kajita and Hirohisa Hirukawa and Kensuke Harada and Kazuhito Yokoi},
     title = {Introduction to Humanoid Robotics},
     date = {2014}
 }
@@ -1425,7 +1417,7 @@ journal = {ACM Trans. Graph. 2009}
   author = {Erwin Coumans and Yunfei Bai},
   title = {PyBullet, a Python module for physics simulation for games, robotics and machine learning},
   howpublished = {\url{http://pybullet.org}},
-  year = {2016--2019}
+  year = {2016}
 }
 
 @article{HPP,
@@ -2090,12 +2082,16 @@ journal = {ACM Trans. Graph. 2009}
     journal = {Motion, Interaction and Games}
 }
 
-@article{learn_to_steer_rl_2018,
-    author = {Wu K, Esfahani MA, Yuan S, Wang H.},
-    title = {Learn to Steer through Deep Reinforcement Learning},
-    year = {2018},
-    journal = {Sensors}
+
+@Article{learn_steer_2018,
+  AUTHOR = {Wu, Keyu and Abolfazli Esfahani, Mahdi and Yuan, Shenghai and Wang, Han},
+  TITLE = {Learn to Steer through Deep Reinforcement Learning},
+  JOURNAL = {Sensors},
+  YEAR = {2018}
 }
+
+
+
 
 @article{prm_rl_2019,
     author = {Francis, Anthony and Faust, Aleksandra and Chiang, Hao-Tien Lewis and Hsu, Jasmine and Kew, J. and Fiser, Marek and Lee, Tsang-Wei},
