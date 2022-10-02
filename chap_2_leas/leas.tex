@@ -1,6 +1,5 @@
 
 
-
 \chapter{Guide path: LEAS}
 \label{sec:LEAS}
 \minitoc
@@ -141,8 +140,25 @@ A SM learned by reinforcement could learn how to navigate locally with a vision 
 In this chapter, we first train a pure steering method and provide the results. 
 In the next chapters, we plug a contact planner to validate the trajectories during the learning, then we observe what behaviour changes on the SM to increase its success rate.
 
+
 \subsection{Reinforcement Learning: Overview}
-\textcolor{red}{\textbf{TO DO}: Do a small paragraph about what is RL in short, how it works but above all what it can do. SEE WHERE TO PLACE THIS SECTION.}
+
+Reinforcement Learning can be defined as an agent interacting with an environment according to a policy $\pi$. 
+The interaction sequence can be modeled as a Markov Decision Process (MDP) that is a tuple ($S$,$A$,$P$,$R$,$\mu$,$\gamma$), where:
+\begin{itemize}
+    \item $S$ is the state space of the environment.
+    \item $A$ the set of discrete or continuous actions available.
+    \item $P: S \times A \rightarrow \Delta S$ is the transition function of the MDP dynamics.
+    \item $R: S \times A \rightarrow \mathbb{R}$ is the reward function defining the desired agent behavior.
+    \item $\mu$ is the initial state distribution.
+    \item $\gamma \in [0,1]$ a discount factor.
+\end{itemize}
+
+The agent starts an episode in an initial state $s_0$ sampled according to $\mu$.
+Depending on the agent state $s_t \in S$, the objective of the policy $\pi$ is to make the agent perform an action $a=\pi(s)$ in its environment, while maximizing its future cumulative rewards $J(\pi) = \mathbb{E}[\sum_{k=t}^{\infty} \gamma^k r_{t+k} | \pi]$.
+We denote the optimal policy $\pi^* = \underset{\pi}{\mbox{arg max}} \; J(\pi)$.
+
+In this work, we will use a partially observable MDP as our steering method is only local and can not observe to the entire state space.
 
 
 \section{LEAS: a RL Steering Method\label{subsec:leas-RL}}
@@ -179,11 +195,16 @@ Following this design, we desire LEAS to have the following list of behaviours:
 \label{list:leas:specifications}
 \end{enumerate}
 
-The design of an RL agent requires four main components: the \textit{state} that represents what the agent sees from the environment, the \textit{actions} the agent performs according to its actual state, the \textit{reward} that evaluates how well the agent acts to achieve the desired behaviour, and finally the \textit{done} condition that checks if an episode is over.
+The design of an RL agent for our navigation task requires four main components: 
+the agent \textit{state} that represents what the agent sees from the environment, the \textit{actions} the agent performs according to its actual state, the \textit{reward} that evaluates how well the agent acts to achieve the desired behaviour, and finally the \textit{done} condition that checks if an episode is over.
 
 In our work, the \textit{done} condition is straightforward as it verifies the collision and reachability constraints. If the actual configuration of the robot cannot reach the ground or is in collision with the environment, the episode is over. 
 As a result in order to maximize the future cumulative rewards, the agent learns by reinforcement how to avoid such cases and to fulfill the behaviour (B). 
 We can add two optional conditions depending on the scenario played to stop the episode: when reaching a maximum number of steps, or when being close enough to an objective.
+
+
+
+
 
 \subsection{States\label{subsubsec:states}}
 
@@ -521,9 +542,9 @@ We reduce our choices to two State-of-the-Art RL algorithms that are PPO \cite{P
 Off-policy algorithms (TD3, SAC \cite{SAC} ...) are known to be more sample efficient but can lack stability compare to on-policy RL algorithms.
 % What do we pick in the end ?
 % Note: TD3 is hard to tune, it did not converge after 3M steps, when PPO already converged.}
-That is why most of the recent works in RL uses PPO \ref{Survey_RL_char_anim}, that can be easier to tune and more stable during the learning, even for tasks that require data-efficiency as \cite{openai2019dota}.
-The learning of LEAS without a contact planner, which is a pure navigation task can be learned efficiently with PPO as in \cite{compare_PPO_TD3_SAC_DDPG} for a boat navigation task.
-The training of our first version of LEAS \cite{LEAS} with PPO was slow, order of hours without a contact planner and tens of hours with our sample-based contact planner due to its poor sample efficiency, thus making off-policy RL algorithms a better choice.
+That is why most of the recent works in RL often use PPO \ref{survey_rl_animation_pettre_2022}, that can be easier to tune and more stable during the learning, even for tasks that require data-efficiency as \cite{openai2019dota}.
+%The learning of LEAS without a contact planner, which is a pure navigation task can be learned efficiently with PPO as in \cite{compare_PPO_TD3_SAC_DDPG} for a boat navigation task.
+In our first version of LEAS \cite{LEAS}, the training with PPO was slow due to its poor sample efficiency (order of hours without contact planner and tens of hours with our sample-based contact planner). %At that time, using off-policy RL algorithms was a more pertinent choice.
 However, this issue was fixed with the optimizations and approximations discussed in the previous sections making both off and on-policy pertinent choices.
 We tested both TD3 and PPO for our navigation task and we observed with TD3 a slower and less stable convergence than PPO, with the default hyperparameters as defined in Stable Baseline or with manual tuning.
 As a result, we decided to use PPO to learn LEAS.
