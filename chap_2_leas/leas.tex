@@ -5,7 +5,7 @@
 \minitoc
 \bigskip
 
-\textcolor{red}{A revoir apres l'ecriture de la SOTA etc}
+%\textcolor{red}{A revoir apres l'ecriture de la SOTA etc}
 In this chapter, we present our method to Learn To Steer a locomotion contact planner \qq{LEAS}, the core module of this thesis. 
 Our steering method answers the question: \textit{How to locally navigate complex and unknown terrains subject to validity and collision constraints?}
 % Input / Output
@@ -24,7 +24,7 @@ Finally, we discuss the advantages, limitations, and potential improvements of o
 \section{Motivation\label{subsec:leas-motivation}}
 \subsection{Context\label{subsubsec:context}}
 
-\begin{figure}
+\begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{Figures/Chapter_LEAS/pipeline.png}
     \caption{Pipeline of the Loco3D project addressing the locomotion with a multi-stage approach.}
@@ -38,7 +38,7 @@ As discussed in the previous chapter, most of the recent locomotion planners are
 The general organization is shown in Figure \ref{fig:pipeline}.
 
 % All pipeline
-A first stage generates a \textit{guide path} (P1), i.e. a trajectory in translation and rotation that we would like to follow (roughly ou exactly) with the main robot body, referred to as the \textit{root} (i.e. the basis of the torso for Talos). In the second stage, a contact planner (P2) computes the contacts along the guide path. In the last stage, a whole-body controller (P3) computes the control sent to the robot to perform these contacts.
+A first stage generates a \textit{guide path} (P1), i.e. a trajectory in translation and rotation that we would like to follow with the main robot body, referred to as the \textit{root} (i.e. the basis of the torso for Talos). In the second stage, a contact planner (P2) computes the contacts along the guide path. In the last stage, a whole-body controller (P3) computes the control sent to the robot to perform these contacts.
 
 % What we opt for: motion-before-contact
 The decoupling of $P1$ and $P2$ has proven successful in \cite{Escande2008Guide, bouyarmane2009} and later on in \cite{loco3d, RB-PRM}, where each sub-task can be solved independently from each other, thus reducing the complexity of the problem and allowing us to experiment and compare different module implementations. 
@@ -220,7 +220,7 @@ The robot configuration can be seen in figure \ref{fig:LEAS_states} from which w
 
 The observable state is a set: 
 \begin{equation}
-S=\{v_{o}, o_{target}, h_{o}\}
+s=\{v_{o}, o_{target}, h_{o}\}
 \end{equation}
 with $v_{0}$ the velocity of the robot relative to its orientation, $o_{target}$ the angle between its actual and desired orientations, and $h_{o}$ a local height map of the terrain relative to its $z$ root position.
 
@@ -277,7 +277,7 @@ At each step, the RL agent takes action in the environment based on the observed
 
 Our policy returns a set of actions: 
 \begin{equation}
-A = \{ a_x, a_y, a_z, \omega \}
+a = \{ a_x, a_y, a_z, \omega \}
 \end{equation}
 with $a_x, a_y, a_z$ the accelerations of the robot on each axis, and $\omega$ the angular velocity of the robot on the yaw axis. At each step $i$, the robot position q$_{pos}$, velocity q$_{vel}$ and orientation q$_{ori}$ are modified in the following order:
 \begin{equation}
@@ -725,7 +725,7 @@ RB-Kino \cite{kinodynamic_sm_2017} and RB-Lin \cite{AcyclicCP} are two steering 
 RB-Kino uses the Double Integrator Minimum Time \cite{DIMT} to also add a constraint on the acceleration.
 % LEAS
 LEAS does not exactly connect the initial and goal configurations as it is trained to follow a given goal direction, and as a result, LEAS can at best end up near the goal position.
-The capability to connect exactly two configurations is needed in robotics for hand manipulation \textcolor{red}{Cite papers where they need exact connection with DIMT}. However, in locomotion, this accuracy is not required in most scenarios.
+The capability to connect exactly two configurations is needed in robotics for hand manipulation. However, in locomotion, this accuracy is not required in most scenarios.
 This is especially true on long paths with key waypoints to sequentially reach up to a distant objective, where passing close enough to each waypoint is sufficient.
 As LEAS uses a target direction instead of a target configuration, this also allows controlling LEAS using a remote controller, which is equivalent to a very distant target that the agent tries to reach. We simulate this kind of control for the training of LEAS by randomly repositioning its goal.
 

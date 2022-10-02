@@ -15,8 +15,8 @@
 In this chapter, we will use two contact planners formulated with a Mixed-Integer Programming (MIP) approach.
 %we plug our steering method LEAS into two contact planners with a Mixed-Integer Programming (MIP) approach.
 
-\textcolor{red}{Steve: il manquait une intro et dire pourquoi on utilise ces contact planners.}
-\textcolor{blue}{J'ai ajouté la phrase d'en dessous, qui mérite surement d'être revue.}
+%\textcolor{red}{Steve: il manquait une intro et dire pourquoi on utilise ces contact planners.}
+%\textcolor{blue}{J'ai ajouté la phrase d'en dessous, qui mérite surement d'être revue.}
 
 The sampling contact planner presented in previous section relies on heuristics to search for contacts in the robot environment.
 While it can efficiently solve the contact planning problem, its sampling approach can not guarantee its completeness.
@@ -277,7 +277,7 @@ In the previous work \cite{sl1m_v2}, the average value $\Delta\overline{D}$ is m
 But as stated in their discussion, if this value is too large (i.e. a small number of footsteps $n$), the problem can become unfeasible. Conversely, a too small value can lead to redundant footsteps and increase the problem dimension.
 Trivially, we can expect the contact planning to succeed on flat ground for the Talos robot with a $\Delta\overline{D} \approx 25$ cm, that is the near maximum step length of the robot. However, lowering it when crossing more complex terrains is required to ensure planning feasibility.
 
-That is why it is desirable to automatically tune $\Delta D_i$ along the guide depending on the terrain traversed.
+That is why it is desirable to automatically tune $\Delta D_i$ along the guide depending on the terrain traversed, as previously discussed in Chapter \ref{sec:CP-SB}.
 Implementing some heuristics to solve this problem can be difficult. Indeed, they have to evaluate the terrain traversability and estimate the next suitable discretization step.
 We thus give the following question: \textit{what is the maximum discretization step feasible by the contact planner for a given terrain?}
 Answering this question could reduce the number of steps in the MIP problem, thus lowering its complexity, while ensuring its feasibility.
@@ -314,7 +314,7 @@ We obtain candidate surfaces $S_i$ from the local height map $H_i$ around the ro
 We choose this method as we can easily get such an height map with our implementation, but any other method to obtain candidate surfaces around the robot could be applied.
 
 The small size of the height map (80x80 cm) may lower the number of candidate surfaces and so the feasibility of the problem. 
-\stn{why} \textcolor{blue}{J'ai ajouté que ça réduisait le nombre de candidat, il en faut plus ou pas?}
+%\stn{why} \textcolor{blue}{J'ai ajouté que ça réduisait le nombre de candidat, il en faut plus ou pas?}
 However, it also constrains the footstep placements in the guide vicinity, as well as lowering the problem complexity by reducing the number of candidate surfaces.
 We will further discuss this implementation choice and its alternatives in Section \ref{subsub:mip:discussion:candidate_surfaces}.
 
@@ -581,7 +581,7 @@ The main limitation of their approach was the required fine-tuning of the guide 
 To solve this limitation, we presented a solution using our steering method LEAS to automatically generate a guide path with a suitable discretization step along it, depending on the terrain difficulty.
 As a result, it can generate feasible problems for the MIP contact planner while reducing the number of steps, hence the overall contact planning time.
 
-\textcolor{blue}{En vrai tous les scenarios que j'ai presente sont faisable avec une discretisation moyenne de 20-22cm, pour des temps de calcul similaire. Comment je peux tourner ca en quelque chose de plus positifs? On me posera forcement des questions dessus.}
+%\textcolor{blue}{En vrai tous les scenarios que j'ai presente sont faisable avec une discretisation moyenne de 20-22cm, pour des temps de calcul similaire. Comment je peux tourner ca en quelque chose de plus positifs? On me posera forcement des questions dessus.}
 
 
 \paragraph{Traversability estimation.}
@@ -655,8 +655,8 @@ An interesting problem thus naturally arises: \textit{Can we reformulate the pro
 %However, it may not be the same when adding a quadratic cost $l(\mbox{P},\mbox{R})$ to the problem. 
 %Further exploring other methods, more specifically with machine learning, to accelerate the solving of these problems is an exciting direction \cite{deepmind_RL_MIP}.
 
-\textcolor{red}{Steve: La transition ici marche pas, il faut parler de l'exploration des noeuds. Et ensuite dire on pense que du coup, on peut se passer du framewok MIP qui est lourd et ptet formuler juste un LP si on arrive a virer la combi, et la transitioner sur SL1M.}
-\textcolor{blue}{Fixed. J'ai essaye d'introduire au mieux SL1M dans le section d'apres, ca suffit?}
+%\textcolor{red}{Steve: La transition ici marche pas, il faut parler de l'exploration des noeuds. Et ensuite dire on pense que du coup, on peut se passer du framewok MIP qui est lourd et ptet formuler juste un LP si on arrive a virer la combi, et la transitioner sur SL1M.}
+%\textcolor{blue}{Fixed. J'ai essaye d'introduire au mieux SL1M dans le section d'apres, ca suffit?}
 
 % =================================================
 
@@ -732,7 +732,8 @@ However, it requires the use of a heavy MIP solver.
 
 Another approach is to explore the combinatorics with heuristics.
 In \cite{sl1m_v2}, Song et al. fix all the slack variables $\alpha_i$ for which the cardinality constraint is satisfied (i.e. $\alpha_i=0$). 
-They then test all the combinations for the remaining free variables until either i) a solution is found, ii) a maximum number of trials is reached, or iii) all possibilities are exhausted. \stn{je comprends pas ça} \textcolor{blue}{Fixed. Est-ce que j'ai le droit de copier la strategie du papier sl1m mot à mot?}
+They then test all the combinations for the remaining free variables until either i) a solution is found, ii) a maximum number of trials is reached, or iii) all possibilities are exhausted. 
+%\stn{je comprends pas ça} \textcolor{blue}{Fixed. Est-ce que j'ai le droit de copier la strategie du papier sl1m mot à mot?}
 
 \subsection{Insight on the Relaxation}
 \label{subsub:insight_l1}
@@ -1070,7 +1071,7 @@ However, it was not the results we expected, and we did not see any other meanin
 
 Our experiments on SL1M with LEAS were not successful.
 The guide path does impact the problem to solve, but its control over it is limited.
-\textcolor{blue}{Montrer rubbles MIP vs SL1M without heuristics vs SL1M with heuristics}
+%\textcolor{blue}{Montrer rubbles MIP vs SL1M without heuristics vs SL1M with heuristics}
 
 LEAS can not accurately select the candidate surfaces for each step. However, those are at the core of SL1M formulation (Section \ref{subsub:insight_l1}). 
 Indeed, each problem is characterized by the number of steps, as well as the number and geometry of candidate surfaces for each step.
