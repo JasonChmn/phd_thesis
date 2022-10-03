@@ -1059,9 +1059,9 @@ We increased the discount factor $\gamma$ from $0.97$ to $0.995$ to encourage LE
 
 After training, we observed some improvements in SL1M success rate, but with unexpected behavior.
 LEAS-P2 was making the robot sidewalk at the maximum feasible discretization step (when sidewalking) up to the objective.
-This result correlates with our previous experiment on the sampling-based contact planner (Chapter \ref{sec:CP-SB}), where sidewalking is a preferred walking strategy in regard to the robot equilibrium constraints.
+This result is similar to our previous experiment on the sampling-based contact planner (Chapter \ref{sec:CP-SB}), where sidewalking is a preferred walking strategy in regard to the robot equilibrium constraints, plus in this case the overall SL1M formulation complexity.
 
-To avoid sidewalking behavior, we thus forced the robot orientation toward the goal.
+To avoid undesirable sidewalking behavior, we forced the robot orientation toward the goal.
 After training, the success rate was lower than without the orientation enforcement.
 The policy learned that the best strategy was to reach the target in the least number of steps possible.
 This strategy makes sense as by reducing the size of the problem, we possibly reduce the number of footsteps not lying on a surface.
@@ -1076,16 +1076,15 @@ The guide path does impact the problem to solve, but its control over it is limi
 LEAS can not accurately select the candidate surfaces for each step. However, those are at the core of SL1M formulation (Section \ref{subsub:insight_l1}). 
 Indeed, each problem is characterized by the number of steps, as well as the number and geometry of candidate surfaces for each step.
 In addition to optimizing the discretization step along the guide for a solution to exist, the SL1M solution is also much more dependent on the past trajectory compared to the MIP contact planner.
-
 As previously discussed, LEAS is not aware of the past trajectory and candidate surfaces when controlling the robot root. 
-In its actual state, LEAS can generate feasible problems. However, it can not further help SL1M formulation.
+In its actual state, LEAS can generate potentially feasible problems, however, it can not further help SL1M formulation.
 An approach could be to investigate the use of recurrent neural networks in LEAS to permit an internal representation of this past trajectory.
 
 However, we believe that helping to solve SL1M with the guide path may not be the right approach to the problem.
 Indeed, we may have to investigate the formulation itself.
 An idea could be to add weights to the slack variables in function of the surface probability to be stepped on.
 This way, the $l1$-norm minimal area would be more attracted toward these surfaces. 
-However, it is difficult problem to decide how to assign these weights, and machine learning could be useful for it.
+However, it is difficult problem to decide how to assign these weights, and machine learning could be useful for this task.
 
 In future work, further exploring how to improve this formulation is an exciting direction. 
 Finally, this also encompasses a broader range of applications not specific to contact planning which all aim to solve more efficiently Mixed-Integer Programming problems.
