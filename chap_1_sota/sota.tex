@@ -614,9 +614,9 @@ Long-horizon planning solves a global planning problem up to a distant target. T
 Planning only a few steps ahead requires the careful guidance of the robot to avoid falling into local minima.
 On the other hand, planning several steps is subject to combinatorics, making the problem exponentially expensive to compute.
 
-Inspired by some previous works on character animation \cite{thesis_kuffner_1999, pettre_2_stages_2003}, the motion-before-contact strategy alleviates these limitations by adding a higher-level planning layer, thus further dividing the contact planning problem into two modules:
+Inspired by some previous works on character animation \cite{thesis_kuffner_1999, pettre_2_stages_2003}, the motion-before-contact strategy alleviates these limitations by adding a higher-level planning layer, thus further dividing the contact planning problem into two modules (See (1) and (2) in Figure \ref{fig:cp_mbc}):
 \begin{enumerate}
-    \item A guide path planner, to generate a rough trajectory the robot has to follow to go through the environment (e.g. a robot base collision-free trajectory, see Figure \ref{fig:cp_mbc}).
+    \item A guide path planner, to generate a rough trajectory the robot has to follow to go through the environment (e.g. a robot base collision-free trajectory).
     \item A contact planner, to compute the contacts along this trajectory.
 \end{enumerate}
 Previously presented contact planners can thus be adapted to use a guide path to constrain the search for feasible contacts in the environment, and to obtain additional information about the path to traverse.
@@ -678,11 +678,14 @@ The motion-before-contact strategy is promising toward faster contact planning f
 A prior guide path can be used in different ways by contact planners. 
 Some works use it to accelerate the search for footsteps around the guide path, while others use it to get information about the traversed terrain to also solve the multi-modal planning problem.
 
-However, this approach also comes with a critical limitation that is the non-guarantee of the path feasibility by the contact planner.
-That is why, works with this approach typically use heuristics to approximate the feasibility of the contact planner and to plan guide paths alleviating this limitation.
-These methods will be further covered in the next section on legged navigation.
-% I WILL TALK ABOUT IT IN THE NEXT SECTION
-%However, their approach remains expensive to compute and the development of some general enough and efficient heuristics remains complex.
+%However, the benefits of this approach also comes at the cost of the non-guarantee of the path feasibility by the contact planner.
+%That is why, previous works typically use heuristics to approximate the feasibility of the contact planner considered during guide path planning.
+%These methods will be further covered in the next section on legged navigation.
+
+% Modif par nicolas
+The key aspect of motion-before-contact is the question of feasibility. If the feasibility is properly captured, then we can hope to quickly plan good guide paths before selecting contacts. Otherwise, the trade-off between planning infeasible paths or missing valid sequences will certainly lead to an over-conservative planner, with strong practical limitations.
+
+So far, properly describing the feasibility with generic models has been the main bottleneck to these approaches, as we will see in Section \ref{subsub:nav:legged}.
 
 
 \subsection{Conclusion}
@@ -710,8 +713,8 @@ This task relies on specific model reduction, to ensure footsteps feasibility, t
 In this section, we categorized contact planners into two categories.
 The \textit{contact-before-motion} approach can lead to local minima on short horizon planning, and become computationally intractable on a long horizon.
 That is why our research will focus on \textit{motion-before-contact}, that is promising to alleviate these limitations.
-However, it raises the problem of the non-guaranteed feasibility of the guide path with a given contact planner.
-The motion-before-contact approach in turn implies guide planning, separately handled as a legged navigation task.
+However, it raises the problem of the non-guaranteed feasibility of the guide path by a given contact planner.
+The motion-before-contact approach in turn implies guide planning, that can be separately handled as a legged navigation task.
 
 
 %About these walking strategies, an interrogation we would like to raise and that has not been totally answered is: \textit{Is there a real benefits for longer horizon over short horizon contact planning in most scenarios ?}
@@ -754,25 +757,28 @@ The motion-before-contact approach in turn implies guide planning, separately ha
     %\caption{Patel et al. \cite{patel_dwa_rl_2021}}
     %\label{fig:nav_ex_1}
     %end{subfigure}
-    \caption{Navigation task at two different scales. Sources: (a) Tonneau et al. \cite{sl1m_v1}, (b) simulation on HPP \cite{HPP} with Tonneau et al. \cite{sl1m_v1}.}
+    \caption{Navigation task at two different scales. Sources: (a) Tonneau et al. \cite{sl1m_v1}, and (b) a simulation in HPP \cite{HPP}.}
 \end{figure}
 
 
-Navigation focuses on planning and following a conflict-free path from some initial to goal positions, where conflict-free refers to the satisfaction of validity criteria (e.g. collision-free).
-
-This challenging task has been extensively studied in the context of legged character or other autonomous vehicle navigation.
-The environments they move in are often partially known or dynamic, thus requiring fast planning while satisfying optimality criteria.
+Navigation can be formulated as the problem of planning and following a conflict-free path from some initial to goal positions, where conflict-free refers to the satisfaction of validity criteria (e.g. collision-free).
+This challenging task has been extensively studied in the context of legged system or various autonomous vehicle navigation.
+In particular, the environments they move in are often partially known or dynamic, thus requiring fast planning while satisfying optimality criteria.
 
 To solve this problem, the navigation task can be performed with different architectures operating at different scales \cite{review_autonomous_2011}. 
-Recent state-of-the-art implementations for crowd simulation \cite{vantoll_microscopic_crowd_2021} or autonomous vehicles, like the ROS navigation stack for 2D navigation \cite{ROS_software}, employ an architecture composed of two modules:
+Recent state-of-the-art implementations for autonomous vehicles, like the ROS navigation stack for 2D navigation \cite{ROS_software}, or for crowd simulation \cite{vantoll_microscopic_crowd_2021} employ an architecture composed of two modules:
 \begin{itemize}
     \item Global planner, that plans a rough feasible path through the environment to a goal (Figure \ref{fig:nav_ex_0}). This is usually performed by \textit{path planning} algorithms that search for sub-goals to reach sequentially with a local planner.
     \item Local planner, that follows the rough path under specified rules. These rules can for example be based on the current sensory information of the robot for collision avoidance (Figure \ref{fig:nav_ex_1}). 
-    This is usually performed by \textit{motion planning} (or \textit{trajectory planning}) algorithms that consider the robot or vehicle dynamics. In this thesis, we will call such a local planner a \textit{steering method}, which is a widely used term in navigation.
+    This is usually performed by \textit{motion planning} (or \textit{trajectory planning}) algorithms that consider the robot or vehicle dynamics. Here, we will call such a local planner a \textit{steering method}, which is a widely used term in navigation.
 \end{itemize}
 
-Section \ref{subsub:nav:overview} has a pedagogic purpose, in which we will present generic algorithms for both global and local navigation.
-Finally, we refer the reader to Section \ref{subsub:nav:legged} for the use of these algorithms in the context of legged robot navigation.
+%Section \ref{subsub:nav:overview} has a pedagogic purpose, in which we will present generic algorithms for both global and local navigation. Finally, we refer the reader to Section \ref{subsub:nav:legged} for the use of these algorithms in the context of legged robot navigation.
+
+The contribution specific to legged navigation is mostly in the definition of the steering method, whose main challenge is to capture the feasibility of the robot whole-body, hence leading to acceptable robust or even natural movements. Yet, the properties that one must aim for when designing a steering method cannot be understood without, first, the algorithms underlying the navigation problem.
+While we expect most of our readers to be already familiar with these algorithms, we decided to dedicate the next Section \ref{subsub:nav:overview} to a tutorial about them. Expert readers can skip it. Then we explore the existing contributions specifically addressing
+the legged navigation problem in Section \ref{subsub:nav:legged}. This will enable us to finally give my thesis contribution as a conclusion to this chapter.
+
 
 \subsection{Overview: Navigation Methods\label{subsub:nav:overview}}
 We propose to explore the algorithms used in the broad context of navigation.
@@ -1035,18 +1041,15 @@ Furthermore, they can generalize well to unexpected events and partially known e
     \caption{Legged robot navigation for motion-before-contact planning.}
 \end{figure}
 
-We now want to focus on the application of navigation algorithms for legged robot locomotion.
+%We now want to focus on the application of navigation algorithms for legged robot locomotion.
 
 % Chestnutt 2003 => waypoint graph
-In the context of motion-before-contact, manually defining the guide path to follow is a solution for fixed scenarios \cite{Chestnutt2003}.
-However, automatizing their generation with a navigation algorithm is required to cover a larger panel of terrains \cite{darpa_hutter_2022}.
-The problem these planners have to solve is: \textit{How to generate a feasible guide path for the contact planner?}
-%We succintly answered this question in Section \ref{subsub:motion_before_contact} by explaining how the guide can be used by contact planners.
-%In this section, we will go more in-depth into the algorithms employed to achieve such a task.
+%In the context of motion-before-contact, manually defining the guide path to follow is a solution for fixed scenarios \cite{Chestnutt2003}. However, automatizing their generation with a navigation algorithm is required to cover a larger panel of terrains \cite{darpa_hutter_2022}. The problem these planners have to solve is: \textit{How to generate a feasible guide path for the contact planner?}
 
-% Most contact-before-motion approaches have been seen in the previous section.
-% Here, we will just see what they used to generate the guide paths.
-% But it's very limited, not a lot of work on it.
+
+% Version nicolas
+Historically, navigation methods have been used on large near-flat terrains \cite{Chestnutt2007NavigationPF} or legged robots and avatars \cite{pettre_2_stages_2003}, paying mostly attention to naturalness \cite{isabelle_maroger_2020}. Yet, as soon as the environment is more constrained, legged navigation becomes a dedicated topic, with the central feasibility question: \textit{How can we plan a guide path while ensuring that a corresponding feasible whole-body trajectory exists?}
+While no definitive answer yer exists, several advances have been made on a part of the problem main difficulties.
 
 
 % === Conclusion on feasiblity of the guide by the CP ===
@@ -1055,23 +1058,32 @@ The problem these planners have to solve is: \textit{How to generate a feasible 
 % Acyclic + hutter => They consider that the reachability condition is sufficient.
 % Brandao => They trust their local planner (A*)
 
-\paragraph{Collision-avoidance.}
+\paragraph{Collision-free path.}
+\textcolor{blue}{Nicolas: Titre a changer + "Section facile", il faut que je rajoute des papiers et expliquer plus en detail ce que j'entends par collision etc.}
+
+Avoiding collisions between the robot body and the terrain is the first necessary condition for contact planning.
+
 % Classical global planning algorithms
 % Hildebrandt => Elastic band
-Avoiding collisions between the robot body and the terrain is a necessary condition for contact planning.
+
 All navigation algorithms previously presented solve this problem, and could thus be used for legged character navigation.
 Hildebrandt et al. \cite{Hildebrandt_lola_2017} generate a collision-free guide path using a Time-elastic-band as a steering method. The guide path is then used to guide the search of their A*-based contact planner.
 
 While collision avoidance is necessary, it is often not sufficient to ensure the guide feasibility of a given contact planner on complex terrains.
 
 \paragraph{Cost map for terrain traversability.}
-To locomote quadruped robots on rough terrains during the DARPA challenge, heuristics have been used to evaluate the likelihood for a body position to find feasible contacts \cite{kolter_2008, terrain_map_mrinal_2011}.
+As a refinement to basic obstacle avoidance, the fine details of the terrain map can be approximated by a so called \textit{traversability} score. This technic has been employed in particular during the DARPA challenge \cite{darpa_hutter_2022}. 
+
+\textcolor{blue}{Detailler plus les contrib en dessous.}
+To locomote quadruped robots on rough terrains, heuristics have been used to evaluate the likelihood for a body position to find feasible contacts \cite{kolter_2008, terrain_map_mrinal_2011}.
+\textcolor{blue}{Peut etre coller ca a la section d'en dessous vu que c'est les memes approches.}
 
 % Grid => kolter / winkler / Arain 2013 / Wermelinger 2016
 Works with the same approach \cite{winkler_2014, wermelinger_2016} discretizes the terrain into a body cost map (grid), then searched to plan a guide path. As a result, such paths are more likely to be feasible by a contact planner.
 But these approaches often rely on manually designed heuristics, that could poorly approximate a given contact planner capabilities.
 Lin et al. \cite{lin_traversability_2018} alleviate this limitation by learning a regressor to estimate terrain traversability. They learn one estimator for each of their contact planning strategy in multiple environments, then use it to build a 2D cost map.
 
+\textcolor{blue}{Nico: Trouver les arguments pour ca dans les papiers. Il faut que ca soit bien argumente pour dire que c'est pas assez. La conclu doit pouvoir etre percutante.}
 However, planning guide paths with a high traversability score is not yet sufficient to ensure contact planning success.
 Moreover, these methods require some computationally expensive offline and online phases, to build the cost map and search it respectively. 
 As a consequence, such a strategy is not yet tractable for real-time applications.
@@ -1084,46 +1096,50 @@ As a consequence, such a strategy is not yet tractable for real-time application
 % Kinodynamic + RRT => Pierre + Norby 2020/2022
 % NavMesh => brandao
 The reachability condition introduced by Tonneau et al. \cite{RB-PRM} has proven successful to generate guide paths on complex terrains prior to contact planning.
-They use an approximation of the robot range of motion, and ensure that the robot can reach the terrain all along the path.
+They use an approximation of the robot range of motion, and ensure that the robot can reach the terrain all along the path. 
+\textcolor{blue}{Added by nico}
+This leads to high success rate for producing a sequence of whole-body posture, but turn out to be less successful when trying to connect these postures with feasible dynamic trajectories.
 
 An approach is to incorporate these conditions in sampling-based path planning algorithms \cite{sl1m_v2, fanny_mip_solo}.
 Some works use a PRM with a linear interpolation method \cite{AcyclicCP} for navigation and contact planning in tractable computation time, or RRT with model-based kinodynamic steering methods \cite{kinodynamic_sm_2017} for dynamic locomotion.
 In this line of work, Norby et al. \cite{norby_skd_2022} use a kinodynamic body path planner to guide their short-horizon contact planner. Their result shows a quadruped robot walking and jumping to locomote through uneven terrains (Figure \ref{fig:legged_nav_0}).
 
-Combining reachability condition and foothold estimator, Wellhausen et al. \cite{rough_terrain_reachability_hutter_2021} learn a foothold score predictor in a supervised fashion. This predictor is then used to remove geometry from the reachability space.
-Finally, they employ the reachability condition with a PRM and linear interpolation to plan guide paths in complex terrains (Figure \ref{fig:legged_nav_1}).
+Combining reachability condition and foothold estimator in \cite{rough_terrain_reachability_hutter_2021},  a foothold score predictor is learned in a supervised fashion. This predictor is then used to remove geometry from the reachability space.
+It is then proposed to employ the reachability condition with a PRM and linear interpolation to plan guide paths in complex terrains (Figure \ref{fig:legged_nav_1}).
 By doing so, they ensure the presence of suitable surfaces to step on along the guide, hence improving the contact planning success rate.
 
 % What is the problem => On a plus la notion de traversabilité. Le terrain peut être atteignable oui, mais pas sûr qu'on puisse trouver une sequence de contact dessus.
-Previous works consider the reachability condition as being sufficient to approximate the feasibility of their contact planner. However, this condition may not be sufficient to generalize to the large panel of contact planning strategies.
-Moreover, this condition requires particular fine-tuning.
-Overestimating the robot range of motion can lead to unfeasible guide paths.
-Conversely, considering only a small range of motion can increase the guide success with a given contact planner, but also limit the guide planning navigation possibilities.
+%Previous works consider the reachability condition as being sufficient to approximate the feasibility of their contact planner. However, this condition may not be sufficient to generalize to the large panel of contact planning strategies. Moreover, this condition requires particular fine-tuning. Overestimating the robot range of motion can lead to unfeasible guide paths. Conversely, considering only a small range of motion can increase the guide success with a given contact planner, but also limit the guide planning navigation possibilities.
 
-%Guide paths generated have also been used to help solving the surface selection problem of continuous contact planning methods \cite{sl1m_v2} (Figure \ref{fig:cp_mbc_1}).
-%In a model predictive control fashion, Risbourg et al. \cite{fanny_mip_solo}  use a guide to obtain candidate contact surfaces and allow a real-time for short horizon footstep planning with a MIP method on the quadruped Solo.
+The reachability condition is the cornerstone to build contact planners that go beyond simple traversability reasoning. Yet, it has limited performances as it implies hard-tuned heuristics models that are difficult to generalize, and fail to capture the connectivity between successive key whole-body postures. Supervised learning seems a direction to extend it, but the evident lack of dataset makes it difficult.
 
 
-\paragraph{Conclusion on Legged Robot Navigation.}
+\subsection{Conclusion on Legged Navigation}
 % Norby: The global planner is critical to this pipeline due to its place at the top of the planning stack. A good global planner must have an accurate idea of what the robot can and cannot do to ensure that the other layers can resolve the motion, but also must have a long enough horizon to avoid local minima which is difficult to achieve in real time. 
-In motion-before-contact, guide planning is critical due to its place at the top of the planning stack as stated by Norby et al. \cite{norby_skd_2022}.
-Such guide paths must take into account the robot capabilities, and ensure the success of the contact planning.
+
+%In motion-before-contact, guide planning is critical due to its place at the top of the planning stack as stated by Norby et al. \cite{norby_skd_2022}. Such guide paths must take into account the robot capabilities, and ensure the success of the contact planning.
+
+% Phrase par nico
+Legged navigation is strongly related to motion-before-contact planning strategies. 
+Solving it properly then turns the problem of finding a contact sequence to a much simpler one.
+We follow the argument from Norby et al. \cite{norby_skd_2022} to consider it among the most promising directions to solve the contact planning problem.
+
 
 A panel of strategies emerged to increase the success rate (or compatibility) of the guide with contact planners.
 However, they either rely on often necessary but not sufficient conditions (e.g. collision-avoidance, reachability) or on heuristics to improve the likelihood of success that are computationally untractable.
 
 
-\subsection{Conclusion}
+
 
 % Talk about all navigation stuff and what exist => It's a jungle.
-Navigation at both global and local scales has been extensively studied for a wide variety of applications, ranging from autonomous vehicle navigation to crowd simulation.
+%Navigation at both global and local scales has been extensively studied for a wide variety of applications, ranging from autonomous vehicle navigation to crowd simulation.
 % Talk about what is actually done in legged robots relatively to that
-In the context of legged robot locomotion and more specifically motion-before-contact approaches, these algorithms can be used to plan guide paths prior to contact planning.
+%In the context of legged robot locomotion and more specifically motion-before-contact approaches, these algorithms can be used to plan guide paths prior to contact planning.
 
 % Very little works on guide feasibility. They conditions, then consider that it's ok.
 % cost map for traversability is nice to improve the success rate but not tractable yet.
-Legged navigation methods have to solve the critical problem that is the feasibility of the guide path by a given contact planner.
-In spite of a few successes with heuristics, no work has yet fully addressed this problem in a tractable computation time.
+%Legged navigation methods have to solve the critical problem that is the feasibility of the guide path by a given contact planner.
+%In spite of a few successes with heuristics, no work has yet fully addressed this problem in a tractable computation time.
 
 %Most of previous works consider that collision-avoidance and reachability conditions along the guide.
 %However, they are often not sufficient to ensure contact planning success.
@@ -1137,18 +1153,22 @@ In spite of a few successes with heuristics, no work has yet fully addressed thi
 
 % We did not explore all local and global planning strategies and focused on the one that could potentially be applied in this thesis for a character navigation task. More information can be found in the draft of Kris Hauser \cite{hauser_robotics_systems_draft} as well as the reference book in the topic \cite{Robot Motion Planning, planning_algo_lavalle_2006, }
 
-\section{General Conclusion \label{sota4}}
+%\section{General Conclusion \label{sota4}}
+\section{What are the next steps in artificial locomotion? \label{sota4}}
 % - General conclusion
 %A division of the legged character locomotion problem is still required to interactively plan safe walking motions on complex terrains.
 \subsection{Conclusion on legged locomotion strategies.}
-We have shown that, despite some recent promising approaches for legged character locomotion, agnostically considering the contact with the terrain to produce whole-body movement is yet unfeasible on real human-sized legged robots.
-We believe planning contacts and motion simultaneously to be the most promising solution to achieve this task in the future. However, this approach is yet computationally untractable.
+%We have shown that, despite some recent promising approaches for legged character locomotion, agnostically considering the contact with the terrain to produce whole-body movement is yet unfeasible on real human-sized legged robots.
+%We believe planning contacts and motion simultaneously to be the most promising solution to achieve this task in the future. However, this approach is yet computationally untractable.
 
-Dividing whole-body control and contact planning is still required to plan safe robot locomotion in real time on complex terrains.
+Despite some recent promising approaches for legged character locomotion, there exists no locomotion solvers able to generate complex contact platterns without explicitely considering contact decisions on real humand-sized legged robots.
+It seems evident to us that we must consider the whole problem of deciding contacts and motion simultaneously, both to formulate the theoritical objectives and in the perspective of a promising solution to achieve this task in the future.
+However, tackling the whole problem in a unique motion solver is yet computationally untractable.
+
+Dividing the locomotion problem in two parts, contact planning and whole-body control, is still required to plan safe robot locomotion in real time on complex terrains.
 We explored the contact planning problem to automatically generate the contacts to be performed by the whole-body controllers.
 We have seen contact planning at two different scales.
 Short-horizon planning is fast to compute, but prone to local minima.
-% Long horizon planning can offer some guarantee of completeness and optimality to some extent at the cost of a higher computation time.
 Long-horizon planning can offer some guarantee of completeness and potential optimality at the cost of a higher computation time.
 
 % Motion-before-contact is promising to alleviate the limitation of both strategies.
@@ -1160,39 +1180,23 @@ This hierarchical approach contains the following modules:
     \item A \textbf{contact planner} to plan the contacts along this path.
     \item A \textbf{whole-body controller} to compute the whole-body motion performing these contacts.
 \end{enumerate}
-% However there is one limitation, that is the non-guarantee of feasibility between the guide and the contact planner. 
-% The notion of traversability introduced by lin and brandao kinda goes in this direction, but they solve a multi-modal problem.
-% Some heuristics have been developped such as the reachability condition (acyclic) that are necessary but not sufficient.
-% We have to see if we have some solutions coming from the other works in navigation.
-This hierarchical division is a solution for real-time locomotion planning.
-However, it also raises the critical problem of the feasibility between the different modules.
+We argued that this hierarchichal division offers the most promising directions. Yet, as in any divide-and-conquer approach, it raises the question of consistency in the hierarchy that we formulated as the \textbf{feasibility} question: \textit{How to generate feasible guide paths?}
 
-The feasibility of the contact plan by the whole-body controller has been solved to some extent in the past years with the study of the centroidal dynamics \cite{prete_static_equilibrium_2016, CROC}.
-However, generating feasible guide paths for a given contact planner remains yet a difficult problem. %Previous works focus on the use of heuristics to approximate the contact planner capabilities, that can be either insufficient or too costly to compute \cite{AcyclicCP, winkler_2014}.
+The feasibility has been studied in several research fields. Yet we feel these tentatives lack of systematic approaches.
+In particular, there is no proposed guarantee either theoritical or empirical that the propose feasibility conditions of one hierarchical level makes the resulting movement a valid guide for the following stage.
+We propose to explore this problem with a reinforcement learning approach.
+\textcolor{blue}{Nico a mis data-driven approach. En machine learning, data-driven veut dire qu'on utilise des bases de donnee. En RL ca veut dire qu'on entraine ou pre-entraine notre policy avec ces prior dataset, donc ce n'est pas le bon terme.}
 
+The topic of this thesis is the integration of \textbf{legged navigation} in the decision flow of locomotion. Particularly, our first proposition is that the \textbf{feasibility condition} should be formulated in a way that intrinsically takes into account the limitations of the next task in the hierarchy, the \textbf{contact planning}.
+We formulated our problem as follows: \textit{Can we plan feasible guide paths that are more likely to be extended into valid contact sequences?}
 
-% Formulation de la these en exploitant en exploitant les idees de la SOTA centrales.
-\subsection{Thesis Formulation.}
-% "It goes beyond merely summarizing or describing to stake out an interpretation or position that’s not obvious, and others could challenge for good reasons. It’s also arguable in the literal sense that it can be argued, or supported through a thoughtful analysis of your sources. If your argument lacks evidence, readers will think your thesis statement is an opinion or belief as opposed to an argument."
-
-% TOPIC: L'integration d'une tache de navigation dans le contexte du contact planning.
-The topic of this thesis is the integration of a \textbf{navigation} task for the legged robot locomotion problem.
-Particularly, we want to fix the critical limitation that is the \textbf{feasibility} of navigation paths by the next task the hierarchy, the \textbf{contact planning}.
-We formulate our problem as follows: \textit{Can we plan paths more likely feasible by a contact planner?}
-
-% CLAIM: We can see that it helps in accelerating the solving of the contact planning problem, but it raises a critical limitation that is the feasibility of the guide by the contact planner.
 Previous works approach the problem by approximating the contact planner capabilities, such as the \textbf{reachability} condition \cite{RB-PRM} or other user-designed heuristics.
 Then, they plan paths considering these approximations.
 Arguably, they can often be insufficient or too complex to engineer depending on the contact planning strategy \cite{AcyclicCP, winkler_2014}.
-%do not necessarily implies that a contact sequence can be planned.
-%In general, manually designing efficient heuristics has proven too complex or costly.
-%Thereon, we believe that the path feasibility should be learned by collecting \textbf{data} directly from the contact planner.
-%Theron, we believe that the generation of feasible paths should be learned by collecting \textbf{data} from results of paths with the contact planner.
-Thereon, we believe we should learn how to generate feasible paths by collecting data directly from the contact planner results.
-
-%From path and contact planning data, we should be able to learn how to generate more likely feasible paths.
-We choose \textbf{reinforcement learning} to learn such a navigation task.
-This choice is motivated by the fact that we have no method to generate sufficiently diverse paths to learn from. Therefore, we deemed supervised learning not suitable for this task.
+But any such conditions so far has demonstrated strong practical limitations when scaling it to real scenarios (e.g. nicely producing valid contact sequences but failing to extend to complete dynamic trajectories). 
+Our second proposition is to define dedicated feasibility conditions directly from data collected on past executions of the contact planner.
+However, there is no evident existing dataset to start learning a feasibility condition, nor any method to compute sufficiently diverse paths and generate such data.
+We then finally propose to approach the training of such a feasibility condition by \textit{Reinforcement Learning}. We learn the legged navigation task using the contact planner as an external oracle rewarding the navigation system for feasible guidance.
 
 Our work find some inspiration in some recent works on reinforcement learning navigation \cite{prm_rl_2019, jaedong_2018_crowd_rl}. 
 This thesis further explores this approach in the context of legged character locomotion.
