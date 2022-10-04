@@ -1,5 +1,27 @@
 \appendix
 
+\chapter{Reinforcement Learning: Overview}
+
+Reinforcement Learning can be defined as an agent interacting with an environment according to a policy $\pi$. 
+The interaction sequence can be modeled as a Markov Decision Process (MDP) that is a tuple ($S$,$A$,$P$,$R$,$\mu$,$\gamma$), where:
+\begin{itemize}
+    \item $S$ is the state space of the environment.
+    \item $A$ the set of discrete or continuous actions available.
+    \item $P: S \times A \rightarrow \Delta S$ is the transition function of the MDP dynamics.
+    \item $R: S \times A \rightarrow \mathbb{R}$ is the reward function defining the desired agent behavior.
+    \item $\mu$ is the initial state distribution.
+    \item $\gamma \in [0,1]$ a discount factor.
+\end{itemize}
+As the full environment state is often not observable by our agent, we can use partially observable MDP like in this thesis, where our steering method only uses local observations to navigate through the environment.
+
+The agent starts an episode in an initial state $s_0$ sampled according to $\mu$.
+Depending on the agent state $s_t \in S$, the objective of the policy $\pi$ is to make the agent perform an action $a=\pi(s)$ in its environment, while maximizing its future cumulative rewards $J(\pi) = \mathbb{E}[\sum_{k=t}^{\infty} \gamma^k r_{t+k} | \pi]$.
+We denote the optimal policy $\pi^* = \underset{\pi}{\mbox{arg max}} \; J(\pi)$.
+
+
+
+
+
 \chapter{Mixed-Integer Programming Formulation details}
 
 \section{Feasibility Constraints.\label{appendix:feasibility_constr}}
