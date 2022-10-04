@@ -242,8 +242,9 @@ The key aspect of these approaches is to consider some piecewise-smooth represen
 On the other hand, it has been proposed to explicitly model the discrete nature of the contact sequence by integer variables, hence leading to an optimization problem deciding of a mix of continuous and discrete variables, called Mixed-Integer Programming (MIP) \cite{gurobi_mip}.
 With this approach, Aceituno-Cabezas et al. simultaneously optimize contact, gait and motion planner on their quadruped robot on complex terrains \cite{carlos_2019}.
 However, MIP does not scale well to these large or non-linear problems, hence reducing up to now the impact of these approaches to whole body problems.
+On the other hand, this limitation can be solved if we can keep a linear formulation \cite{sl1m_v1}. This approach will be further covered in this thesis.
 
-%\textcolor{blue}{Nicolas voulait parler de deits+sl1m ici mais ce sont des contact planners pour moi. Pour moi ce n'est pas du tout leur place comme j'en parle dans la section d'apres. Il reboucle sur cette partie en disant que SL1M fait du contact + motion en même temps. Il veut remplacer la citation de carlos par deits 2014 + parler de SL1M ici:} \textcolor{red}{On the other hand, MIP solver are very efficient algorithm if we can keep a linear formulation (SL1M). In this thesis, we will capitalize on this approach and show how we can exploit it to generate whole body movements, by connecting it to the notion of feasibility.} \textcolor{blue}{Je comprends pas trop parce... c'est plus un MIP du coup si c'est lineaire + Je suis pas du tout d'accord avec cette phrase. Je preferai ne pas parler de deits/sl1m ici et d'en parler plutot comme contact planner vu que c'est comme ça qu'on les utilise. Ensuite on fait le WBC avec autre chose pour suivre les pas, mais dans la these on a juste supposé que ca existait la.}
+ %\textcolor{red}{On the other hand, MIP solver are very efficient algorithm if we can keep a linear formulation (SL1M). In this thesis, we will capitalize on this approach and show how we can exploit it to generate whole body movements, by connecting it to the notion of feasibility.}
 
 \paragraph{Conclusion on internal contact decision.}
 A classical approach for locomotion is to synthesize walking motion while adapting footstep placement on flat ground.
@@ -581,13 +582,13 @@ Deits et al. \cite{deits2014FootPlanMI} decompose the terrain into convex region
 The resulting contact planner can find contact plans up to a goal on complex scenes composed of tens of surfaces (Figure \ref{fig:cp_bm_1}). However, it requires predefined convex contact surfaces and still presents high computation time due to the formulation (10-30steps computed in up to a few minutes depending on the terrain).
 % SL1M
 Using a relaxation of the MIP, Tonneau et al. \cite{sl1m_v1} reformulate a feasibility problem and present a much faster computation time than MIP when planning a smaller number of steps.
-Both approaches will be covered in-depth and used later on in this thesis.
+As discussed in Section \ref{par:simul_contact_motion}, this work also connects with MIP-based locomotion optimization, where the continuous motion and the discrete contacts are optimized together. As it reasons with a simplified model inspired from contact planning, it also introduce the notion of feasibility, although with complete guarantee.
 Continuous approaches for contact planning, depending on the formulation of the problem, are promising to alleviate the limitation of discrete approaches using graphs.
 However, their formulation requires predefined convex regions for contact surfaces and can still be computationally expensive (or even fail) in the presence of highly combinatorial problems.
+These approaches will be covered in-depth and used later on in this thesis.
 % Explain why it's kinda similar to before
 %\textcolor{blue}{Nico veut enlever ca et dire (voir après)}
-We previously presented a similar continuous approach in Section \ref{par:simul_contact_motion}, planning contact and motion simultaneously.
-We distinguish this strategy from only contact planning, therefore resulting in a problem of lower complexity, hence a reduced the computation time.
+%We previously presented a similar continuous approach in Section \ref{par:simul_contact_motion}, planning contact and motion simultaneously. We distinguish this strategy from only contact planning, therefore resulting in a problem of lower complexity, hence a reduced the computation time.
 %, at the cost of relying on simplified models to estimate the contact feasibily.
 %\textcolor{red}{Nico: As discussed in Section \ref{par:simul_contact_motion}, SL1M also connects with MIP-based locomotion optimization, where the continuous motion and the discrete contacts are optimized together (???). As SL1M reason with a simplified model inspired from contact planning, it also introduce the notion of feasibility, although with complete guarantee (?).}
 %\textcolor{blue}{Je comprends pas trop pourquoi il classe pas SL1M comme un contact planner, mais comme un motion et contact en meme temps. Je comprends qu'il y a le COM pour la faisabilité ok, mais c'est aussi applicable pour tous les autres contact planner dont je parle dans cette section potentiellement non? Je suis pas du tout d'accord avec le phrase. SL1M pour moi c'est un contact planner.}
@@ -895,11 +896,6 @@ The graph is then searched to get a rough path (i.e. waypoints to reach sequenti
 
 \paragraph{Local Navigation for environment uncertainty\label{subsub:nav:local}}\mbox{}\\
 
-% Discussion about the definition of a steering method:
-% From \cite{DIMT}, \qq{A steering method is able to exactly and optimally connect any two states while ignoring obstacles}. 
-% From \cite{PRM_RRT_SM}, the function steer returns a point $z$ such that $z$ is closer to $y$ than $x$. If we follow this definition, then this is exactly what LEAS does.
-% The steer function is also well expained in RL-RRT \cite{RL_RRT}, Pettre in microscopic crowd.
-
 %\stn{donner l algo et ou une figure ça simplifierait la comprehension}
 
 A local planner computes a trajectory between two points generated by a global planner.
@@ -1047,9 +1043,8 @@ Furthermore, they can generalize well to unexpected events and partially known e
 %In the context of motion-before-contact, manually defining the guide path to follow is a solution for fixed scenarios \cite{Chestnutt2003}. However, automatizing their generation with a navigation algorithm is required to cover a larger panel of terrains \cite{darpa_hutter_2022}. The problem these planners have to solve is: \textit{How to generate a feasible guide path for the contact planner?}
 
 
-% Version nicolas
 Historically, navigation methods have been used on large near-flat terrains \cite{Chestnutt2007NavigationPF} or legged robots and avatars \cite{pettre_2_stages_2003}, paying mostly attention to naturalness \cite{isabelle_maroger_2020}. Yet, as soon as the environment is more constrained, legged navigation becomes a dedicated topic, with the central feasibility question: \textit{How can we plan a guide path while ensuring that a corresponding feasible whole-body trajectory exists?}
-While no definitive answer yer exists, several advances have been made on a part of the problem main difficulties.
+While no definitive answer yet exists, several advances have been made on a part of the problem main difficulties.
 
 
 % === Conclusion on feasiblity of the guide by the CP ===
@@ -1059,59 +1054,75 @@ While no definitive answer yer exists, several advances have been made on a part
 % Brandao => They trust their local planner (A*)
 
 \paragraph{Collision-free path.}
-\textcolor{blue}{Nicolas: Titre a changer + "Section facile", il faut que je rajoute des papiers et expliquer plus en detail ce que j'entends par collision etc.}
+%\textcolor{blue}{Nicolas: Titre a changer + "Section facile", il faut que je rajoute des papiers et expliquer plus en detail ce que j'entends par collision etc.}
+Planning collision-free whole-body trajectories is required for legged robots to locomote through terrains with non-traversable obstacles.
+Trivially, we have no access to these trajectories during navigation, but we can expect the robot base to be collision-free.
 
-Avoiding collisions between the robot body and the terrain is the first necessary condition for contact planning. 
+Following \cite{pettre_2_stages_2003}, previous works typically rely on simplified system walking models for collision detection such as collision boxes \cite{collision_box_1988}.
+%that have long history in the character animation field for collision detection \cite{collision_box_1988}.
+% Hildebrandt => 2D => Harmonic + time elastic band. Point model with a safe collision margin.
+In \cite{Hildebrandt_lola_2017}, the robot is represented as a point with safe margins, simple yet efficient to generate 2D paths avoiding obstacles on flat terrains.
+As a result, their footstep planner is guaranteed collision-free footstep trajectories, thus demonstrating clear computation gains over their previous contact-before-motion approach.
+In \cite{rough_terrain_reachability_hutter_2021, lin_traversability_2018, AcyclicCP}, the robot torso is approximated by a simple box volume to significantly improve 3D collision checking speed, hence reducing guide planning time.
 
-% Classical global planning algorithms
-% Hildebrandt => Elastic band
+% Papier pettre: bounding box (pettre_2_stages_2003)
+% Papier acyclic
+% Papier hutter DARPA: darpa_hutter_2022 page 20.
 
-All navigation algorithms previously presented solve this problem, and could thus be used for legged character navigation.
-Hildebrandt et al. \cite{Hildebrandt_lola_2017} generate a collision-free guide path using a Time-elastic-band as a steering method. The guide path is then used to guide the search of their A*-based contact planner.
-
-While collision avoidance is necessary, it is often not sufficient to ensure the guide feasibility of a given contact planner on complex terrains.
-
-\paragraph{Cost map for terrain traversability.}
-As a refinement to basic obstacle avoidance, the fine details of the terrain map can be approximated by a so called \textit{traversability} score. This technic has been employed in particular during the DARPA challenge \cite{darpa_hutter_2022}. 
-
-\textcolor{blue}{Detailler plus les contrib en dessous.}
-To locomote quadruped robots on rough terrains, heuristics have been used to evaluate the likelihood for a body position to find feasible contacts \cite{kolter_2008, terrain_map_mrinal_2011}.
-\textcolor{blue}{Peut etre coller ca a la section d'en dessous vu que c'est les memes approches.}
-
-% Grid => kolter / winkler / Arain 2013 / Wermelinger 2016
-Works with the same approach \cite{winkler_2014, wermelinger_2016} discretizes the terrain into a body cost map (grid), then searched to plan a guide path. As a result, such paths are more likely to be feasible by a contact planner.
-But these approaches often rely on manually designed heuristics, that could poorly approximate a given contact planner capabilities.
-Lin et al. \cite{lin_traversability_2018} alleviate this limitation by learning a regressor to estimate terrain traversability. They learn one estimator for each of their contact planning strategy in multiple environments, then use it to build a 2D cost map.
-
-\textcolor{blue}{Nico: Trouver les arguments pour ca dans les papiers. Il faut que ca soit bien argumente pour dire que c'est pas assez. La conclu doit pouvoir etre percutante.}
-However, planning guide paths with a high traversability score is not yet sufficient to ensure contact planning success.
-Moreover, these methods require some computationally expensive offline and online phases, to build the cost map and search it respectively. 
-As a consequence, such a strategy is not yet tractable for real-time applications.
-
-% Humanoid => Lin, he uses a cost-based grid as well. Explain specifically.
-% It may not be useful to cite it here.
 
 \paragraph{Robot kinematic reachability.}
 % Linear + PRM => Hutter + Acyclic
 % Kinodynamic + RRT => Pierre + Norby 2020/2022
 % NavMesh => brandao
-The reachability condition introduced by Tonneau et al. \cite{RB-PRM} has proven successful to generate guide paths on complex terrains prior to contact planning.
-They use an approximation of the robot range of motion, and ensure that the robot can reach the terrain all along the path. 
-\textcolor{blue}{Added by nico}
-This leads to high success rate for producing a sequence of whole-body posture, but turn out to be less successful when trying to connect these postures with feasible dynamic trajectories.
+Naturally, the extension of legged robot navigation to 3D also raises the question of reachability, where the robot should be kinematically able to reach the ground with its end effectors.
+The reachability condition introduced by Tonneau et al. \cite{RB-PRM} use an approximation of the robot range of motion, that ensures the robot can reach the terrain all along the path. It has proven successful to generate guide paths on complex terrains with a high success rate for producing a sequence of whole-body posture. However, it turns out to be less successful when trying to connect these postures with feasible dynamic trajectories.
 
-An approach is to incorporate these conditions in sampling-based path planning algorithms \cite{sl1m_v2, fanny_mip_solo}.
+An approach is to incorporate these conditions in sampling-based path planning algorithms \cite{sl1m_v2}.
 Some works use a PRM with a linear interpolation method \cite{AcyclicCP} for navigation and contact planning in tractable computation time, or RRT with model-based kinodynamic steering methods \cite{kinodynamic_sm_2017} for dynamic locomotion.
-In this line of work, Norby et al. \cite{norby_skd_2022} use a kinodynamic body path planner to guide their short-horizon contact planner. Their result shows a quadruped robot walking and jumping to locomote through uneven terrains (Figure \ref{fig:legged_nav_0}).
+In this line of work, \cite{norby_2020} use a kinodynamic body path planner to guide their short-horizon contact planner. Their extended results show that their quadruped robot can walk and jump to locomote over complex terrains \cite{norby_skd_2022}(Figure \ref{fig:legged_nav_0}).
 
-Combining reachability condition and foothold estimator in \cite{rough_terrain_reachability_hutter_2021},  a foothold score predictor is learned in a supervised fashion. This predictor is then used to remove geometry from the reachability space.
-It is then proposed to employ the reachability condition with a PRM and linear interpolation to plan guide paths in complex terrains (Figure \ref{fig:legged_nav_1}).
-By doing so, they ensure the presence of suitable surfaces to step on along the guide, hence improving the contact planning success rate.
+The reachability condition is the cornerstone to build legged robot contact planners.
+%that go beyond simple obstacle avoidance behavior. 
+Yet, it has limited performance as it implies hard-tuned heuristics models that are difficult to generalize, and often fail to capture the connectivity between successive key whole-body postures. %Supervised learning seems a direction to extend it, but the evident lack of dataset makes it difficult.
+
+
+% Definition of traversability by yu-chin lin: Traversability is a measurement of how easy the contact space planner can generate contact sequences to traverse through a certain region.
+
+\paragraph{Cost map for terrain traversability.}
+As a refinement to these two required conditions, the fine details of the terrain map can be approximated by a so-called \textit{traversability} score, which evaluates how easy it is for the robot to traverse a region. This technic has been employed in particular during the DARPA challenge to locomote quadruped robots on rough terrains \cite{darpa_hutter_2022}. 
+
+In \cite{kolter_2008, terrain_map_mrinal_2011, wermelinger_2016}, some hand-tuned heuristics are implemented to score footholds, hence evaluating how desirable a foot placement is at a given location. 
+%This score is then used to compute the likelihood of a body position to find desirable and feasible contacts in complex environments.
+% Grid => kolter / winkler / Arain 2013 / Wermelinger 2016
+Following this approach, Winkler et al. \cite{winkler_2014} compute sequentially from a terrain height map: the footholds score map, then the corresponding body score map which evaluates the likelihood of a body position to find desirable and feasible contacts.
+The body map is then searched to plan guide paths more likely to be feasible by their robot according to their heuristics.
+However, these heuristics often require complex tuning to sufficiently approximate the robot capabilities, and result in expensive computation to build the map over the search space.
+In \cite{lin_traversability_2017}, this last limitation is alleviated by learning regressors to estimate terrain traversability, faster to querry during planning. Their results demonstrate a higher contact planning success rate with their traversability estimation over a classical collision-free guide, but still at the cost of extra computation.
+
+Combining terrain traversability with the reachability conditions, \cite{rough_terrain_reachability_hutter_2021} learn a foothold score predictor in a supervised fashion from a few manually labelled data. This predictor enables removing unsuitable geometry from the reachability space.
+It is then proposed to employ the reachability condition with a PRM and linear interpolation to efficiently plan guides in complex terrains (Figure \ref{fig:legged_nav_1}).
+By doing so, they ensure the presence of suitable surfaces to step on along the guide, hence potentially facilitating the robot locomotion with their blind controller \cite{hutter_challenging_terrain}.
+
+
+Supervised learning seems a promising direction to learn how to approximate guide path feasibility by a contact planner and by extension the whole-body motion. 
+Yet, they mostly rely on heuristics that are either too expensive to compute or can fail to sufficiently capture their capabilities.
+Learning directly from these planners could solve these limitations, however, the evident lack of dataset makes it difficult to generalize.
+
+
+%\textcolor{blue}{Nico: Trouver les arguments pour ca dans les papiers. Il faut que ca soit bien argumente pour dire que c'est pas assez. La conclu doit pouvoir etre percutante.}
+%However, planning guide paths with a high traversability score is not yet sufficient to ensure contact planning success.
+%Moreover, these methods require some computationally expensive offline and online phases, to build the cost map and search it respectively. 
+%As a consequence, such a strategy is not yet tractable for real-time applications.
+
+% Humanoid => Lin, he uses a cost-based grid as well. Explain specifically.
+% It may not be useful to cite it here.
+
+
 
 % What is the problem => On a plus la notion de traversabilité. Le terrain peut être atteignable oui, mais pas sûr qu'on puisse trouver une sequence de contact dessus.
 %Previous works consider the reachability condition as being sufficient to approximate the feasibility of their contact planner. However, this condition may not be sufficient to generalize to the large panel of contact planning strategies. Moreover, this condition requires particular fine-tuning. Overestimating the robot range of motion can lead to unfeasible guide paths. Conversely, considering only a small range of motion can increase the guide success with a given contact planner, but also limit the guide planning navigation possibilities.
 
-The reachability condition is the cornerstone to build contact planners that go beyond simple traversability reasoning. Yet, it has limited performances as it implies hard-tuned heuristics models that are difficult to generalize, and fail to capture the connectivity between successive key whole-body postures. Supervised learning seems a direction to extend it, but the evident lack of dataset makes it difficult.
+
 
 
 \subsection{Conclusion on Legged Navigation}
