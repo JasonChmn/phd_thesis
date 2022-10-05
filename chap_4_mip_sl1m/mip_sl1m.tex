@@ -726,10 +726,14 @@ Due to the highly combinatorial aspect of the surface selection problem, an inte
 %This problem is solved by a classical branch-and-bound algorithm to solve its combinatorics \cite{gurobi_mip}.
 
 %However, commercial MIP solvers can not easily be embedded on robots due to their memory size and computation power required.
-This section investigates the formulation called SL1M \cite{sl1m_v1}.
-%The continuous contact planning approach presented is inherently subject to the combinatorics of the surfaces selection. As a consequence, reformulating it as a linear problem is not trivial. 
-Its objective is to remove the need for heavy MIP solvers, proposing a reformulation of the contact planning problem to break its combinatorial aspect.
-The contact plannning could thus be formulated as a simple and fast to solve Linear Programming problem.
+%The continuous contact planning approach presented is inherently subject to the combinatorics of the surfaces selection. As a consequence, reformulating it as a linear problem is not trivial.
+
+As presented in the previous section, the performance of the MIP contact planner is heavily impacted by the combinatorial aspect of the problem.
+
+In \cite{sl1m_v1, sl1m_v2}, a reformulation called SL1M (Sparse L1-norm Minimization) is proposed.
+Its objective is to take advantage of the sparsity-inducing properties of the $l1$-norm, hence breaking the combinatorics of the surface selection problem as we will explain later in this section.
+Such a promising solution could remove the need for branch-and-bounds algorithms, and thus MIP solvers, replacing them with simple linear solvers easily embeddable on the robot.
+
 
 \subsection{Relaxation of the Mixed-Integer Problem}
 % Show the reformulation with a guide path => Constraint stated above.
@@ -737,17 +741,16 @@ The contact plannning could thus be formulated as a simple and fast to solve Lin
 % How does gurobi solve it? => In fact the first step is SL1M?
 % Two ways: use a MIP for a branch&bound, or use only some LP but lose the guarantee of completeness.
 % Put the results here for relaxation.
-In the previous work \cite{sl1m_v1}, a relaxation of the MIP formulation for contact planning is proposed.
-The relaxed formulation using a guide path is as follows:
+%In the previous work , a relaxation of the MIP formulation for contact planning is proposed.
+The relaxed formulation of the MIP formulation for contact planning with guide path \cite{sl1m_v2} is as follows:
 \begin{align}
     \textrm{\textbf{given}} %\quad & \mathcal{I}=\{p_0^{left}, \mbox{r}_0^{left},p_0^{right}, \mbox{r}_0^{right}\} \nonumber\\
     %\textrm{, the initial foot position}\\
                             %\quad & n\\%\textrm{, the desired number of contacts}\\
                             %\quad & \mathcal{S}=\{\mathcal{S}^0,...,\mathcal{S}^m\}\\%\textrm{, the set of terrain surfaces}\\
                             %\quad & \mathcal{S}^{goal}\\%\textrm{, the goal surface to reach}\\
-                            \quad & n, \;\mbox{p}_0, \; \mbox{r}_0, \; \mathcal{S}^{goal} \nonumber\\
                             \quad & R=[\mbox{r}_1,...,\mbox{r}_n], \; \mbox{r}_i \in \mathbb{R}^{3} \nonumber\\
-                            \quad & C=[\mathcal{S}_0, ..., \mathcal{S}_n] \nonumber\\
+                            \quad & \mathcal{X}=[\mathcal{S}_0, ..., \mathcal{S}_n] \nonumber\\
     \textrm{\textbf{find}}  \quad & \mbox{P}=[\mbox{p}_1,...,\mbox{p}_n], \;\mbox{p}_i \in \mathbb{R}^{3} \nonumber\\
                             \quad & \textcolor{blue}{\alpha=[\alpha_1,...,\alpha_n], \; \alpha_i \in \mathbb{R}_{+}^{m_i}} \label{eq:mbc:sl1m:slack_relaxed}\\
                             \quad & \beta=[\beta_1,...,\beta_n], \; \beta_i \in \mathbb{R}^{m_i} \nonumber\\
@@ -762,20 +765,21 @@ The relaxed formulation using a guide path is as follows:
                                     \nonumber
 \end{align}
 \paragraph{Reformulation.}
-Contrary to the MIP formulation, the integrality constraint on the slack variables is relaxed (\ref{eq:mbc:sl1m:slack_relaxed}). 
+Contrary to the MIP formulation, the integrality constraints on the slack variables are relaxed (\ref{eq:mbc:sl1m:slack_relaxed}). 
 As a result, the problem can be solved with a linear or quadratic solver.
 
-The most important change is the reformulation of the feasibility problem into a cardinality minimization problem. The cardinality constraint of the MIP formulation is replaced by a $l1$-norm minimization (\ref{eq:mbc:sl1m:norm_l1}).
+The most important change is the reformulation of the feasibility problem into a cardinality minimization problem.
+The cardinality constraints of the MIP formulation are thus replaced by a $l1$-norm minimization (\ref{eq:mbc:sl1m:norm_l1}).
 Indeed, $l1$-norm minimization has long been used in optimization problems to induce sparsity (i.e. encourage the convergence of the slack variables to 0) \cite{boyd2004convex}. 
 In this formulation for contact planning, having an $\alpha_i^j$ with a 0 value means that the candidate surface $\mathcal{S}_i^j$ has been selected for the $i$-th footstep. 
-As a result, the $l1$-norm encourages the selection of surfaces for each step.
+Simply said, the $l1$-norm encourages the surface selection for each step.
 In the next Section \ref{subsub:insight_l1}, we will provide further insight on the $l1$-norm to visually understand how it encourages this sparsity in the contact planning context.
 
 %However, this formulation also implies that for each step $i$, all surfaces in $\mathcal{S}_i$ must be disjoint:
 %\begin{equation}
 %    \forall i \in \{1,...,n\},\; \cap^m_{j=1} \mathcal{S}^j_i = 0
 %\end{equation}
-%In other words, it is impossible for a footstep to lie on two surfaces at the same time. This condition is required, otherwise the foot position $\mbox{p}_i$ will automatically lie at the intersection between these surfaces to miminize the $l1$-norm.
+%In other words, it is impossible for a footstep to lie on two surfaces at the same time. This condition is required, otherwise, the foot position $\mbox{p}_i$ will automatically lie at the intersection between these surfaces to minimize the $l1$-norm.
 
 
 \paragraph{Solution to the relaxed problem.\label{par:sl1m:solution_relaxed_heuristics}}
@@ -786,13 +790,16 @@ The problem is directly solved if exactly one surface is selected for each foots
 \end{equation}
 If the problem is not solved after this relaxation, as is usually the case, several strategies are available to enforce this condition.
 
-As previously discussed, a branch-and-bound approach can efficiently solve this problem. 
+As previously discussed, a branch-and-bound algorithm can efficiently solve this problem. 
 However, it requires the use of a heavy MIP solver.
 
-Another approach is to explore the combinatorics with heuristics.
+Another approach is to explore combinatorics with heuristics.
 In \cite{sl1m_v2}, Song et al. fix all the slack variables $\alpha_i$ for which the cardinality constraint is satisfied (i.e. $\alpha_i=0$). 
-They then test all the combinations for the remaining free variables until either i) a solution is found, ii) a maximum number of trials is reached, or iii) all possibilities are exhausted. 
+They then test all the combinations for the remaining free variables until either (a) a solution is found, (b) a maximum number of combinatorial explorations is reached, or (c) all possible combinations are exhausted.
 %\stn{je comprends pas ça} \textcolor{blue}{Fixed. Est-ce que j'ai le droit de copier la strategie du papier sl1m mot à mot?}
+
+As one could guess, to reduce the contact planning time, the problem needs to be solved right after relaxation or with as few combinatorial explorations as possible.
+
 
 \subsection{Insight on the Relaxation}
 \label{subsub:insight_l1}
@@ -802,6 +809,26 @@ They then test all the combinations for the remaining free variables until eithe
 To better understand how the $l1$-norm encourages surface selection, we propose several scenarios with a visual understanding of SL1M solutions.
 
 \paragraph{Big-M method and $l1$-norm without constraints.}
+We give the following simplified formulation of our problem:
+\begin{align}
+    \textrm{\textbf{given}} \quad & \mathcal{S}, \mbox{p} \nonumber\\
+    \textrm{\textbf{find}}  \quad & \alpha=[\alpha^1,...,\alpha^m],\; \alpha^j \in \mathbb{R}_{+} \nonumber\\
+    \textrm{\textbf{min}}  \quad & \sum_{j=1}^{m_i} \alpha^j \label{eq:mbc:sl1m:no_constr_l1}\\
+    \textrm{\textbf{s.t.}}  \quad & \quad \forall j \in \{1,..,m\} : \nonumber\\
+                            \quad & \quad \quad S^j \mbox{p} \leq s^j + M \alpha^j \textbf{1} \nonumber\\
+                            \nonumber
+\end{align}
+For each position p in the 2D space, we aim to minimize the $l1$-norm relative to the surfaces $\mathcal{S}^j \subset \mathcal{S}$. 
+Results for different surface samples are shown in Figure \ref{fig:sl1m:no_constraint}.
+Black rectangles represent the terrain surfaces $\mathcal{S}^j$.
+Once the problem is optimized, we understand that each $\alpha^j$ measures a distance between the point position p and the closest edge of surface $\mathcal{S}^j$.
+We represent on a 2D map the $l1$-norm cost (\ref{eq:mbc:sl1m:no_constr_l1}), i.e. the sum of these distances, where the gradient changes from bright to dark to represent higher and lower cost values respectively.
+
+In the top right figure, we highlight in pink the delimitations between the different gradient cost areas, where the gradient of the $l1$-norm changes in strength or direction.
+These delimitations show that there always exists a gradient change on the edges of the surfaces, which already hints at how sparsity is encouraged in SL1M.
+
+We now want to understand what is the consequence of such a $l1$-norm property in SL1M contact planning formulation (\ref{eq:mbc:sl1m:norm_l1}).
+
 \begin{figure}[ht]
     \centering
     \captionsetup[subfigure]{justification=centering}
@@ -813,22 +840,6 @@ To better understand how the $l1$-norm encourages surface selection, we propose 
     \begin{subfigure}[t]{0.48\linewidth}
     %\includegraphics[trim={5cm 2cm 12cm 2cm},clip,width=\textwidth]{Figures/Chapter_MIP_SL1M/l1_no_cst/grad_two_0_1.png}
     \includegraphics[trim={5cm 2cm 12cm 2cm},clip,width=\textwidth]{Figures/Chapter_MIP_SL1M/l1_no_cst/grad_two_0_1_limit.png}
-    %\begin{tikzpicture}
-    %    \draw (0, 0) node[inner sep=0] {\includegraphics[trim={5cm 2cm 12cm 2cm},clip,width=\textwidth]{Figures/Chapter_MIP_SL1M/l1_no_cst/grad_two_0_1_limit.png}};
-        % ARROWS
-        % grad 2
-        %horizontal
-    %    \draw [white,-to](-3,0) -- (-2.5,0);
-    %    \draw [white,-to](3.15,0) -- (2.65,0);
-    %    \draw [white,-to](0,-2) -- (0,-1.5);
-    %    \draw [white,-to](0,1.93) -- (0,1.43);
-        %vertical
-    %    \draw [white,-to](-3,-2) -- (-2.56,-1.65);
-    %    \draw [white,-to](-3,1.93) -- (-2.58,1.65);
-    %    \draw [white,-to](3.15,-2) -- (2.71,-1.65);
-    %    \draw [white,-to](3.15,1.93) -- (2.73,1.65);
-    %\end{tikzpicture}
-    %\caption{}
     \end{subfigure}
     \begin{subfigure}[t]{0.48\linewidth}
     \includegraphics[trim={5cm 2cm 12cm 2cm},clip,width=\textwidth]{Figures/Chapter_MIP_SL1M/l1_no_cst/grad_three_0_1_2.png}
@@ -843,53 +854,36 @@ To better understand how the $l1$-norm encourages surface selection, we propose 
     \caption{Example of $l1$-norm cost (\ref{eq:mbc:sl1m:no_constr_l1}) relative to different surfaces sample in 2D: dark shades represent a low cost and bright shades a high cost. The pink lines in the top right figure delimits the gradient changes.}
     \label{fig:sl1m:no_constraint}
 \end{figure}
-We give the following simplified formulation of our problem:
-\begin{align}
-    \textrm{\textbf{given}} \quad & \mathcal{S}, \mbox{p} \nonumber\\
-    \textrm{\textbf{find}}  \quad & \alpha=[\alpha^1,...,\alpha^m],\; \alpha^j \in \mathbb{R}_{+} \nonumber\\
-    \textrm{\textbf{min}}  \quad & \sum_{j=1}^{m_i} \alpha^j \label{eq:mbc:sl1m:no_constr_l1}\\
-    \textrm{\textbf{s.t.}}  \quad & \quad \forall j \in \{1,..,m\} : \nonumber\\
-                            \quad & \quad \quad S^j \mbox{p} \leq s^j + M \alpha^j \textbf{1} \nonumber\\
-                            \nonumber
-\end{align}
-For each position p in the 2D space, we aim to minimize the $l1$-norm relative to the surfaces $\mathcal{S}^j \subset \mathcal{S}$. 
-Results for different surfaces sample are shown in Figure \ref{fig:sl1m:no_constraint}.
-Black rectangles represent the terrain surfaces $\mathcal{S}^j$.
-We represent the $l1$-norm cost (\ref{eq:mbc:sl1m:no_constr_l1}) on a 2D map, where the gradient changes from bright to dark to represent higher and lower cost value respectively.
-In the top right figure, we highlight in pink the delimitation between the different gradient cost areas (i.e. where the gradient of the $l1$-norm changes in strength or direction).
-These delimitations show that there always exists a change of gradient on the edges of the surfaces, which already hints at how sparsity is encouraged in SL1M.
-
-In the solution (\ref{eq:mbc:sl1m:no_constr_l1}), each $\alpha^j$ measure the distance between the point position p and the closest edge of surface $\mathcal{S}^j$.
-We now want to understand what is the consequence of such a formulation in the context of contact planning.
-
 
 \paragraph{Scenario A.}
 % Show the simple where it works.
 % Show the one where it doesn't.
 
 In all following scenarios, we simplify the feasibility constraints $\mathcal{F}$ (See Appendix \ref{appendix:feasibility_constr}).
-We will use only the constraints on the foot positions, represented by the red and yellow rectangles in our scenarios (left and right foot respectively).
-The rotation r$_i$ is kept constant for all footsteps, so that all constraints are oriented in the same direction.
+We will only use the constraints on the foot positions, represented by the red and yellow rectangles in our scenarios (left and right foot respectively).
 As a consequence, the foot position p$_i$ is only constrained by the previous foot position p$_{i-1}$.
-We do so to have a better visual understanding of SL1M relative to these simple constraints.
+The rotation r$_i$ is kept constant for all footsteps, so that all foot constraints are oriented in the same direction.
+We do so to have a better visual understanding of SL1M relative to these simplified constraints.
 
-In both scenarios (Figures \ref{fig:sl1m:a11} and \ref{fig:sl1m:a12}), the robot from its initial right foot position p$_1$ (yellow dots) has to reach the surface $\mathcal{S}^4$ in two steps. 
-To do so, we arbitrarily assign to the step position p$_2$ the candidate surfaces of indices 2 and 3 (i.e. $\mathcal{S}^2$ and $\mathcal{S}^3$).
-We plot the $l1$-norm cost map for this step only, as it is the only one given multiple surface candidates.
+In both scenarios (Figures \ref{fig:sl1m:a11} and \ref{fig:sl1m:a12}), the robot from its initial right foot position p$_1$ (yellow dots) has to reach the surface $\mathcal{S}^4$ in two steps, meaning that $p_3$ can lie anywhere on $\mathcal{S}^4$. 
+For these examples, we arbitrarily assign to the step position p$_2$ the candidate surfaces of indices 2 and 3 (i.e. $\mathcal{S}^2$ and $\mathcal{S}^3$). The $l1$-norm cost map is only plotted for this step, as it is the only one given multiple surface candidates.
 
 In scenario A.1 (Figure \ref{fig:sl1m:a11}), the feet positions p$_2$ and p$_3$ computed by SL1M relaxation both lies at the edges of their respective constraints. 
-This is expected as we are solving a linear problem using the simplex algorithm, which explores the edges of the feasibility constraints.
-Also, the feet position p$_2$ is attracted by the $l1$-norm minimum area between the surface $\mathcal{S}^2$ and $\mathcal{S}^3$. 
-In this scenario, the problem is solved after the first relaxation as one surface has been selected for each step.
+This is expected as we are solving a linear problem using the simplex algorithm, which explores the extremities and the edges of the feasibility constraints.
+Also, the feet position p$_2$ is attracted by the $l1$-norm minimum area (dark) between the surfaces $\mathcal{S}^2$ and $\mathcal{S}^3$. 
+Here, the problem is solved after the first relaxation as one surface has been selected for each step.
 
-In scenario A.2 (Figure \ref{fig:sl1m:a12}), the result shows that the foot position p$_2$ still lies at the edge of the foot constraint, and is placed in the minimum $l1$-norm minimum area. 
-However, it does not lie on a surface ($\alpha_1^2 > 0$ and $\alpha_1^2 > 0$), and so our problem is not solved.
+In scenario A.2 (Figure \ref{fig:sl1m:a12}), we now increase the distance between surfaces $\mathcal{S}^2$ and $\mathcal{S}^3$.
+The result shows that the foot position p$_2$ still lies at the edge of the foot constraint, and is placed in the $l1$-norm minimum area, i.e. with a zero gradient (Figure \ref{fig:sl1m:a12:0}).
+However, it does not lie on a surface ($\alpha_2^2 > 0$ and $\alpha_2^3 > 0$), so our problem is not solved.
 As discussed in Section \ref{par:sl1m:solution_relaxed_heuristics}, we can use some heuristics to explore the combinatorics. 
 The heuristics previously presented generate 2 sub-problems as p$_2$ has 2 candidate surfaces.
 The first combination tested is $p_2 \in \mathcal{S}^2$, its closest surface.
 In this scenario, the heuristics is successful with the first combination (Figure \ref{fig:sl1m:a12:1}).
 
-\begin{figure}[ht]
+These simple scenarios enable us to observe one of the main limitations of the linear formulation, that is that the extremities of the constraints are always explored first. Consequently, if an extremity already lies inside the minimal cost area but is not on a surface, we irremediably require to explore the combinatorics. However, the contacts are generally planned for a higher number of steps which, as we will see, impacts the relaxed solution.
+
+\begin{figure}[t]
     \centering
     \captionsetup[subfigure]{justification=centering}
     \begin{subfigure}[t]{0.48\linewidth}
@@ -925,7 +919,7 @@ In this scenario, the heuristics is successful with the first combination (Figur
     \label{fig:sl1m:a11}
 \end{figure}
 % Other figure
-\begin{figure}[ht]
+\begin{figure}[t]
     \centering
     \captionsetup[subfigure]{justification=centering}
     \begin{subfigure}[t]{0.48\linewidth}
@@ -977,13 +971,16 @@ We arbitrarily assign to each step position the following surface indices:
     \item $p_6 \; \Rightarrow$ \; $j = [10]$
 \end{enumerate}
 We plot 3 different $l1$-norm cost maps corresponding to the steps $\{p_2\}$, $\{p_3\}$, $\{p_4,p_5\}$ respectively.
-As we can see, the cost map of $\{p_4,p_5\}$ contains higher values than the others as they have a lot more candidate surfaces. 
+As we can see, the cost map of $\{p_4,p_5\}$ contains higher values than the others as they have more candidate surfaces. 
 As a consequence, they will be more attracted toward their minimal cost area than the two others, p$_2$ and p$_3$ (Figure \ref{fig:sl1m:final:0}).
 
 In this scenario, SL1M selects some surfaces for $p_2 \in \mathcal{S}^2$, $p_3 \in \mathcal{S}^5$, and obviously $p_6 \in \mathcal{S}^{10}$ that is a hard constraint. 
 However, it does not solve the problem as $p_4$ and $p_5$ do not belong to any surface.
 As a consequence, the heuristics generates 36 sub-problems as $p_4$ and $p_5$ can potentially lie on 6 different surfaces each. 
 By testing all lowest cost combinations first, the heuristics finds a feasible solution after 5 explorations (Figure \ref{fig:sl1m:final:1}).
+
+As we can observe, the $l1$-norm encourages sparse solutions, hence the surface selection. However, it does not guarantee that each step lies on a surface.
+Consequently, SL1M formulation often requires combinatorial explorations to solve the problem on complex terrains.
 
 \begin{figure}[h!]
     \centering
@@ -1044,30 +1041,30 @@ By testing all lowest cost combinations first, the heuristics finds a feasible s
 
 \subsection{Problem Statement}
 SL1M formulation is promising to solve the contact planning problem with a simple linear optimization solver.
-We have seen that the $l1$-norm cost encourages the sparsity among the slack variables $\alpha_i$ for each step, and so the selection of surfaces.
+We have seen that the $l1$-norm cost encourages the sparsity among the slack variables $\alpha_i$, and so the surface selection for each step.
 %However, the formulation of the problem comes with limitations depending on the terrain geometry.
 
-SL1M outputs foot positions that are attracted toward their minimal cost area formed by their candidate surfaces.
-As the cost gradients generally operate at the edges of surfaces, the foot positions are encouraged to lie on them.
-In synergy with the foot constraints as well as the cost balancing between each step, it permits to find a sufficient approximation in our test scenarios.
+%SL1M outputs foot positions that are attracted toward their minimal cost area formed by their candidate surfaces.
+%As the cost gradients generally operate at the edges of surfaces, the foot positions are encouraged to lie on them.
+%In synergy with the foot constraints as well as the cost balancing between each step, it permits to find a sufficient approximation in our test scenarios.
 
-However, we have also seen that SL1M rarely solves the problem directly. 
-It often requires the use of heuristics to explore the combinatorics for undecided steps, which can grow exponentially with the number of footsteps and surface candidates \cite{sl1m_v1}.
+However, we observed that SL1M rarely solves the problem directly, and thus requires the use of heuristics to explore the combinatorics for undecided steps, which grows exponentially with the number of footsteps and surface candidates \cite{sl1m_v1}.
 
 Moreover, the heuristics presently used can lead to unfeasible problems. 
-Indeed, fixing selected surfaces in the SL1M solution further constrains our set of possibilities. While lowering the combinatorics to explore, it can also lead to unfeasible sub-problems. As a consequence, we may lose the guarantee of completeness.
+Indeed, fixing selected surfaces in the SL1M solution further constrains our set of possibilities. While reducing the combinatorics to explore, it can also lead to unfeasible sub-problems. As a consequence, we may lose the guarantee of completeness.
 At the moment, we do not have better heuristics or solutions other than the branch-and-bound algorithm to fix this limitation.
 
 Another important remark is that the constraints have been simplified in the previous examples.
-The full set of kinematic and dynamic constraints $\mathcal{F}$ (Appendix \ref{appendix:feasibility_constr}) further reduces the feasibility spaces, which irremediably makes the combinatorial exploration with the heuristics less likely to succeed.
+The full set of kinematic and dynamic constraints $\mathcal{F}$ (Appendix \ref{appendix:feasibility_constr}) further reduces the feasibility spaces, which makes the combinatorial exploration with the heuristics less likely to succeed.
 %\textcolor{red}{Steve: ??? plus tu contrains, plus t'as de chance que ca converge.} \textcolor{blue}{Pas vraiment... Exemple sur un de mes scenarios avec les debris: (a) SL1M sans contrainte sur le COM = 19 succes sur 20 tests, et (b) avec contraintes 17/20.*
 %Comme tu fixes des surfaces avec l'heuristics, t'as des chances qu'elle rende le probleme totalement infaisable. Si en plus tu mets encore plus de contraintes de faisabilité, tu vas encore plus echouer. C'est pour ça que je t'ai posé la question sur les slack à l'intérieur des contraintes de faisabilité. Je pensais qu'elles pouvaient potentiellement aider ce probleme?}
 
 To fix these limitations, we explore a lead from the previous work \cite{sl1m_v2}, that is the impact of the guide path and its discretization on the SL1M problem.
-In their result, they notice that its tuning is critical to generate easier SL1M problems.
+In their result, they noticed that its tuning is critical to generate easier SL1M problems.
 Indeed, as shown in the previous section on MIP, we need sufficiently small discretization steps $\Delta D$ for the problem to be feasible. 
-However, SL1M introduces a new dimension to the problem with its formulation, in regard to the $l1$-norm.
-We thus conduct several experiments to answer the following question: \textit{Can we generate guide paths further helping SL1M relaxation?}
+However, SL1M introduces a new dimension to the problem with its formulation regarding the $l1$-norm.
+
+We thus conduct several experiments to answer the following question: \textit{how can we generate guide paths helping SL1M relaxation, hence breaking the inherent combinatorics of the surface selection and contact planning problems?}
 
 
 \subsection{Experiments Conducted and Discussion}
@@ -1082,23 +1079,33 @@ We thus conduct several experiments to answer the following question: \textit{Ca
 We aim to increase the success rate of SL1M contact planner, with as little combinatorial exploration as possible using the heuristics.
 This objective is also related to the work in the previous Section \ref{subsub:mip:implementation_details}. 
 Indeed, if a problem is not feasible by the MIP contact planner, then it is not feasible by SL1M, its relaxed form.
-To achieve this objective, we tested the exact same approaches we had with LEAS and the other contact planners.
+To achieve this objective, we tested the same approaches we had with LEAS and the other contact planners.
 
 \paragraph{Testing our previous approaches.}
-%First, we employed the strategy of the sampling based contact planner (Section \ref{sec:CP-SB}).
-First, we trained LEAS to follow a desired velocity $v_{desired}=0.10$ m/s. 
-Then, we aimed for an average discretization step $\Delta D=20$ cm along the guide given to SL1M, value for which MIP contact planning is nearly always feasible (See Section \ref{subsub:mip:results}).
-LEAS-P2 was trained for two modes, with and without feedback from SL1M. Just as with the MIP contact planner, we perform a dichotomic search of the last successful step along the guide, feedbacked during the training.
+%First, we employed the strategy of the sampling-based contact planner (Section \ref{sec:CP-SB}).
+Just as done with the MIP contact planner in Section \ref{subsub:mip:results}, 
+we first trained LEAS to follow a desired velocity $v_{desired}=0.10$ m/s.
+We first focused on generating feasible problems for SL1M without maximizing the discretization steps along the guide.
+That is why we aimed for an average discretization step $\Delta \overline{D}=20$, for which we demonstrated that it was sufficient to cope with the contact planning feasibility constraints $\mathcal{F}$ in all our test scenarios.
+We also performed a dichotomic search of the last successful step along the guide, feedbacked during the training.
+We expected LEAS to adapt the robot root velocity, hence the discretization steps along the guide, to generate feasible SL1M problems.
+Two LEAS versions were trained, (1) with and (2) without SL1M heuristics. 
+
 However, this experiment was not successful as both RL policies did not converge.
-In our training area, the policy was making the robot idle on flat ground to accumulate positive rewards, without crossing any transition tile. 
-Indeed, the policy deemed the transition tiles (rubbles, stairs, bridge) too difficult to be crossed with the contact planner SL1M for both modes.
-As a result, it preferred staying idle on flat ground with only one candidate surface on it per step, the flat ground surface under the robot.
-This strategy thus avoids the difficulty of SL1M contact planning and does not permit us to achieve our navigation task.
+While LEAS trained with the heuristics (1) exhibited slightly higher episode rewards than its counterpart, both (1) and (2) converged to a similar unexpected behavior:
+the policies were making the robot idle on flat ground to accumulate positive rewards, without crossing any transition tile. 
+Indeed, they deemed the transition tiles (rubbles, stairs, bridge) too difficult to be crossed with the contact planner SL1M for both modes.
+As a consequence, they accumulated the idle rewards on flat ground ensuring the surface selection with only one candidate surface per step.
+
+Such behavior is understandable knowing the insight from the previous section. Indeed, SL1M contact planning solution is highly sensitive to the number of steps as well as the number and geometry of candidate surfaces for each step along the guide.
+Our steering method control may not be sufficient to solve this problem. As a consequence, it avoided the difficulty of SL1M contact planning by not performing its navigation task.
+
 
 
 \paragraph{Sanity check with a sparse reward.}
 To force LEAS in confronting both the navigation task and SL1M contact planning, we performed a sanity test on the stairs scenario.
-To do so, LEAS-P2 was trained with a simple sparse reward:
+
+To enforce LEAS in reaching a distant objective, we replaced its continuous rewards with a simple sparse reward:
 \begin{equation}
     R = \left\{
     \begin{array}{ll}
@@ -1107,43 +1114,47 @@ To do so, LEAS-P2 was trained with a simple sparse reward:
     \end{array}
 \right.
 \end{equation}
-In order to maximize the episode reward, LEAS is thus forced to succeed in climbing the stairs with the contact planner.
+To maximize the episode reward, LEAS was thus forced to succeed in climbing the stairs with the contact planner.
+As LEAS rarely reaches the objectives with the following reward, the network was pretrained using trajectories generated by LEAS-P1 to guide its exploration.
+We increased the discount factor $\gamma$ from $0.97$ to $0.9999$ to encourage it in reaching the objective while focusing on the contact planning success instead of the number of steps, without modifying the sparse reward.
 
-With the heuristics, the steering methods with SL1M achieve similar results to the MIP contact planner on stairs (\ref{subsub:mip:basic_scenarios}).
-That is why in this simple scenario, we performed it without its heuristics to analyze the direct impact of the guide on the relaxation.
-%With the heuristics, SL1M always succeeds on scenarios with a small number of steps \cite{sl1m_v1}.
-%However, to achieve our objective, we wanted to analyze the impact of the guide discretization on the relaxation itself without the heuristics.
-As LEAS-P2 rarely reaches the objectives with the following reward, the network was pretrained using trajectories generated by LEAS-P1 to guide its exploration.
-We increased the discount factor $\gamma$ from $0.97$ to $0.995$ to encourage LEAS-P2 in reaching the objective with SL1M in the least feasible number of steps, without modifying the sparse reward.
+As SL1M always succeeds in this low combinatorial problem scenario with its heuristics (1), we only trained our steering method without it (2) to better analyze if the guide impacts the relaxation itself.
+
 
 After training, we observed some improvements in SL1M success rate, but with unexpected behavior.
-LEAS-P2 was making the robot sidewalk at the maximum feasible discretization step (when sidewalking) up to the objective.
+LEAS was making the robot sidewalk at the maximum feasible discretization step (when sidewalking) up to the objective.
 This result is similar to our previous experiment on the sampling-based contact planner (Chapter \ref{sec:CP-SB}), where sidewalking is a preferred walking strategy in regard to the robot equilibrium constraints, plus in this case the overall SL1M formulation complexity.
 
-To avoid undesirable sidewalking behavior, we forced the robot orientation toward the goal.
-After training, the success rate was lower than without the orientation enforcement.
-The policy learned that the best strategy was to reach the target in the least number of steps possible.
-This strategy makes sense as by reducing the size of the problem, we possibly reduce the number of footsteps not lying on a surface.
-However, it was not the results we expected, and we did not see any other meaningful behavior.
+To avoid this undesirable sidewalking behavior, we then forced the robot orientation toward the goal. To do so we added the continuous reward $R_{ori}$ as defined in Chapter \ref{sec:LEAS}.
+After training, the success rate was obviously lower than without orientation enforcement.
+The policy learned that the best strategy was to reach the target in the least possible number of steps.
+This strategy makes sense as by reducing the size of the problem, we can potentially reduce the number of footsteps not lying on a surface.
+Another interesting behavior we observed is that the robot was staying on the edges of the terrain with a non-straight orientation, thus further reducing the number of candidate surfaces and so the problem combinatorics.
+Other than reducing the problem complexity through these behaviors, we did not oberve any other that could help us better understand how to help SL1M relaxation.
+
+Just as with MIP contact planner, we also tried to add past observable states along the trajectory as well as a counter indicating when the next step is to come.
+However, it was not successful in capturing the combinatorial complexity of SL1M formulation.
+
 
 \paragraph{Conclusion and Prospective}
 
-Our experiments on SL1M with LEAS were not successful.
-The guide path does impact the problem to solve, but its control over it is limited.
-%\textcolor{blue}{Montrer rubbles MIP vs SL1M without heuristics vs SL1M with heuristics}
+We explained the SL1M contact planning formulation whose objective is to remove the combinatorial aspect of the surface selection problem.
+Following the intuition of the previous work \cite{sl1m_v2}, we explored precisely how the guide path helps this relaxed formulation.
 
-LEAS can not accurately select the candidate surfaces for each step. However, those are at the core of SL1M formulation (Section \ref{subsub:insight_l1}). 
-Indeed, each problem is characterized by the number of steps, as well as the number and geometry of candidate surfaces for each step.
-In addition to optimizing the discretization step along the guide for a solution to exist, the SL1M solution is also much more dependent on the past trajectory compared to the MIP contact planner.
-As previously discussed, LEAS is not aware of the past trajectory and candidate surfaces when controlling the robot root. 
-In its actual state, LEAS can generate potentially feasible problems, however, it can not further help SL1M formulation.
-An approach could be to investigate the use of recurrent neural networks in LEAS to permit an internal representation of this past trajectory.
+Each contact planning problem is characterized by the number of steps and the number and geometry of candidate surfaces for each step.
+Beyond the combinatorial aspect of the problem as in the MIP planner, SL1M introduces a new dimension to it with the $l1$-norm that is efficient for simple scenarios, but hard to grasp on complex ones.
 
-However, we believe that helping to solve SL1M with the guide path may not be the right approach to the problem.
-Indeed, we may have to investigate the formulation itself.
-An idea could be to add weights to the slack variables in function of the surface probability to be stepped on.
+Our experiments with LEAS have shown that we can impact SL1M solution through the guide path.
+However, its control over it is quite limited and mostly led to undesirable strategies like sidewalking that reduce the problem combinatorics.
+%These results made us understand the obvious, that is that forcing a problem 
+
+As previously discussed, LEAS is not aware of the past trajectory and candidate surfaces when controlling the robot root. As a consequence, it is not fully aware of the contact planning combinatorics which is critical in SL1M formulation.
+An interesting approach could be to investigate the use of recurrent neural networks in LEAS to permit an internal representation of this past trajectory.
+
+However, we believe that solving SL1M through the guide path may not be the right approach to the problem.
+Indeed, we may have to improve the formulation itself.
+Many ideas come to our mind, such as adding weights to the slack variables in function of the surface probability to be stepped on.
 This way, the $l1$-norm minimal area would be more attracted toward these surfaces. 
-However, it is difficult problem to decide how to assign these weights, and machine learning could be useful for this task.
-
+However, it is difficult to decide how to assign these weights, and machine learning could be particularly useful for this task.
 In future work, further exploring how to improve this formulation is an exciting direction. 
 Finally, this also encompasses a broader range of applications not specific to contact planning which all aim to solve more efficiently Mixed-Integer Programming problems.
