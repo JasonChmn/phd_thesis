@@ -534,6 +534,8 @@ As one could guess, this approach is particularly fast to compute as it is often
 Using this strategy, Scianca et al. \cite{Scianca_2020} compute the next footstep to be made on flat ground, then adapt and perform it by their whole-body controller on the humanoid robots NAO and HRP-4.
 % Rebulla at darpa => problem of local minima highlighted.
 Rebulla et al. \cite{rebula_2007_little_dog} present a model-based controller for quadruped robots planning only the next footstep to statically walk on rough terrains.
+% Bratta: contactNet
+Recently in \cite{bratta_contact_net_2022}, a fast acyclic contact planner is learned by a multi-output regression neural network. Their network ranks discretized stepping regions and learns to select the best next feasible footstep.
 
 Reinforcement learning has also been used to choose the next few contact positions to be performed by the robot \cite{deepGait, RLOC} (Figure \ref{fig:cp_bm_0}). However, they often require complex reward design, long learning time (tens of hours), and the learned policies are specific to each robot model.
 
@@ -1198,7 +1200,7 @@ We argued that this hierarchichal division offers the most promising directions.
 The feasibility has been studied in several research fields. Yet we feel these tentatives lack of systematic approaches.
 In particular, there is no proposed guarantee either theoritical or empirical that the propose feasibility conditions of one hierarchical level makes the resulting movement a valid guide for the following stage.
 We propose to explore this problem with a reinforcement learning approach.
-\textcolor{blue}{Nico a mis data-driven approach. En machine learning, data-driven veut dire qu'on utilise des bases de donnee. En RL ca veut dire qu'on entraine ou pre-entraine notre policy avec ces prior dataset, donc ce n'est pas le bon terme.}
+%\textcolor{blue}{Nico a mis data-driven approach. En machine learning, data-driven veut dire qu'on utilise des bases de donnee. En RL ca veut dire qu'on entraine ou pre-entraine notre policy avec ces prior dataset, donc ce n'est pas le bon terme.}
 \hfill \break
 \hfill \break
 
