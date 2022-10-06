@@ -1,6 +1,7 @@
 \appendix
 
 \chapter{Reinforcement Learning: Overview}
+\label{appendix:rl_overview}
 
 Reinforcement Learning can be defined as an agent interacting with an environment according to a policy $\pi$. 
 The interaction sequence can be modeled as a Markov Decision Process (MDP) that is a tuple ($S$,$A$,$P$,$R$,$\mu$,$\gamma$), where:
@@ -93,7 +94,7 @@ The complete formulation of the contact-before-motion MIP contact planning probl
                                 \quad & \quad \mbox{card}(a_i) = m-1  \nonumber\\
                                 \quad & \quad \forall j \in \{1,..,m\} : \nonumber\\
                                     \quad & \quad \quad S^j \mbox{p}_i \leq s^j + M a_i^j \textbf{1} \nonumber\\
-                                    \quad & \quad \quad (p_i)^{\intercal} \textbf{n}^j = e^j + \beta_i^j \nonumber\\
+                                    \quad & \quad \quad (p_i)^{\intercal} \textbf{d}^j = e^j + \beta_i^j \nonumber\\
                                     \quad & \quad \quad ||\beta_i^j||_1 \leq M a_i^j \nonumber\\
                                     %\quad & \quad \quad \textcolor{blue}{F^{j}_{i-1} (\mbox{c}_{i,\:0}-\mbox{p}_{i-1}) \leq  f_{i-1}^{j} + M a_{i-1}^{j} } \nonumber\\
                                     %\quad & \quad \quad \textcolor{blue}{F^{j}_{i} (\mbox{c}_{i,\:1}-\mbox{p}_{i}) \leq  f^j_{i} + M a{i}^{j} }  \nonumber\\

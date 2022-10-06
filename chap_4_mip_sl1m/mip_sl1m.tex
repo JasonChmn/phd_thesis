@@ -1,6 +1,6 @@
 
 
-\chapter{LEAS with a Mixed-Integer Programming Contact Planner}
+\chapter{LEAS with Mixed-Integer Programming Contact Planners}
 \label{sec:CP-SL1M}
 \minitoc
 \bigskip
@@ -21,8 +21,8 @@ In this chapter, we will use two contact planners formulated with a Mixed-Intege
 %\textcolor{blue}{J'ai ajouté la phrase d'en dessous, qui mérite surement d'être revue.}
 
 The sampling contact planner presented in the previous section relies on heuristics to search for contacts in the robot environment.
-While it can efficiently solve the contact planning problem, its sampling approach can not guarantee its completeness.
-On the other hand, optimization-based approaches are an appealing approach to solve this limitation. However, they have to handle both the discrete choice of contact surfaces and the continuous optimization of placing contacts on them.
+While it can efficiently solve the contact planning problem, its sampling approach cannot guarantee its completeness.
+Optimization-based approaches are an appealing approach to solve this limitation. However, they have to handle both the discrete choice of contact surfaces and the continuous optimization of placing contacts on them.
 Previous works on contact planning \cite{deits2014FootPlanMI, sl1m_v2} solved this problem using a MIP approach or its relaxed form respectively.
 We will explain both approaches and further investigate if our method LEAS can improve them through its guide paths generation.
 %such contact planners have been used to solve both the discrete choice of selecting a sequence of surfaces to step on, and the continuous problem of placing contacts on these surfaces.
@@ -83,7 +83,7 @@ For any foot position p$ \in \mathbb{R}^{3}$, we have:
 \end{equation}
 Where d$^j \in \mathbb{R}^3$ is the normal of surface $\mathcal{S}^j$, and $e^j \in \mathbb{R}$. The constant matrix $S^j \in \mathbb{R}^{h \times 3}$ and the vector $s^j \in \mathbb{R}^h$ define the $h$ half-spaces that bounds the surface $\mathcal{S}^j$.
 
-For simplicity's sake, we denote $\mathcal{F}$ the set of dynamic and kinematic feasibility constraints. 
+For simplicity, we denote $\mathcal{F}$ the set of dynamic and kinematic feasibility constraints. 
 They guarantee the robot to follow the footstep plan in equilibrium without violating joint limits (Appendix \ref{appendix:feasibility_constr}).
 In this work, we will formulate the initial constraint as $\mathcal{I} : \{\mbox{P}, \mbox{p}_1 = \mbox{p}_{\mathcal{I}}\}$, and the goal constraint as $\mathcal{G} : \{\mbox{P}, \mbox{p}_1 \in \mathcal{S}^{\mathcal{G}} \}$, where p$_{\mathcal{I}}$ is a constant and $\mathcal{S}^{\mathcal{G}}$ the destination surface.
 
@@ -96,7 +96,7 @@ In this work, we will formulate the initial constraint as $\mathcal{I} : \{\mbox
 % We are only interested in the feasibility problem. We will only briefly talk about the cost that we can optimize later.
 
 
-We give the simplified contact planning problem as follows:
+We formulate the simplified contact planning problem as follows:
 \begin{equation}
 \label{eq:mip_simple}
 \begin{aligned}
@@ -118,8 +118,8 @@ As the condition p$_i \in \mathcal{S}$ is represented by inequality constraints(
                             \quad & \beta_i=[\beta_i^1,...,\beta_i^m], \; \beta_i^j \in \mathbb{R} \nonumber\\
     \textrm{\textbf{s.t.}}  \quad & \mbox{card}(\mbox{a}_i) = m-1 \label{eq:cbm:surf:card}\\
                             \quad & \forall j \in \{1,..,m\} : \nonumber\\
-                            \quad & \quad \quad S^j\mbox{p}_i \leq s^j + M a_i^j \textbf{1} \nonumber\\
-                            \quad & \quad \quad (\mbox{p}_i)^{\intercal} \textbf{n}^j = e^j + \beta_i^j \nonumber\\
+                            \quad & \quad \quad S^j\mbox{p}_i \leq s^j + M a_i^j \textbf{1} \label{eq:cbm:surf:big_m_explain}\\
+                            \quad & \quad \quad (\mbox{p}_i)^{\intercal} \textbf{d}^j = e^j + \beta_i^j \nonumber\\
                             \quad & \quad \quad ||\beta_i^j||_1 \leq M a_i^j \nonumber\\
                             \nonumber
 \end{align}
@@ -129,7 +129,9 @@ We introduce the slack variables $a_i^j$ and $\beta_i^j$:
     \item If $a_i^j = 0$, the corresponding surface $\mathcal{S}^j$ is selected and the $i$-th foot position $\mbox{p}_i$ lies on it, thus implying that $\beta_i^j = 0$.
     \item If $a_i^j = 1$, the constraints relative to the surface $\mathcal{S}^j$ always have a solution and can be ignored.
 \end{itemize}
-The big-M method introduces a sufficiently large scalar $M$ to solve our problem, but small enough to not hinder its convergence \cite{big_M_danger}.
+The big-M method introduces a sufficiently large scalar $M$ to solve our problem, but small enough to not hinder its convergence \cite{big_M_danger}. 
+Indeed, for $a_i^j = 1$ and a sufficiently high $M$ value the constraint (\ref{eq:cbm:surf:big_m_explain}) is always true, and conversely for $a_i^j = 0$ where the feet position must lies in $\mathcal{S}^j$ to be true.
+Simply said, the big-M method permits us to represent a logical \textbf{OR} operator for the surface selection problem.
 The cardinality function (\ref{eq:cbm:surf:card}) counts the number of non-zero entries in a vector. 
 It enforces the foot position p$_i$ to lie on exactly one surface in $\mathcal{S}$.
 
@@ -147,7 +149,7 @@ We present the mixed-integer formulation for contact planning without guide (con
                                 \quad & \quad \mbox{card}(\mbox{a}_i) = m-1 \label{eq:cbm:mip_complete:card}\\
                                 \quad & \quad \forall j \in \{1,..,m\} : \nonumber\\
                                     \quad & \quad \quad S^j\mbox{p}_i \leq s^j + M a_i^j \textbf{1} \nonumber\\
-                                    \quad & \quad \quad (\mbox{p}_i)^{\intercal} \textbf{n}^j = e^j + \beta_i^j \nonumber\\
+                                    \quad & \quad \quad (\mbox{p}_i)^{\intercal} \textbf{d}^j = e^j + \beta_i^j \nonumber\\
                                     \quad & \quad \quad ||\beta_i^j||_1 \leq M a_i^j \nonumber\\
                                     \nonumber
 \end{align}
@@ -178,24 +180,24 @@ Finally, it is important to note that state-of-the-art MIP solvers, such as Guro
 This formulation can explore all terrain contact surfaces in $\mathcal{S}$ while optimizing footstep positions and orientations on them.
 As a result, it offers a guarantee of completeness under the problem constraints.
 
-However, in most scenarios such as Figure \ref{fig:rubbles:empty}, we can not know other than empirically how many steps $n$ are required to reach the distant objective.
+However, in most scenarios such as Figure \ref{fig:rubbles:empty}, we cannot know other than empirically how many steps $n$ are required to reach the distant objective.
 The tuning of the number of steps $n$ is avoided in \cite{deits2014FootPlanMI} by defining a maximum bound for the required number of steps. The MIP problem is then solved with a cost encouraging the robot to reach the goal with the minimum number of steps. 
 Once done, the redundant footsteps in the goal area are then discarded.
 A critical limitation of this approach is the manual tuning of the maximum number of steps. 
 On the one hand, overestimating this number results in unnecessary computation due to the number of redundant footsteps.
 On the other hand, underestimating it can make the problem infeasible.
 
-Overall, as the number of steps $n$ and candidate surfaces $m$ increase, so do exponentially the dimension and complexity of the problem ($n^m$). As a consequence, this method can result in contact planning times up to several seconds for a few steps.
+Overall, as the number of steps $n$ and candidate surfaces $m$ increases, so do exponentially the dimension and complexity of the problem ($n^m$). As a consequence, this method can result in contact planning times up to several seconds for a few steps.
 
 
-\subsection{Advantages of the Guide Path and Problem Statement}
+\subsection{Motion-before-contact Approach}
 %\begin{figure}[ht]
 %    \centering
 %    \includegraphics[width=0.7\textwidth, height=5cm]{Figures/Chapter_MIP_SL1M/strategies_cp_guide_B.png}
 %    \caption{Given root configurations along the guide path, the contact planner computes the reachable surfaces to step on and optimizes the contact placements on it.}
 %    \label{fig:cp-sb:strategy_cp-sb}
 %\end{figure}
-To fix the limitations of tuning the number of steps $n$ as well as the problem complexity, we can reformulate the MIP formulation with a motion-before-contact approach, i.e. using a guide path.
+To fix the limitation of tuning the number of steps $n$ as well as preprocessing the search footstep orientations R, hence reducing the problem complexity, we can reformulate the MIP formulation with a motion-before-contact approach, i.e. using a guide path.
 
 \begin{figure}[h!]
     \centering
@@ -212,7 +214,7 @@ To fix the limitations of tuning the number of steps $n$ as well as the problem 
         \includegraphics[trim={10cm 8cm 10cm 10cm},clip,width=\textwidth,height=4cm]{Figures/Chapter_MIP_SL1M/rubbles/rubbles_steps_4_9_14_steps.png}
         \caption{Contact placement\label{fig:rubbles:surf_sel_2}}
     \end{subfigure}
-    \caption{MIP with guide path: (a) the steering method plans a guide and gets a reduced set of candidate surfaces for each step, (b) the contact planner selects the surfaces to step on, and (c) it places the contacts on it. We highlight three configurations for better visualization.\label{fig:rubbles:surf_sel}}
+    \caption{MIP with guide path: (a) the steering method plans a guide and gets a reduced set of candidate surfaces for each step represented by the colored patches, one for each discretized configuration along the guide, (b) the contact planner selects the surfaces to step on, and (c) it places the contacts on it. We highlight three configurations in red, blue and black for better visualization.\label{fig:rubbles:surf_sel}}
 \end{figure}
 
 
@@ -234,7 +236,7 @@ The formulation is as follows:
                                 \quad & \quad \mbox{card}(\mbox{a}_i) = m_i-1 \nonumber \\
                                 \quad & \quad \forall j \in \{1,..,m_i\} : \label{eq:mbc:mip_complete:surf_cand}\\
                                     \quad & \quad \quad S_i^j\mbox{p}_i \leq s_i^j + M a_i^j \textbf{1}  \nonumber\\
-                                    \quad & \quad \quad (\mbox{p}_i)^{\intercal} \textbf{n}^j = e^j + \beta_i^j \nonumber\\
+                                    \quad & \quad \quad (\mbox{p}_i)^{\intercal} \textbf{d}^j = e^j + \beta_i^j \nonumber\\
                                     \quad & \quad \quad ||\beta_i^j||_1 \leq M a_i^j \nonumber\\
                                     \nonumber
 \end{align}
@@ -293,7 +295,7 @@ We average the results over 20 tests, with a  sufficiently high number of steps 
     \hline
     \makecell{\textbf{w/o guide}\\computation time\\(ms)} & 330 & 3400 & 4700 & 27200 & 31000 \\
     \hline
-    \makecell{\textbf{w/ guide}\\computation time\\(s)} & 30 & 75 & 120 & 218 & 292\\
+    \makecell{\textbf{w/ guide}\\computation time\\(ms)} & 30 & 75 & 120 & 218 & 292\\
     \hline
 \end{tabular}
 \caption{Computation time comparison between contact-before-motion (without guide) and motion-before-contact (with guide) on our long-range scenario for different path lengths.}
@@ -301,7 +303,7 @@ We average the results over 20 tests, with a  sufficiently high number of steps 
 \end{table}
 
 Results in Table \ref{tab:mip:cbm_mbc} show the clear advantage of the motion-before-contact approach over its counterpart, ranging from 10 times to 100 times faster as the number of steps increases.
-We did not analyze the computation time of the guide as we did not yet fully optimize LEAS implementation, written in python.
+We did not analyze the computation time of the guide as we did not yet fully optimize LEAS implementation, written in Python. At the moment, it corresponds to $15$ ms per step with most of the resources allocated to retrieving the local height map. From our results, it still results in better performance when added to the contact planning time, with in the worst case (red): $18 \times 15 + 30 = 300$ ms that is still superior to the $330$ ms contact planning time without guide.
 
 
 \paragraph{Problem statement.}
@@ -314,9 +316,9 @@ In the previous scenario, we manually tuned the discretization steps, which we w
 %In this work, we choose to constrain the search for footsteps in the vicinity of their corresponding configurations along the guide, while ensuring enough candidate surfaces to not strongly impact the planning feasibility. We will show the benefits of such pruning, however, we will not explore strategies to filter these $m_i$ candidates, but that deserve further investigation.
 
 As hinted by our previous experiments, always using sufficiently high discretization steps could enable us to reduce the number of steps in the problem, hence further alleviating its combinatorics and so its computation time.
-Following this idea, we formulate the question: \textit{Can we automatically compute guide paths with sufficiently high discretization steps depending on the terrain traversability, while being feasible by the contact planner?}
-We previously discussed this question in Chapter \ref{sec:CP-SB}, where we ask if a fixed average discretization step along the guide is desirable in terms of contact planning quality and complexity. We choose to discretize the guide with a fixed desired value $\Delta D=10$ cm to alleviate the heavy computation load of our sampling-based contact planner.
-Here, the MIP contact planner finally allows us to explore this question.
+Following this idea, we formulate the question: \textit{Can we automatically compute guide paths with sufficiently high discretization steps depending on the terrain, while being feasible by the contact planner?}
+We previously discussed this question in Chapter \ref{sec:CP-SB}, where we ask if a fixed average discretization step along the guide is desirable in terms of contact planning quality and complexity. We chose to discretize the guide with a fixed desired value $\Delta D=10$ cm to alleviate the heavy computation load of our sampling-based contact planner.
+Here, we investigate this question with the MIP contact planner.
 
 % How to discretize the guide ?
 %We will thus focus on the main limitation of the previous work \cite{sl1m_v2} that is the manual tuning of the discretization steps $\Delta D_i$ for each step $i$ along the guide path (i.e. distance between each root configuration).
@@ -413,7 +415,7 @@ However, it is prone to local minima.
 This limitation is avoided in their implementation by solving the problem with a regularization cost in $l(\mbox{P},\mbox{R})$, but at the cost of a longer computation time than a feasibility problem.
 
 In this work, we want to avoid adding such costs for computation efficiency purposes. 
-Moreover, short-horizon planning can not guarantee completeness, which is not desirable for our task.
+Moreover, short-horizon planning cannot guarantee completeness, which is not desirable for our task.
 That is why we choose the dichotomic search strategy to solve the long-horizon contact planning problem along the whole guide path.
 
 %The contact planner then searches for a sequence of surfaces among these candidates as well as contact placement on it to reach a distant objective.
@@ -591,7 +593,7 @@ We compare the steering methods on our long-range scenario (Figure \ref{fig:mip:
 Here, we will further focus on the impact of adapting the discretization $\Delta D_i$ between each root configuration step on a sequence of easy and difficult terrains.
 
 The steering methods have to generate a guide path up to the red objective, then succeed in the MIP contact planning.
-As RB-Kino can not generate valid guide paths up to the goal without a path planner, we manually place waypoints on the terrain.
+As RB-Kino cannot generate valid guide paths up to the goal without a path planner, we manually place waypoints on the terrain.
 This scenario is particularly difficult because the steering methods should lower the discretization steps depending on the terrain difficulty.
 In that regard, we render the different $\Delta D_i$ values between each step along the guide for $N_{ref}$.
 The x-axis matches the terrain pictured so that we can observe their behavior in each terrain area.
@@ -627,7 +629,7 @@ Just like in the basic scenarios, LEAS-P2 can generate feasible guide paths by t
 We will now observe the impact of the number of steps, and the gains we can obtain through this optimization (Figure \ref{fig:mip:long_range_success_time:time}).
 Our long range is scenario is feasible for a number of steps $n \geq 90$. We expected the contact planning time to be lower as the number of steps converges to this minimum bound.
 Using Gurobi solver along with its presolver and heuristics, we first observe that it is complex to analyze. While it is true that the very high number of steps ($n=200$) results in an exponential increase, there is no clear benefits in reducing this number from $n=130$ to $n=90$ where we observe similar computation time.
-In our experiments, we notice a great disparity between the problem results of similar length. Indeed, Gurobi heuristics are effective but unpredictable in their performance, hence making difficult the evaluation of the problem complexity. Further, tests thus need to be performed on other MIP solvers.
+In our experiments, we notice a great disparity between the problem results of similar length. Indeed, Gurobi heuristics are effective but unpredictable in their performance, hence making difficult the evaluation of the problem complexity. Further tests thus need to be performed on other MIP solvers.
 
 
 \subsection{Conclusion and Discussion}
@@ -700,7 +702,7 @@ However, it may not constrain enough the search for footsteps around the guide, 
 We emphasize the fact that the MIP contact planner solves the discrete choice of contact surfaces, which is a combinatorial problem.
 %Indeed, the problems we presented are solved along all the trajectory at once, as opposed to a short horizon planning approach \cite{fanny_mip_solo}.
 Our steering method adapts the robot velocity along the guide path depending on the terrain, that then composes the contact planning problem to solve. 
-However, LEAS can not observe the past trajectory. 
+However, LEAS cannot observe the past trajectory. 
 As a consequence, it is not directly (or not at all) aware of its combinatorial aspect. 
 
 As discussed in the previous work \cite{sl1m_v2}, pruning surfaces along the guide can be seen as a MIP presolve routine (cuts) specific to contact planning.
@@ -725,7 +727,7 @@ Due to the highly combinatorial aspect of the surface selection problem, an inte
 %We presented in previous section a Mixed-Integer Programming formulation for contact planning.
 %This problem is solved by a classical branch-and-bound algorithm to solve its combinatorics \cite{gurobi_mip}.
 
-%However, commercial MIP solvers can not easily be embedded on robots due to their memory size and computation power required.
+%However, commercial MIP solvers cannot easily be embedded on robots due to their memory size and computation power required.
 %The continuous contact planning approach presented is inherently subject to the combinatorics of the surfaces selection. As a consequence, reformulating it as a linear problem is not trivial.
 
 As presented in the previous section, the performance of the MIP contact planner is heavily impacted by the combinatorial aspect of the problem.
@@ -761,7 +763,7 @@ The relaxed formulation of the MIP formulation for contact planning with guide p
                             \quad & \forall i \in \{1,..,n\} : \nonumber\\
                                 \quad & \quad \forall j \in \{1,..,m_i\} : \nonumber\\
                                     \quad & \quad \quad S_i^j\mbox{p}_i \leq s_i^j + M \textcolor{blue}{\alpha_i^j} \textbf{1} \nonumber\\
-                                    \quad & \quad \quad (\mbox{p}_i)^{\intercal} \textbf{n}^j = e^j + \beta_i^j \nonumber\\
+                                    \quad & \quad \quad (\mbox{p}_i)^{\intercal} \textbf{d}^j = e^j + \beta_i^j \nonumber\\
                                     \quad & \quad \quad ||\beta_i^j||_1 \leq M \textcolor{blue}{\alpha_i^j} \nonumber\\
                                     \nonumber
 \end{align}
@@ -963,7 +965,7 @@ These simple scenarios enable us to observe one of the main limitations of the l
 
 \paragraph{Scenario B.}
 As shown on figure \ref{fig:sl1m:final}, the robot has to cross a complex terrain composed of 10 surfaces and reach the surface $\mathcal{S}^{10}$ in 5 steps. 
-We arbitrarily assign to each step position the following surface indices:
+We arbitrarily assign to each step position the following candidate surface indices:
 \begin{enumerate}
     \item $p_2 \; \Rightarrow$ \; $j = [1,2,3]$
     \item $p_3 \; \Rightarrow$ \; $j = [4,5]$
@@ -1056,7 +1058,8 @@ Indeed, fixing selected surfaces in the SL1M solution further constrains our set
 At the moment, we do not have better heuristics or solutions other than the branch-and-bound algorithm to fix this limitation.
 
 Another important remark is that the constraints have been simplified in the previous examples.
-The full set of kinematic and dynamic constraints $\mathcal{F}$ (Appendix \ref{appendix:feasibility_constr}) further reduces the feasibility spaces, which makes the combinatorial exploration with the heuristics less likely to succeed.
+The full set of kinematic and dynamic constraints $\mathcal{F}$ (Appendix \ref{appendix:feasibility_constr}) further reduces the feasibility spaces, which in our experiments makes the combinatorial exploration with the heuristics less likely to succeed. 
+%However, additional tests are required to confirm it.
 %\textcolor{red}{Steve: ??? plus tu contrains, plus t'as de chance que ca converge.} \textcolor{blue}{Pas vraiment... Exemple sur un de mes scenarios avec les debris: (a) SL1M sans contrainte sur le COM = 19 succes sur 20 tests, et (b) avec contraintes 17/20.*
 %Comme tu fixes des surfaces avec l'heuristics, t'as des chances qu'elle rende le probleme totalement infaisable. Si en plus tu mets encore plus de contraintes de faisabilité, tu vas encore plus echouer. C'est pour ça que je t'ai posé la question sur les slack à l'intérieur des contraintes de faisabilité. Je pensais qu'elles pouvaient potentiellement aider ce probleme?}
 
@@ -1065,7 +1068,8 @@ In their result, they noticed that its tuning is critical to generate easier SL1
 Indeed, as shown in the previous section on MIP, we need sufficiently small discretization steps $\Delta D$ for the problem to be feasible. 
 However, SL1M introduces a new dimension to the problem with its formulation regarding the $l1$-norm.
 
-We thus conduct several experiments to answer the following question: \textit{how can we generate guide paths helping SL1M relaxation, hence breaking the inherent combinatorics of the surface selection and contact planning problems?}
+We thus conduct several experiments to answer the following question: \textit{Can we use the guide to help SL1M convergence to feasible sparse solutions?}
+%\textit{how can we generate guide paths helping SL1M relaxation, hence breaking the inherent combinatorics of the surface selection and contact planning problems?}
 
 
 \subsection{Experiments Conducted and Discussion}
@@ -1149,10 +1153,10 @@ Our experiments with LEAS have shown that we can impact SL1M solution through th
 However, its control over it is quite limited and mostly led to undesirable strategies like sidewalking that reduce the problem combinatorics.
 %These results made us understand the obvious, that is that forcing a problem 
 
-As previously discussed, LEAS is not aware of the past trajectory and candidate surfaces when controlling the robot root. As a consequence, it is not fully aware of the contact planning combinatorics which is critical in SL1M formulation.
+As previously discussed, LEAS can not oberve the past trajectory and candidate surfaces that compose the problem. As a consequence, it is not fully aware of its combinatorial aspect which is critical in SL1M formulation.
 An interesting approach could be to investigate the use of recurrent neural networks in LEAS to permit an internal representation of this past trajectory.
 
-However, we believe that solving SL1M through the guide path may not be the right approach to the problem.
+Arguably, solving SL1M through the guide path may not be the right approach to the problem.
 Indeed, this problem goes beyond the concepts of reachability or traversability, and turns out too complex to be handled by a simple navigation task.
 Consequently, we may have to improve the formulation itself.
 Many ideas come to our mind, such as adding weights to the slack variables in function of the surface probability to be stepped on.
