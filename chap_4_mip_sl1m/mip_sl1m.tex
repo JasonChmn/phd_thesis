@@ -736,6 +736,7 @@ Such a promising solution could remove the need for branch-and-bounds algorithms
 
 
 \subsection{Relaxation of the Mixed-Integer Problem}
+\label{sub:mip:sl1m}
 % Show the reformulation with a guide path => Constraint stated above.
 % Reformulation into a feasibility problem => Minimize l1-norm inside the MIP (no quadratic cost) + surfaces never intersect + remove the constraint on nb of surfaces.
 % How does gurobi solve it? => In fact the first step is SL1M?
@@ -1152,7 +1153,8 @@ As previously discussed, LEAS is not aware of the past trajectory and candidate 
 An interesting approach could be to investigate the use of recurrent neural networks in LEAS to permit an internal representation of this past trajectory.
 
 However, we believe that solving SL1M through the guide path may not be the right approach to the problem.
-Indeed, we may have to improve the formulation itself.
+Indeed, this problem goes beyond the concepts of reachability or traversability, and turns out too complex to be handled by a simple navigation task.
+Consequently, we may have to improve the formulation itself.
 Many ideas come to our mind, such as adding weights to the slack variables in function of the surface probability to be stepped on.
 This way, the $l1$-norm minimal area would be more attracted toward these surfaces. 
 However, it is difficult to decide how to assign these weights, and machine learning could be particularly useful for this task.

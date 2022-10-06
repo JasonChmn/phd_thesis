@@ -1,6 +1,23 @@
 \chapter{Conclusion}
 \label{sec:conclusion}
 
+% https://reussirsathese.com/comment-ecrire-la-conclusion-de-sa-these
+% Réfléchissez :  quel est le message le plus important, le plus innovant de votre thèse ? Quel phénomène central avez-vous décrit qui n’avait pas été décrit ainsi auparavant? Et quelles conséquences cela peut-il avoir pour ceux qui feront de la recherche après vous ?
+
+% J'ai approche la notion de traversabilite directement a travers les contact planners.
+% A partir de tres peu d'observation de l'environnement (petite HM), on est capable d'avoir des info suffisantes pour approximer leur faisabilite.
+% Au final, meme l'echec a la fin avec SL1M => Il a reussit a apprendre quelque chose, c'est qu'il ne pouvait rien y faire.
+% Prendre une approche haut niveau comme ca en essayant de trouver des inputs qui font fonctionner les modules suivant du pipeline permet d'avoir pas mal d'insight sur eux.
+
+
+% These de pierre: La vision à long terme du projet Loco-3D [Carpentier 2017b] dans lequel s’inscrit cette thèse est d’embarquer cette architecture de planification dans le robot et de la connecter aux méthodes de perception en entrée et de contrôle en sortie. Le résultat serait un robot pouvant effectuer des tâches de locomotion dans un environnement quelconque et inconnu, capable de produire des mouvements en multi-contact sans interventions humaines.
+
+
+% 1e CP: Pas une methode complete mais multi-contact qui a été testé beaucoup dans la these de Pierre. Il dit que ce qui est critique c'est l'heuristique et parce que la methode n'est pas complete, il faut la relancer plusieurs fois avant de trouver une solution.
+% Limitation du rb-rrt comme dit chez pierre: la méthode de planification locale est complète mais le RB-RRT kinodynamique n’est pas complet à cause des heuristiques et des approximations utilisées.
+% Le principal problème de la méthode RB-RRT Kinodynamique est que la méthode de planification locale nécessite de connaître exactement les contacts entre le robot et l’environnement mais que cette information n’est pas disponible durant la résolution de P1. (...) Une approche qui nous semble prometteuse serait d’utiliser des méthodes d’apprentissage afin d’apprendre la distribution de probabilité du placement des contacts en fonction de l’état courant, de l’environnement proche et de la direction de déplacement future.
+
+% ============================================
 
 % ====== Cheminement argumentaire. Reprenez votre question de recherche, expliquez les pas que vous avez faits pour y répondre à travers les différents chapitres. Grâce à ce résumé, on doit bien sentir comment les différentes parties de la thèse s’articulent et « tiennent » bien ensemble, pourquoi le cheminement est cohérent.
 
@@ -76,7 +93,3 @@ Finally, we would like to add a final word on the place of Reinforcement Learnin
 When training such an RL agent subject to complex or in our case unknown feasibility criteria, it is not an easy task to comprehend its behavior in a given situation.
 Just as us humans, we can difficulty explain why we behave in a certain way. However, comprehending the reasons can help us better guide our future choices.
 \textcolor{blue}{J'ai essayé de faire un truc sur une reflexion que j'ai eu, à voir si c'est idiot ou pas?}
-
-% Après avoir entrainé un agent, c'est pas fini. Il faut savoir pourquoi il fait ça.
-
-\end{document}
