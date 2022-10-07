@@ -644,7 +644,7 @@ In this chapter, the number of workers planning contacts is set to 0 as we train
 % - size of network with PPO : 256x128x64
 The PPO actor and critic are two distinct networks with hidden layers of size 128x64x32. Tuning the number of nodes and hidden layers in the machine is empirical and depend on the task to perform. In general, deeper networks with more nodes means a better capability to solve very complex tasks and less under-fitting. However, it also means more parameters to train and can be prone to over-fitting. In our experiments on LEAS, we found no noticeable difference between 2 or 3 hidden layers and nodes number ranging from 64-256. However, we increased the network size of 64x64 from the first version of LEAS \cite{LEAS} for more potential scalability in our tests in terms of observations and contact planners.
 
-We train LEAS without a contact planner and evaluate the model after 12 million steps corresponding to around 2 hour of training on a PC with an Intel Core i7-8700 (12 cores, 3.20Ghz, 16GB ram). Learning curves can be seen on figure \ref{fig:control_LEAS_learning_curves}.
+We train LEAS without a contact planner and evaluate the model after 12 million steps corresponding to around 2 hour of training on a PC with an Intel Core i7-8700 (12 cores, 3.20Ghz, 16GB ram). Learning curves can be seen in figure \ref{fig:control_LEAS_learning_curves}.
 
 \begin{figure}[ht]
     \centering
@@ -752,7 +752,7 @@ Finally, we recall the main advantage of LEAS over our previous steering methods
 
 \subsection{Test Scenarios\label{subsub:leas:test_scenarios}}
 
-As LEAS does not connect exactly with the goal position, we consider the goal as reached when the distance from the current state on the guide path to the goal is lower than a distance threshold $\epsilon$ set to $20$ cm for all our scenarios.
+As LEAS does not connect exactly with the goal position, we consider the goal to be reached when the distance from the current state on the guide path to the goal is lower than a distance threshold $\epsilon$ set to $20$ cm for all our scenarios.
 
 % Show behaviour:
 % [0] Navigate while keeping a desired velocity => Show acceleration, velocity, orientation, reward.
@@ -767,6 +767,7 @@ As LEAS does not connect exactly with the goal position, we consider the goal as
     \centering
     \includegraphics[width=0.8\textwidth, height=5cm]{Figures/Chapter_LEAS/stairs_exemple.png}
     \caption{Scene view}
+    \label{fig:stairs_p1:scene}
     \end{subfigure}
     \begin{subfigure}[t]{0.49\linewidth}
     \includegraphics[width=\textwidth, height=5cm,trim={2cm 2cm 2cm 2cm},clip]{Figures/Chapter_LEAS/stairs_lin_p1_90.png}
@@ -783,15 +784,20 @@ As LEAS does not connect exactly with the goal position, we consider the goal as
     \caption{LEAS (ours)}
     \label{fig:leas:stairs_p1_leas}
     \end{subfigure}
-    \caption{Comparison on stairs where dots represent initial states from where the SM generates a valid (yellow) or invalid (black) guide path up to the goal (red). We illustrate for each SM one trajectory where the black arrows represent the robot orientation along the guide.}
+    \caption{Comparison on stairs where dots represent initial states from where the SM generates a valid (yellow) or invalid (black) guide path up to the goal (red). 
+    The height map is represented by the grey shades from dark to bright, that are lower and higher heights respectively.
+    We illustrate for each SM one trajectory where the black arrows represent the robot orientation along the guide.}
     \label{fig:stairs_p1}
 \end{figure}
 
 \hfill
 
-\noindent\textbf{Stairs}. We compare the navigation skills of LEAS and our previous steering methods on the stairs scenario (Figure \ref{fig:stairs_p1}). The height map of the terrain is represented by the grey shades with the bottom of the stairs on the left, and the top of the stairs on the right. We uniformly sample 80 initial root configurations at the bottom of the stairs, from which the steering methods have to generate guide paths up to the same fixed goal location (red). Each initial state is oriented at $90^{\circ}$, to better show the rotation performed by the steering methods, and with a null velocity. 
-Initial states from where the SM reaches the goal with a valid guide path are represented by yellow dots, and black dots represent states where either the SM fails to reach the goal or generates an invalid guide path (i.e. ground not reachable or collision) and thus requires path planning to succeed. 
-For RB-Kino, we need to define additional constraints that are the velocity and acceleration desired on the goal configuration and that have an impact on the shape of the trajectory. In this scenario, we set both goal acceleration and velocity to $0$.
+\noindent\textbf{Stairs}. We compare the navigation skills of LEAS and our previous steering methods on the stairs scenario (Figure \ref{fig:stairs_p1}). 
+%The height map of the terrain is represented by the grey shades with the bottom of the stairs on the left, and the top of the stairs on the right.
+We uniformly sample 80 initial root configurations at the bottom of the stairs (Figure \ref{fig:stairs_p1:scene}), from which the steering methods have to generate guide paths up to the same fixed goal location.
+Each initial state is oriented at $90^{\circ}$ with respect to the stairs, to better show the rotation performed by the steering methods, and with a null velocity. 
+Initial states from where the SM reaches the goal with a valid guide path are represented by yellow dots. Conversely, black dots represent states where either the SM fails to reach the goal or generates an invalid guide path (i.e. ground not reachable or collision) and thus requires additional waypoints to be provided by a path planning method. 
+For RB-Kino, we need to define some constraints that are the velocity and acceleration desired on the goal configuration and that have an impact on the shape of the trajectory. In this scenario, we set both goal acceleration and velocity to $0$.
 
 RB-Lin is designed to first rotate the robot toward the goal, then generate a straight line up to the goal (Figure \ref{fig:leas:stairs_p1_lin}). The main limitation of this method is that it succeeds only when directly placed in front of the stairs and further initial position on the left results in guide paths where the robot is unable to touch the ground.
 RB-Kino presents the same limitation as RB-Lin, plus another one on the orientation where it rotates directly from $90^{\circ}$ to $0^{\circ}$ in one timestep (Figure \ref{fig:leas:stairs_p1_kino}). This is a problem inherent to RB-Kino which is the correlation between the initial velocity and the angular velocity. As a consequence starting with null velocity, as we will see later on, is critical with our contact planners as such fast rotation is not feasible kinematically. 
@@ -831,8 +837,8 @@ LEAS  succeeds on a much broader range of initial states, hence removing the nee
     \label{fig:leas:hole_scenarios}
 \end{figure}
 
-\noindent\textbf{Hole}. We now compare our steering methods on our hole scenario (Figure \ref{fig:leas:hole_scenarios}). Each initial configuration has a null velocity and is oriented toward the goal located on the other side of the hole. 
-RB-Kino and RB-Lin generate valid guide paths only when the problem is feasible in a straight line and so require path planning for half of the initial configurations (Figures \ref{fig:leas:hole:lin} and \ref{fig:leas:hole:kino}).
+\noindent\textbf{Hole}. We now compare our steering methods on our hole avoidance scenario (Figure \ref{fig:leas:hole_scenarios}). Each initial configuration has a null velocity and is oriented toward the goal located on the other side of the hole. 
+RB-Kino and RB-Lin generate valid guide paths only when the problem is feasible in a straight line. It means that they require path planning for half of the initial configurations (Figures \ref{fig:leas:hole:lin} and \ref{fig:leas:hole:kino}).
 In contrast, LEAS always succeeds in avoiding the hole and reaching the goal.
 Even when starting from difficult configurations on the right, LEAS detects the hole and slowly slides along it while keeping a valid state.
 
@@ -865,14 +871,21 @@ This brings out the main problem of our previous validity condition $\mathcal{R}
 We uniformly sample 100 configurations before each transition tile with two different initial orientations, $0^{\circ}$ and $180^{\circ}$, to evaluate their impact on LEAS success. 
 
 
-For both rubbles and stairs (down), LEAS succeeds in all 100 trajectories for both initial orientations. 
-However, we observe some scenarios where our steering method fails, mainly from initial configurations facing backward and very close to the transition tile to cross. The agent thus fails to rotate the robot, to have a clear vision of the terrain type in its back, before navigating it. 
+For both rubbles and stairs (down), LEAS succeeds in all 100 trajectories for both initial orientations.
+Resuls show that our steering method succeeds in crossing all transition tiles of our scenario with a near $100$\% success rate, hence demonstrating its terrain-aware navigation skill.
+%However, we observe some scenarios where our steering method fails
+However, it also fails in some bridge and stairs (up) scenarios. This is mainly due to initial configurations facing backward and very close to the transition tile to cross. 
+The agent thus fails to rotate the robot, to have a clear vision of the terrain type in its back, before navigating it. 
 These difficult cases appear on the bridge where the agent stops the robot near the void to avoid falling, and on the stairs up where the agent collides with it during its rotation.
-Despite these extreme cases, our steering method succeeds in crossing all the transition tiles of our scenario with a near $100$ \% success rate, hence demonstrating its terrain-aware navigation skills.
+%Despite these extreme cases, our steering method succeeds in crossing all the transition tiles of our scenario with a near $100$ \% success rate, hence demonstrating its terrain-aware navigation skills.
+In pratice, the robot will never be positioned in such extreme initial configurations, hence the results show that our steering method can successfully navigate all our practical cases.
+
 
 %Figure \ref{fig:leas_stop_void_obstacle} shows example scenarios where LEAS makes the robot idle to avoid unvalid configurations ($\mathcal{R}$ and $\mathcal{C}$).
 
-Finally, we manually place some waypoints to reach a distant goal on a complex scenario as seen in Figure \ref{fig:bauzil_waypoints}. LEAS successfully reaches each waypoint navigating across this terrain composed of stairs and a bridge.
+%Finally, we manually place some waypoints to reach a distant goal on a complex scenario as seen in Figure \ref{fig:bauzil_waypoints}. LEAS successfully reaches each waypoint navigating across this terrain composed of stairs and a bridge.
+Finally, we construct a scenario to sequentially cross different transition tiles (Figure \ref{fig:bauzil_waypoints}). To do so, we place manually chosen waypoints on the terrain to traverse some stairs and a bridge.
+Results show that LEAS successfully reaches each waypoint, while generating valid configurations.
 
 \begin{table}[h]
 \centering
@@ -915,7 +928,7 @@ Finally, we manually place some waypoints to reach a distant goal on a complex s
 \begin{figure}[t]
     \centering
     \includegraphics[width=0.6\textwidth, height=5cm]{Figures/Chapter_LEAS/follow_waypoints_bauzil.png}
-    \caption{LEAS following manually placed waypoints (yellow cross) to reach a distant goal.}
+    \caption{LEAS connecting manually placed waypoints (yellow).}
     \label{fig:bauzil_waypoints}
 \end{figure}
 
