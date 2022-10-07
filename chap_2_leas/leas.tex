@@ -190,7 +190,7 @@ We can add two optional conditions to stop the episode, depending on the scenari
 
 \subsection{States\label{subsubsec:states}}
 
-\begin{figure}
+\begin{figure}[ht]
     \centering
     \includegraphics[width=0.42\textwidth]{Figures/Chapter_LEAS/leas_states.png}
     \caption{Robot states: (blue arrow) velocity of the robot, (white arrow) orientation, (red arrow) desired velocity and orientation, (dots) height map relative to the root configuration.}
@@ -310,7 +310,7 @@ We design three rewards to get these behaviors:
   \item[(E)] $R_{ori} = -( 1 -  \overrightarrow{q_{ori}} \cdot \overrightarrow{u}_{target} )$ \\
   with $\overrightarrow{q_{ori}}$ the unit vector representing the root orientation and $\overrightarrow{u}_{target}$ the goal direction.
   \item[(A)] $R_{dir} = -( ||\overrightarrow{q_{vel}} - \overrightarrow{v*} ||/(2v_{max}) )^2$\\
-  with $\overrightarrow{q_{vel}}$ the root velocity vector, $\overrightarrow{v*}=\overrightarrow{u}_{target} \times v_{desired}$ the desired velocity vector and $v_{max}$ the max velocity norm.
+  with $\overrightarrow{q_{vel}}$ the root velocity vector, $\overrightarrow{v*}=\overrightarrow{u}_{target} \times v_{desired}$ the desired velocity vector and $v_{max}$ the maximum velocity norm.
   \item[(C)] $R_{alive} = 1$ 
     %$
     %\begin{cases}
@@ -627,7 +627,7 @@ We set a fixed timestep value $T =0.2$ seconds, which corresponds to a maximum d
 Each episode has a maximum length of $800$ steps, meaning that the guide path can contain up to $800$ states (maximum distance of 32 meters). 
 During the training, the robot has to navigate the terrain at the desired velocity while keeping a valid state ($\tilde{\mathcal{R}^*}$ and $\tilde{\mathcal{C}}$).
 To further guide the learning, we initialize each episode as follows: first, the robot has to cross a link, i.e start from an initial tile and navigate through a transition tile (stairs, rubbles, or bridge), then, it has to follow a new random goal direction that is updated every $n_{rand} \in [200,800]$ steps.
-The first goal prioritizes the task of crossing a link that we will perform in all our basic scenarios, while the others often lead to a dead-end or a difficult path where the agent will have to learn if it has to stop or has the ability to cross it.
+The first goal prioritizes the task of crossing a link that we will perform in our basic scenarios, while the others often lead to a dead-end or a difficult path where the agent will have to learn if it has to stop or has the ability to cross it.
 
 % Param for learning
 We linearly decay the learning rate from $5e^-4$ to $1e-5$ over 2 millions training steps and set a discount factor $\gamma = 0.97$. 
@@ -638,7 +638,7 @@ The distance traveled by the RL agent after 33 steps is equal to 66 cm and 132 c
 We emphasize that we want to learn a steering method to navigate locally and that the agent only needs to think about its very near future. For example the detection of an obstacle should impact its action only when close to the robot (distance inferior to 1 meter).
 
 % Number of workers
-In this chapter, the number of workers planning contacts is set to 0 as we train LEAS for a pure navigation task without a contact planner. In our experiment, the number of synchronous workers is limited to 6 due to hardware limitations.
+In this chapter, the number of workers planning contacts is set to 0 as we train LEAS for a pure navigation task without a contact planner. In our experiment, the number of parallel agents is limited to 6 due to hardware limitations.
 
 % Explain choices for the RL parameters used:
 % - size of network with PPO : 256x128x64
@@ -799,7 +799,7 @@ Each initial state is oriented at $90^{\circ}$ with respect to the stairs, to be
 Initial states from where the SM reaches the goal with a valid guide path are represented by yellow dots. Conversely, black dots represent states where either the SM fails to reach the goal or generates an invalid guide path (i.e. ground not reachable or collision) and thus requires additional waypoints to be provided by a path planning method. 
 For RB-Kino, we need to define some constraints that are the velocity and acceleration desired on the goal configuration and that have an impact on the shape of the trajectory. In this scenario, we set both goal acceleration and velocity to $0$.
 
-RB-Lin is designed to first rotate the robot toward the goal, then generate a straight line up to the goal (Figure \ref{fig:leas:stairs_p1_lin}). The main limitation of this method is that it succeeds only when directly placed in front of the stairs and further initial position on the left results in guide paths where the robot is unable to touch the ground.
+RB-Lin is designed to first rotate the robot toward the goal, then generate a straight line up to the goal (Figure \ref{fig:leas:stairs_p1_lin}). Its main limitation is that it succeeds only when directly placed in front of the stairs, and further initial positions result in guide paths where the robot is unable to touch the ground.
 RB-Kino presents the same limitation as RB-Lin, plus another one on the orientation where it rotates directly from $90^{\circ}$ to $0^{\circ}$ in one timestep (Figure \ref{fig:leas:stairs_p1_kino}). This is a problem inherent to RB-Kino which is the correlation between the initial velocity and the angular velocity. As a consequence starting with null velocity, as we will see later on, is critical with our contact planners as such fast rotation is not feasible kinematically. 
 In practice, we avoid this problem by adopting the same strategy as RB-Lin by first rotating the robot to always start RB-Kino with a $0^{\circ}$ orientation.
 
@@ -875,7 +875,7 @@ For both rubbles and stairs (down), LEAS succeeds in all 100 trajectories for bo
 Resuls show that our steering method succeeds in crossing all transition tiles of our scenario with a near $100$\% success rate, hence demonstrating its terrain-aware navigation skill.
 %However, we observe some scenarios where our steering method fails
 However, it also fails in some bridge and stairs (up) scenarios. This is mainly due to initial configurations facing backward and very close to the transition tile to cross. 
-The agent thus fails to rotate the robot, to have a clear vision of the terrain type in its back, before navigating it. 
+The agent thus fails to rotate the robot, to have a clear vision of the terrain in its back, before navigating it. 
 These difficult cases appear on the bridge where the agent stops the robot near the void to avoid falling, and on the stairs up where the agent collides with it during its rotation.
 %Despite these extreme cases, our steering method succeeds in crossing all the transition tiles of our scenario with a near $100$ \% success rate, hence demonstrating its terrain-aware navigation skills.
 In pratice, the robot will never be positioned in such extreme initial configurations, hence the results show that our steering method can successfully navigate all our practical cases.
@@ -940,7 +940,7 @@ Results show that LEAS successfully reaches each waypoint, while generating vali
 LEAS offers a flexible alternative to our previous steering methods. Our results show that LEAS performs better in generating valid guide paths, under collision-avoidance and reachability criteria, than RB-Kino and RB-Lin thanks to its local terrain awareness. 
 This method learned by reinforcement succeeds in navigating all our test scenarios, while permitting a more flexible user control by providing a goal direction instead of a goal configuration. 
 %However, it also presents some limitations in its design and further improvements will be required in the future.
-However, there is still a lot of scope for further improvements in its design.
+However, there is still a lot of scope for improvements in its design.
 
 \subsection{Limitations}
 % FAILURE CASES
@@ -949,15 +949,15 @@ However, there is still a lot of scope for further improvements in its design.
 Parameters $[z_{min}, z_{max}]$ as well as the height map resolution impacts the agent capabilities to detect its environment.
 In our experiments, the most difficult scenarios to handle were navigating through bridges and obstacle avoidance, where the tuning of these values was critical.
 First, a too high value $z_{min}$ can lead LEAS to interpret the void surrounding the bridge as a potential stair.
-This caused LEAS to lower the robot root, at the limit of the collision with the trunk, to confirm if what it sees is a stair or a void. 
+This caused LEAS to lower the robot root, at the limit of the trunk collision with the bridge, to confirm if what it sees is a stair or a void. 
 As a consequence, it can lead to some collisions with the bridge due to these two conflicting behaviors.
 A similar problem appeared for a too low value $z_{max}$, with the interpretation of an obstacle as the next step of some stairs and causing a collision with it.
-Finally, setting a too wide bound $[z_{min}, z_{max}]$ made the value of the heightmap difficult to interpret by our agent, that was unable to capture small to medium terrain variations.
+Finally, setting a too wide bound $[z_{min}, z_{max}]$ made the values of the heightmap difficult to interpret by our agent, that was unable to capture small to medium terrain variations.
 The values we have selected offered a balanced trade-off, however, further tests are required to improve LEAS navigation performance.
 
 % Play on R_ALIVE
 To avoid such collisions, one could also increase $w_{alive}$ to encourage the robot to act more carefully. 
-We tested this solution that greatly improved the LEAS capabilities for collision avoidance while keeping reachable states. However, LEAS was acting so safely that it did not dare to cross difficult transition tiles, thus making the robot idle in front of bridges to safely accumulate the reward $R_{alive}$. 
+We tested this solution that greatly improved the LEAS capabilities for collision avoidance while keeping reachable states. However, LEAS was acting so safely that it did not dare to cross difficult transition tiles, sometimes making the robot idle in front of bridges to safely accumulate the reward $R_{alive}$. 
 The final value $w_{alive}=1$ decided for LEAS offers a compromise safety/risk but requires further investigation. 
 
 \hfill
