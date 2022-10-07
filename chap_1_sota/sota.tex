@@ -284,7 +284,12 @@ Current works are mostly on the simulator formulation \cite{chainqueen_2019, dif
 
 
 \paragraph{Learning how to locomote.}
-\begin{figure}[h]
+
+Similarly to trajectory optimization, Reinforcement learning can explore movements to optimize an objective function. Yet they offer unprecedented flexibility in environments and the objective they can tackle. Furthermore, they only require optimization at training time, while the run-time only consists of the execution of the resulting policy.
+% PETTRE SURVEY: RL stands out as a promising approach for character animation because it provides a versatile framework to learn motor skills without the need of labelled data. RL is particularly useful when the dynamic equations of the environment are unknown or non-differentiable, to which conventional gradient-based optimal control algorithms do not apply.
+As they do not require the evaluation of the simulator gradients, they are also less prone to the limitations discussed with trajectory-based solvers related to contact differentiability, and accept classical (stiff) contact formulation.
+
+\begin{figure}[ht]
     \centering
     \captionsetup[subfigure]{justification=centering}
     \begin{subfigure}[t]{0.36\linewidth}
@@ -306,11 +311,6 @@ Current works are mostly on the simulator formulation \cite{chainqueen_2019, dif
     \caption{Works on reinforcement learning for legged characters locomotion.}
 \end{figure}
 
-Similarly to trajectory optimization, Reinforcement learning can explore movements to optimize an objective function. Yet they offer unprecedented flexibility in environments and the objective they can tackle. Furthermore, they only require optimization at training time, while the run-time only consists of the execution of the resulting policy.
-% PETTRE SURVEY: RL stands out as a promising approach for character animation because it provides a versatile framework to learn motor skills without the need of labelled data. RL is particularly useful when the dynamic equations of the environment are unknown or non-differentiable, to which conventional gradient-based optimal control algorithms do not apply.
-As they do not require the evaluation of the simulator gradients, they are also less prone to the limitations discussed with trajectory-based solvers related to contact differentiability, and accept classical (stiff) contact formulation.
-
-
 % That is where Reinforcement Learning becomes really useful in physics-based sim.
 Reinforcement Learning (RL) in physics-based simulation can be used for character animation \cite{survey_rl_animation_pettre_2022}.
 This method permits learning controllers able to cope with the system dynamics.
@@ -320,7 +320,7 @@ Using a similar control, such RL controller can be extended to 3D locomotion \ci
 %for example using Proximal Policy Optimization (PPO) RL algorithm \cite{PPO_2017}.
 These seminal works are the basis of many others further improving the naturalness and robustness of the motions as well as the diversity of skills performed \cite{drecon, carl, Lee_muscles_rl_2019}.
 More recently, Won et al. \cite{VAE_jungdam_2022} use conditional variational autoencoders to learn how to imitate motion from a database and achieve various tasks in a physics-based simulation. 
-One of their results shows a biped locomotion task using a low-resolution local height map as terrain observation to walk and run on rough terrains.
+One of their results shows a biped locomotion task using a low-resolution local height map as terrain observation to walk and run on rough terrains (Figure \ref{fig:rl_agnostic_2}).
 
 Evolutionary algorithms can be a suitable alternative to RL, even to learn locomotion skills from scratch \cite{evol_vs_rl_deepmind_2017}. 
 While both approaches present their pros and cons \cite{evol_vs_rl_majid_2021}, they also present similarities as they both learn from interactions with the environment.
@@ -671,7 +671,7 @@ This strategy has been used to move some quadruped robots through difficult roug
 Additionally, the guide paths can give information about the sections of the terrain traversed, permitting different walking strategies in function of its difficulty, also known as the multi-modal planning problem.
 To move a humanoid robot in cluttered environments, Lin et al. \cite{lin_traversability_2018} plan a torso guide path using an A* searching algorithm on a cost map, and accounting for the difficulty of traversing the environment. 
 They then decompose the guide path into segments, selecting for each one a locomotion mode. They switch between simple biped walking on flat ground or multi-contact locomotion using the robot's hand for increased stability in cluttered environments.
-In the same line of work, Brandao et al. \cite{brandao_multimode_2019} use a quadruped robot body path to plan the different modes, such as a walking or trotting gait on flat ground, and contact planning on terrains requiring careful footstep placements.
+In the same line of work, Brandao et al. \cite{brandao_multimode_2019} use a quadruped robot body path to plan the different modes, such as a walking or trotting gait on flat ground, and contact planning on terrains requiring careful footstep placements (Figure \ref{fig:cp_mbc_works_1}).
 Their results demonstrate that multi-modal planning locomotion can potentially achieve faster computation speed than pure footstep planning methods.
 
 % Mini-conclusion: Such approximation considerably improve the computation time by lowering the complexity of the problem, where the goal is just to compute contacts along the collision-free guide given in input.
@@ -775,8 +775,8 @@ In particular, the environments they move in are often partially known or dynami
 To solve this problem, the navigation task can be performed with different architectures operating at different scales \cite{review_autonomous_2011}. 
 Recent state-of-the-art implementations for autonomous vehicles, like the ROS navigation stack for 2D navigation \cite{ROS_software}, or for crowd simulation \cite{vantoll_microscopic_crowd_2021} employ an architecture composed of two modules:
 \begin{itemize}
-    \item Global planner, that plans a rough feasible path through the environment to a goal (Figure \ref{fig:nav_ex_0}). This is usually performed by \textit{path planning} algorithms that search for sub-goals to reach sequentially with a local planner.
-    \item Local planner, that follows the rough path under specified rules. These rules can for example be based on the current sensory information of the robot for collision avoidance (Figure \ref{fig:nav_ex_1}). 
+    \item \textbf{Global planner}, that plans a rough feasible path through the environment to a goal (Figure \ref{fig:nav_ex_0}). This is usually performed by \textit{path planning} algorithms that search for sub-goals to reach sequentially with a local planner.
+    \item \textbf{Local planner}, that follows the rough path under specified rules. These rules can for example be based on the current sensory information of the robot for collision avoidance (Figure \ref{fig:nav_ex_1}). 
     This is usually performed by \textit{motion planning} (or \textit{trajectory planning}) algorithms that consider the robot or vehicle dynamics. Here, we will call such a local planner a \textit{steering method}, which is a widely used term in navigation.
 \end{itemize}
 
@@ -1087,7 +1087,7 @@ The reachability condition introduced by Tonneau et al. \cite{RB-PRM} use an app
 
 An approach is to incorporate these conditions in sampling-based path planning algorithms \cite{sl1m_v2}.
 Some works use a PRM with a linear interpolation method \cite{AcyclicCP} for navigation and contact planning in tractable computation time, or RRT with model-based kinodynamic steering methods \cite{kinodynamic_sm_2017} for dynamic locomotion.
-In this line of work, \cite{norby_2020} use a kinodynamic body path planner to guide their short-horizon contact planner. Their extended results show that their quadruped robot can walk and jump to locomote over complex terrains \cite{norby_skd_2022}(Figure \ref{fig:legged_nav_0}).
+In this line of work, \cite{norby_2020} use a kinodynamic body path planner to guide their short-horizon contact planner. Their extended results show that their quadruped robot can walk and jump to locomote over complex terrains \cite{norby_skd_2022} (Figure \ref{fig:legged_nav_0}).
 
 The reachability condition is the cornerstone to build legged robot contact planners.
 %that go beyond simple obstacle avoidance behavior. 
