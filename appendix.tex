@@ -13,6 +13,7 @@ The interaction sequence can be modeled as a Markov Decision Process (MDP) that 
     \item $\mu$ is the initial state distribution.
     \item $\gamma \in [0,1]$ a discount factor.
 \end{itemize}
+
 As the full environment state is often not observable by our agent, we can use partially observable MDP like in this thesis, where our steering method only uses local observations to navigate through the environment.
 
 The agent starts an episode in an initial state $s_0$ sampled according to $\mu$.
