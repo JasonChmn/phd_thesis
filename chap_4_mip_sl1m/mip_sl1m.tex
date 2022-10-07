@@ -654,7 +654,7 @@ As a result, it can generate feasible problems for the MIP contact planner while
 
 
 \paragraph{Traversability estimation.}
-As discussed in Chapter \cite{sec:LEAS}, tuning the upper and lower bounds of the z-value in the height map is critical to have a correct terrain representation.
+As discussed in Chapter \ref{sec:LEAS}, tuning the upper and lower bounds of the z-value in the height map is critical to have a correct terrain representation.
 Trivially, setting wider bounds will permit better detection of large obstacles, or differentiate stairs and void. However, it hinders the detection of small height variations on the terrain such as rubbles.
 Several strategies could be explored to fix such problems, such as using convolutional neural networks as previously discussed, or giving as observation a second tighter bounded height map.
 
@@ -673,7 +673,7 @@ Another option is for LEAS to output directly the next root configuration $q$ fr
 This approach can remove the need to filter the guide path ($N=1$).
 Hence, this control could potentially permit the agent to directly control the discretization step and to accurately select suitable candidate surfaces $\mathcal{S}_i$.
 In our experiments, we implemented such an approach by raising the timestep $T$ and controlling LEAS in velocity (instead of acceleration). 
-However as discussed in Chapter \ref{sec:CP-SB}, it was not achievable in practice regarding the learning stability, because of the large actions the RL agent does.
+But as discussed in Chapter \ref{sec:CP-SB}, it was not achievable in practice regarding the learning stability, because of the large actions the RL agent does.
 
 \paragraph{Pruning candidates surfaces.\label{subsub:mip:discussion:candidate_surfaces}}
 %\begin{figure}[t]
@@ -1099,10 +1099,10 @@ To achieve this objective, we tested the same approaches we had with LEAS and th
 
 \paragraph{Testing our previous approaches.}
 %First, we employed the strategy of the sampling-based contact planner (Section \ref{sec:CP-SB}).
-Just as done with the MIP contact planner in Section \ref{subsub:mip:results}, 
+Just as done with the MIP contact planner, 
 we first trained LEAS to follow a desired velocity $v_{desired}=0.10$ m/s.
 We first focused on generating feasible problems for SL1M without maximizing the discretization steps along the guide.
-That is why we aimed for an average discretization step $\Delta \overline{D}=20$, for which we demonstrated that it was sufficient to cope with the contact planning feasibility constraints $\mathcal{F}$ in all our test scenarios.
+That is why we aimed for an average discretization step $\Delta \overline{D}=20$, for which we demonstrated that it was sufficient to cope with the contact planning feasibility constraints $\mathcal{F}$ in all our test scenarios (Section \ref{subsub:mip:results}).
 We also performed a dichotomic search of the last successful step along the guide, feedbacked during the training.
 We expected LEAS to adapt the robot root velocity, hence the discretization steps along the guide, to generate feasible SL1M problems.
 Two LEAS versions were trained, (1) with and (2) without SL1M heuristics. 
@@ -1152,7 +1152,7 @@ Just as with MIP contact planner, we also tried to add past observable states al
 However, it was not successful in capturing the combinatorial complexity of SL1M formulation.
 
 
-\paragraph{Conclusion and Prospective}
+\paragraph{Conclusion and Prospective.}
 
 We explained the SL1M contact planning formulation whose objective is to remove the combinatorial aspect of the surface selection problem.
 Following the intuition of the previous work \cite{sl1m_v2}, we explored precisely how the guide path helps this relaxed formulation.
@@ -1168,7 +1168,7 @@ As previously discussed, LEAS can not oberve the past trajectory and candidate s
 An interesting approach could be to investigate the use of recurrent neural networks in LEAS to permit an internal representation of this past trajectory.
 
 Arguably, solving SL1M through the guide path may not be the right approach to the problem.
-Indeed, this problem goes beyond the concepts of reachability or traversability, and turns out too complex to be handled by a simple navigation task.
+Indeed, this problem goes beyond the concepts of reachability or traversability, and could turn out too complex to be handled by a simple navigation task.
 Consequently, we may have to improve the formulation itself.
 Many ideas come to our mind, such as adding weights to the slack variables in function of the surface probability to be stepped on.
 This way, the $l1$-norm minimal area would be more attracted toward these surfaces. 
