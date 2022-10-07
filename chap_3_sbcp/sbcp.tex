@@ -26,7 +26,7 @@ Yet those approximated conditions are necessary but not sufficient to guarantee 
 
 We now propose to explore the following question: \textit{What is a good guide path to generate a valid contact sequence ?}
 For that, we will rely on an existing implementation of a contact planner, which we refer to as the second stage of our framework (P2). 
-In this chapter, we use an acyclic Sampling Based Contact Planner \cite{AcyclicCP} for multiped robot locomotion, which for convenience we will refer to as SBCP.
+In this chapter, we use an acyclic Sample-Based Contact Planner \cite{AcyclicCP} for multiped robot locomotion, which for convenience we will refer to as SBCP.
 As discussed in Chapter \ref{sec:LEAS}, we want LEAS to achieve two objectives:
 \begin{itemize}
     \item Navigating using a local height map of the terrain toward a goal direction subject to some reachability and collision constraints;
@@ -38,7 +38,7 @@ In the context of Motion-before-Contact, LEAS learns to address by reinforcement
 This chapter is organized as follows:
 %section \ref{sub:cp-sb:implementation} we describe how the contact planner is implemented with the offline sampling of limb configurations, the contact generation and their solution to break down the combinatorics.
 Section \ref{sub:cp-sb:implementation} is an overview of SBCP and its limitations due to the guide path. While this contact planner is not a contribution to this thesis, it is important to have a strong understanding of its structure and of the success and failure modes.
-Section \ref{sub:cp-sb:leas_coupling} shows how to train LEAS with it as a black-box. 
+Section \ref{sub:cp-sb:leas_coupling} shows how to train LEAS with the contact planner as a black-box. 
 Section \ref{sub:cp-sb:results} presents a benchmark and analysis of the results obtained by this contact planner with our steering methods.
 Finally, section \ref{sub:cp-sb:discussion} discusses about our implementation choices and potential improvements to our work.
 
@@ -47,7 +47,7 @@ Finally, section \ref{sub:cp-sb:discussion} discusses about our implementation c
 
 \subsection{Notations}
 
-The Sample-based Contact Planner (SBCP) \cite{AcyclicCP} belongs to the motion-before-contact family of contact planners, using a rough robot root trajectory (guide path) to generate the contacts along.
+The Sample-Based Contact Planner (SBCP) \cite{AcyclicCP} belongs to the motion-before-contact family of contact planners, using a rough robot root trajectory (guide path) to generate the contacts along.
 %In this work we do not use the arms of the robot and thus dismiss the multicontact aspect to focus on legged locomotion. \stn{la maniere plus simple de decrire le pb c est de parler de leas et de la validation et de dire naturellement que les scenarios etudies (que tu as deja definis precedemment) sont la marche bipedes}
 While it can perform multi-contact locomotion tasks such as standing up or climbing stairs using a handrail, in this work we are interested in biped walking for the scenarios tested in Chapter \ref{sec:LEAS} where we only enable foot contacts with the terrain.
 % Notations need to be consistant with part \ref{subsubsec:actions}
@@ -131,12 +131,13 @@ Finally we recall the motion-before-contact strategy of SBCP in Figure \ref{fig:
 
 \subsection{Limitation due to the Guide}
 
-In Chapter \ref{sec:LEAS}, we have shown how LEAS generates guide paths subject to reachability and collision constraints ($\tilde{\mathcal{R}^*}$ and $\tilde{\mathcal{C}}$) for configuration validity, and raised the key problem of the motion-before-contact strategy that is the non-guaranteed feasibility of the guide (P1) by the contact planner (P2).
+In Chapter \ref{sec:LEAS}, we have shown how LEAS generates guide paths subject to reachability and collision constraints ($\tilde{\mathcal{R}^*}$ and $\tilde{\mathcal{C}}$) for configuration validity. 
 
+We now raise the key problem of the motion-before-contact strategy that is the non-guaranteed feasibility of the guide (P1) by the contact planner (P2).
 % which hints us to some limitations of computing a contact sequence with SBCP using such guide paths.
 %This limitation is encountered in many scenarios with our contact planner that can fail to compute a contact sequence following exactly a root trajectory.
 % Our conclusion
-Our experiments have shown that the major factor impacting the contact planning success is the guide path in input.
+Our experiments will show that the major factor impacting the contact planning success is the guide path in input.
 % We do not know what is a "good" guide for SBCP, so it is difficult to approximate the feasibility using some manually designed heuristics. The reachability and collision conditions may not be sufficient
 The problem is that we do not know what is a good guide path for this contact planner. 
 The reachability and collision conditions introduced for configuration validity are necessary but not sufficient to generate guide paths feasible by this contact planner. 
@@ -181,7 +182,7 @@ That is why we provide an analysis of both parameters and explain our choices fo
     \caption{}
     \label{fig:cp-sb:impact_param_tuning:b}
     \end{subfigure}
-    \caption{Analysis of the success rate and computation time of SBCP with a guide path computed by RB-Kino in function of: (a) the number of samples $N$ and (b) the average guide path discretization $\Delta D$ (distance between the root configurations).}
+    \caption{Analysis of the success rate and computation time of SBCP with a guide path computed by RB-Kino in function of: (a) the number of samples $N$ and (b) the guide path discretization $\Delta D$ (average distance between the root configurations).}
     \label{fig:cp-sb:impact_param_tuning}
 \end{figure}
 
@@ -195,7 +196,7 @@ We perform this test on the climbing stairs scenario (see Section \ref{sec:cp-sb
 We then evaluate the results of different sample values $N$ for 3 different seeds, with an average guide path discretization step $\Delta D = 2$cm. 
 We will explain the choice of $\Delta D$ later on in this section.
 
-We observe that the success rate rapidly converges to a maximum success rate on this task (red), and that contact planning time increases with the number of samples (blue).
+We observe that (red) the success rate rapidly converges to a maximum success rate on this task, and that (blue) the contact planning time increases with the number of samples $N$.
 From these results, we can deduce that a number of samples $N=10K$ is sufficient to solve this particular locomotion task.
 However, reducing the value of this parameter beyond a certain point increases the computation time, where the contact planner requires contact repositioning to compensate for the lack of sampled configurations leading to a robust solution.
 As a result, we found the sweet spot to be $N=25K$ for the stairs and that we keep fixed in our setting across our scenarios. 
@@ -203,13 +204,13 @@ It is unsure how this small number of samples copes with more complex terrains l
 
 
 \paragraph{Guide path discretization.}
-The discretization step $\Delta D$ on the guide path corresponds to the average distance between each root configuration q$_{base}^i$ to q$_{base}^{i+1}$. A small $\Delta D$ means a higher number of root configurations on the guide, which results in a higher number of footsteps with SBCP. 
-A small value increases its success rate but also its computation time as observed on Figure \ref{fig:cp-sb:impact_param_tuning:b}.
+The discretization step $\Delta D$ on the guide path corresponds to the average distance between each root configuration q$_{base}^i$ to q$_{base}^{i+1}$. A small $\Delta D$ means a higher number of root configurations on the guide, that results in a higher number of footsteps with SBCP. 
+A small value increases its success rate but also its computation time as observed in Figure \ref{fig:cp-sb:impact_param_tuning:b}.
 % How is the test done
 This test is performed on the same stairs scenario with the steering method RB-Kino. 
 RB-Kino generates guide paths continuous in time with non-constant velocities that
 we discretize with a fixed timestep. 
-We sample some timestep values and measure the corresponding average velocity on the guide, and thus its average discretization step $\Delta D$.
+We sample some timestep values and measure the corresponding average velocity on the guide, and thus its discretization step $\Delta D$.
 We compute 50 trajectories for each measurement and average the results over 3 different seeds and three sample numbers, $N=\{25,50,100\}$K. 
 
 % Comparison with discretization of the guide in acyclic
@@ -249,7 +250,7 @@ We want to generate guide paths that are feasible by the contact planner.
 In the previous chapter, we have shown how LEAS performs in a navigation task with its local terrain-aware capability.
 In simple scenarios, LEAS does not heavily rely on path planning algorithms compared to our previous steering methods, resulting in an overall faster generation of guide paths.
 %\stn{il faut que tu remplaces tous tes efficient par des termes precis. En quoi elle est mieux que quoi ? sur quelle metrique?}
-We now want to improve the feasibility of the guide paths generated by LEAS on our sample-based contact planner.
+We now want to improve the feasibility of the generated guide paths by our sample-based contact planner.
 % - RL with the SBCP as a black-box, introduce a synergy between P1 and P2 and attempt to alleviate the previously cited limitations intrinsic and extrinsic of SBCP.
 We employ the strategy described in the previous chapter with our Master-Workers architecture where the workers validate the trajectories generated by the LEAS agents, by computing the contact sequence along the guides with SBCP used as a black box.
 %To do so, we plug SBCP (P2) as a black-box, that computes the contact sequence along the guides generated by LEAS and feedbacks a validation of it during the learning.
@@ -260,7 +261,7 @@ We employ the strategy described in the previous chapter with our Master-Workers
 \paragraph{RL policy.}
 We employ the same network architecture, states, actions, rewards, and hyperparameters as described in chapter \ref{sec:LEAS} and set the number of asynchronous workers computing the contacts to 6.
 Our method LEAS takes as input a local height map of the terrain and a direction to the goal to locally navigate the terrain. 
-States generated by LEAS are subject to the reachability $\tilde{\mathcal{R}^*}$ and collision-free $\tilde{\mathcal{C}}$ conditions, plus a new additional constraint on the whole guide path that is to succeed with the contact planner that we will explain later on.
+States generated by LEAS are subject to the reachability $\tilde{\mathcal{R}^*}$ and collision-free $\tilde{\mathcal{C}}$ conditions, plus a new additional constraint on the whole guide path that is to succeed with the contact planner, that we will explain later on.
 
 % About the CP param
 \paragraph{Contact planner parameters.}
@@ -304,12 +305,12 @@ LEAS has to find a trade-off between learning the navigation task presented in C
 \begin{figure}[t]
     \centering
     \includegraphics[width=0.6\textwidth]{Figures/Chapter_CPSB/learning_curve_p1_p2.png}
-    \caption{Learning curves of (blue) LEAS-P1 trained without contact planner and (red) LEAS-P2 trained with feedback from SBCP.}
+    \caption{Learning curves of (blue) LEAS-P1 trained without contact planner and (red) LEAS-P2 trained with guide validation by SBCP.}
     \label{fig:cp-sb:learning_curves_p1_p2}
 \end{figure}
 We train LEAS with SBCP on our training terrain presented in the previous chapter.
 The model is evaluated after 12 million steps corresponding to 8 hours of training on a PC with an Intel Core i7-8700 (12 cores, 3.20Ghz, 16GB ram). 
-Learning curves of LEAS without a contact planner, referred to as LEAS-P1 (Chapter \ref{sec:LEAS}), and LEAS with the contact planner, LEAS-P2, are shown in Figure \ref{fig:cp-sb:learning_curves_p1_p2} (the maximum reward is equal to 100 for trajectories in a straight line). 
+Learning curves of LEAS without a contact planner, referred to as LEAS-P1 (Chapter \ref{sec:LEAS}), and LEAS with the contact planner, LEAS-P2, are shown in Figure \ref{fig:cp-sb:learning_curves_p1_p2} (the maximum reward is equal to 100 for trajectories in a straight line at $v_{desired}$). 
 The P2 validation increases its probability to meet a terminal condition (i.e. failing the contact planning) and forces LEAS to adapt its behavior to succeed with the contact planner, hence resulting in a lower average reward per episode.
 
 \section{Results\label{sub:cp-sb:results}}
@@ -387,15 +388,15 @@ In this experiment, all steering methods succeed in generating a valid guide pat
     \includegraphics[trim={2cm 2cm 4cm 2cm}, clip,width=0.32\textwidth]{Figures/Chapter_CPSB/rotation_seq/rot2.png}
     \includegraphics[trim={2cm 2cm 4cm 2cm}, clip,width=0.32\textwidth]{Figures/Chapter_CPSB/rotation_seq/rot3.png}
     \includegraphics[trim={2cm 2cm 4cm 2cm}, clip,width=0.32\textwidth]{Figures/Chapter_CPSB/rotation_seq/rot4.png}
-    \caption{Scenario A: Sequence of configurations where LEAS-P1 fails the rotation.}
+    \caption{Scenario A: Sequence of configurations where LEAS-P1 fails the rotation along the guide.}
     \label{fig:cp-sb:rotation_leas_p1_fail}
 \end{figure}
 
 % RB-Lin results => Work all the time with $\omega_{max}$, it's like a sanity test.
-RB-Lin rotates at a fixed angular velocity $\omega_{max}=\frac{\pi}{9}=20$ deg/s which is equal for $T=0.2$ s to a maximum rotation of $\omega_{max} \times T \times 5 = 20^{\circ}$ between each configurations on the guide.
+RB-Lin rotates at a fixed angular velocity $\omega_{max}=\frac{\pi}{9}=20$ deg/s which is equal for $T=0.2$ s to a maximum rotation of $\omega_{max} \times T \times 5 = 20^{\circ}$ between each configurations on the guide (keeping 1 out 5 guide configurations).
 As expected, the results show that for any initial orientation, rotating the robot with a step angle of $20^{\circ}$ before moving it to the goal generates feasible guide paths by the contact planner. 
 RB-Lin shows that a rotation toward the goal, with a step angle $20^{\circ}$ between the guide path configurations, can safely be performed before moving the robot. 
-In our tests, all step angles in the range $]0,90]$ degrees were successful, but in practice, a step angle of $45^{\circ}$ may be in reality the maximum feasible by the Talos robot.
+In our tests, all step angles in the range $]0,90]$ degrees were successful, but in practice, a step angle of $45^{\circ}$ may be the maximum feasible by the Talos robot in reality.
 
 RB-Kino succeeds for all orientations in $[0,120]$ degrees. 
 However, we can see the limitation of RB-Kino when starting with a (near) null velocity as discussed in the previous chapter, and as a result, fails the contact planning as such high rotation is not kinematically feasible. 
@@ -420,7 +421,7 @@ Finally, as the initial velocity increases, we can note that so does the success
 In contrast, LEAS-P2 learns how to rotate and succeeds in every rotation scenarios, thus showing the benefit of our solution.
 % Analyze how LEAS-P2 rotates better than LEAS-P1 => Visually + how it sacrifices the reward (no sacrifice for this scenario) ?
 %However it is difficult to evaluate why LEAS-P2 presents a better success rate than LEAS-P1 (Figure \ref{fig:cp-sb:rotation_scenario}). 
-Empirically, we noticed that LEAS-P2 tends to move in the direction of its orientation to help the rotation task (Figure \ref{fig:cp-sb:rotation_scenario:leas_p2}), whereas backward translations resulted in failure due to heuristics defined in the contact planner (Figure \ref{fig:cp-sb:rotation_scenario:leas_p1}).
+Empirically, we noticed that LEAS-P2 tends to move in the direction of its orientation to help the rotation task (Figure \ref{fig:cp-sb:rotation_scenario:leas_p2}), whereas backward translations of LEAS-P1 resulted in failure due to heuristics defined in the contact planner (Figure \ref{fig:cp-sb:rotation_scenario:leas_p1}).
 That is why some guide paths generated by LEAS-P1 leads to some configurations that do not permit further movement (Figure \ref{fig:cp-sb:rotation_leas_p1_fail}). 
 In contrast, LEAS-P2 automatically discovers how to generate guide paths avoiding the selection of such configurations from the samples.
 
@@ -484,7 +485,7 @@ In contrast, LEAS-P2 automatically discovers how to generate guide paths avoidin
 \end{figure}
 
 
-\begin{figure}[ht]
+\begin{figure}[h!]
     \captionsetup[subfigure]{justification=centering}
     \centering
     \begin{subfigure}[t]{0.32\linewidth}
@@ -510,13 +511,13 @@ In contrast, LEAS-P2 automatically discovers how to generate guide paths avoidin
 % What is tested
 \paragraph{Scenario B1 - Hole and Bridge.} 
 We compute contact sequences on guide paths generated by our steering methods on the hole and bridge scenarios (Figure \ref{fig:cp-sb:scenarios_hole_bridge}). 
-These two scenarios are similar as they can both lead to weak contact configurations located very close to the edge of the obstacle that are unfeasible by the robot in reality (Figure \ref{fig:cp-sb:talos_configurations_hole_bridge}).
+These two scenarios are similar as they can both lead to weak contact configurations located very close to the edge of the obstacles that are unfeasible by the robot in reality (Figure \ref{fig:cp-sb:talos_configurations_hole_bridge}).
 We evaluate for both terrains the success rate with the contact planner and measure the average $robustness$ of the configurations in contact when passing near the obstacle.
 % What is the robustness used for
 The robustness quantifies how far the center of mass of the robot is from the boundaries of the friction cones of the contact forces, giving us a measure of the static equilibrium of one robot configuration (we refer the reader to \cite{AcyclicCP} for further details).
 % We first give a linear program (LP) that verifies whether a contact configuration allows for static equilibrium. This LP is the same that was proposed in [32]. 
 % From this formulation we derive a new LP that quantifies the robustness of the equilibrium to uncertainties in the contact forces. In turn, from this value we can either choose the most robust candidate, or set a threshold on the required robustness.
-In this work, we use the measure of the $robustness$ to give us an overall estimation of the stability of the contact plan generated, where a lower value means a more difficult guide path in the input of the contact planner (i.e. too close to the obstacles, too high or low...) leading to unstable configurations in contact.
+In this work, we use the measure of the robustness to give us an overall estimation of the stability of the contact plan generated, where a lower value means a more difficult guide path in the input of the contact planner (i.e. too close to the obstacles, too high or low...) leading to unstable configurations in contact.
 Conversely, a high robustness value should be the result of a \qq{good} feasible guide path.
 %\textcolor{blue}{STEVE: est-ce que c'est bon comme explication ou j'ai tout faux / faut ajouter plus.}
 
@@ -557,27 +558,11 @@ We have shown in the hole and bridge scenarios how LEAS-P2 learns to increase th
 
 \paragraph{Scenario B2 - Wall.}
 % It learns the constraint hand-wall.
-\begin{figure}[t]
-    \captionsetup[subfigure]{justification=centering}
-    \centering
-    \begin{subfigure}[t]{0.48\linewidth}
-        \includegraphics[width=\textwidth, height=5cm]{Figures/Chapter_CPSB/avoid_wall_fail.png}
-        \caption{LEAS-P1: Collision\label{fig:cp-sb:talos_wall_collision}}
-        \label{fig:cp-sb:talos_wall:p1}
-    \end{subfigure}
-    \begin{subfigure}[t]{0.48\linewidth}
-        \includegraphics[width=\textwidth, height=5cm]{Figures/Chapter_CPSB/avoid_wall.png}
-        \caption{LEAS-P2: Avoid the contact\label{fig:cp-sb:talos_wall_ok}}
-        \label{fig:cp-sb:talos_wall:p2}
-    \end{subfigure}
-    \caption{Scenario B2: (a) LEAS-P1 collision of the robot hand with the wall, (b) LEAS-P2 rotates the robot to avoid a such collision.}
-    \label{fig:cp-sb:talos_wall}
-\end{figure}
 
 % What did we do to evaluate that
-We now evaluate on the wall scenario what kind of additional constraints LEAS can learn from the contact planner. In the wall scenario, LEAS has to generate a collision-free guide path ($\tilde{\mathcal{C}}$).
+We now evaluate on the wall scenario what kind of additional constraints LEAS can learn from the contact planner. In the wall scenario, LEAS must focus on generating a collision-free guide path ($\tilde{\mathcal{C}}$).
 %and compute the contact sequence along it with SBCP.
-Results are shown on Figure \ref{fig:cp-sb:talos_wall}.
+Results are shown in Figure \ref{fig:cp-sb:talos_wall}.
 % Results
 As the original collision volume (i.e. the trunk) does not include the hands of the robot, guide paths generated by LEAS-P1 (a) pass very close to the wall and fail with SBCP as for the given root position and orientation, a collision occurs between the hand of Talos and the wall (Figure \ref{fig:cp-sb:talos_wall:p1}).
 In contrast, LEAS-P2 (b) learned during the training how to avoid such collision with the hand by rotating the robot (Figure \ref{fig:cp-sb:talos_wall:p2}).
@@ -598,6 +583,23 @@ From these results, we decided to implement these constraints directly inside th
 % Consequence
 While reducing the feasibility space of the generated guide paths, these approximations greatly accelerate the training ($\approx 20-30$\%) as the guide paths generated are subject to tighter validity constraints (i.e. root above the ground and with less probability of collisions), thus resulting in a faster contact generation.
 
+
+\begin{figure}[h]
+    \captionsetup[subfigure]{justification=centering}
+    \centering
+    \begin{subfigure}[t]{0.48\linewidth}
+        \includegraphics[width=\textwidth, height=5cm]{Figures/Chapter_CPSB/avoid_wall_fail.png}
+        \caption{LEAS-P1: Collision\label{fig:cp-sb:talos_wall_collision}}
+        \label{fig:cp-sb:talos_wall:p1}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.48\linewidth}
+        \includegraphics[width=\textwidth, height=5cm]{Figures/Chapter_CPSB/avoid_wall.png}
+        \caption{LEAS-P2: Avoid the contact\label{fig:cp-sb:talos_wall_ok}}
+        \label{fig:cp-sb:talos_wall:p2}
+    \end{subfigure}
+    \caption{Scenario B2: (a) LEAS-P1 collision of the robot hand with the wall, (b) LEAS-P2 rotates the robot to avoid a such collision.}
+    \label{fig:cp-sb:talos_wall}
+\end{figure}
 
 
 \subsection{Scenario C: Uneven Terrains}
@@ -683,7 +685,7 @@ For a broader comparison, we plug RB-Kino into a path planning algorithm (RRT) t
 We can note in Figure \ref{fig:cp-sb:stairs_sm_kino_rrt} that the intermediate waypoints found to solve this simple scenario are far from efficient.
 
 % Success rate
-Results in Table \ref{tab:cp-sb:rubbles_stairs} show that the success of RB-Kino+RRT suffers from a limitation, also hinted by with RB-Kino without RRT, where guide paths with configurations at the limit of the reachability condition $\mathcal{R}$ can lead to failed contact plans with SBCP (magenta dots on Figure \ref{fig:cp-sb:stairs_sm}).
+Results in Table \ref{tab:cp-sb:rubbles_stairs} show that the success of RB-Kino+RRT suffers from a limitation, also hinted by with RB-Kino without RRT, where guide paths with configurations at the limit of the reachability condition $\mathcal{R}$ can lead to failed contact plans with SBCP (magenta dots in Figure \ref{fig:cp-sb:stairs_sm}).
 Some contact configurations resulting from a too high and too low guide path are shown in Figure \ref{fig:cp-sb:stairs_difficult}, where no transition is feasible from the actual root position to the next.
 In order to avoid guide paths at the limit of the reachability condition, RB-Kino requires a manual selection of the initial configuration or manually added waypoints at the bottom of the stairs to succeed with SBCP.
 
@@ -793,17 +795,17 @@ However, sidewalking is not the behavior we desire for our biped robot locomotio
 \paragraph{Guide discretization for LEAS.\label{par:cpsb:discussion_guide_discretization}}
 With the desired velocity $v_{desired}$ and the timestep $T$ set in LEAS, we obtain an average discretization step (i.e. distance between each root configuration) on the guide of $\Delta D=2$cm. 
 As shown in section \ref{subsub:cp-sb:tradeoff}, such a low value presents the best success rate with our contact planner at the cost of a high number of steps in the contact plan, and so a high computation time. We aim for a value $\Delta D=10$cm for the guide paths in the input of SBCP, that offers a suitable trade-off.
-Such value is easily reached in RB-Kino and RB-Lin, which generate guide paths as a function of the time $G=f(t)$, by manually tuning their discretization timestep.
-Such a strategy could be performed in LEAS by directly increasing the timestep $T$.
+Such value is easily reached in RB-Kino and RB-Lin, which generate guide paths as a function of the time $G=f(t)$, by increasing the timestep $T$.
+LEAS could also directly achieve such a discretization step with the same strategy.
 However, a higher timestep leads to actions with a bigger impact on the system, more probability to meet a critical state and so, a less stable learning overall.
 Another point to consider is the impact of such change on the reward, and so the navigation results presented in the previous chapter and the need to retrain a new policy for this new timestep value.
 
-That is why we opted for a less intrusive method by further discretizing the guide output by LEAS, keeping 1 out of 5 five root configurations on the guide, resulting in $\Delta D=2 \times 5=10$cm.
-This allowed us to use the same policy LEAS-P1 for our comparisons, trained in the previous chapter, and to retrain a new policy from scratch LEAS-P2 on the same reward basis but adding the validation of the contact planner (P2).
+That is why we opted for a less intrusive method by further discretizing the guide generated by LEAS, keeping 1 out of 5 five root configurations on it, resulting in $\Delta D=2 \times 5=10$cm.
+This enabled us to use the same policy LEAS-P1 for our comparisons, trained in the previous chapter, and to retrain a new policy from scratch, LEAS-P2, on the same reward basis but adding the contact planning validation (P2).
 
 %\textcolor{blue}{CHECK WHAT I WROTE HERE AND CORRECT}
 A question one could ask is if a fixed discretization step $\Delta D$ along the guide is desirable. 
-Indeed, we saw that the tuning of this value presents a trade-off on our contact planner where it can be pertinent to set a small $\Delta D$ for complex sections of the guide path to increase its success (e.g. egress scenario where going out of the car required a value $\Delta D=3$cm in \cite{AcyclicCP}), or adjust it to a higher value on easier sections where the contact planner is almost sure to succeed (e.g. walking on flat ground with $\Delta D=15$cm).
+Indeed, we saw that the tuning of this value presents a trade-off on our contact planner where it can be pertinent to set a small $\Delta D$ for complex sections of the guide path to increase its success (e.g. egress scenario where going out of the car required a value $\Delta D=3$ cm in \cite{AcyclicCP}), or adjust it to a higher value on easier sections where the contact planner is almost sure to succeed (e.g. walking on flat ground with $\Delta D=15$ cm).
 % Expe
 %We trained such policies by increasing the discretization step to $\Delta D = 20$ cm, by keeping 1 out of 10 configurations along the guide.
 %LEAS had to navigate the terrain at the desired velocity, while succeeding in the contact planning. As such a value would not be achievable on complex terrains, LEAS had to lower its velocity to succeed.
@@ -840,7 +842,7 @@ We performed such sanity checks on the stairs and rubbles scenarios, pretraining
 \paragraph{Robustness as a reward.} 
 As seen in the results, there is a correlation between the robustness score and the success rate of the contact planner. 
 That is why it could be pertinent to retro-propagate the measure of robustness during the training.
-This solution is complex to implement as it requires further reward engineering to balance this reward with the other rewards related to the navigation task. 
+This solution is complex to implement as it requires further reward engineering to balance it with the other rewards related to the navigation task. 
 We saw that LEAS-P2 implicitly learned to generate more robust configurations without being specified, but it would be interesting in the future to see if such a measure could furter improve its results.
 
 % Why not reuse knowledge of LEAS-P1
