@@ -12,7 +12,7 @@ Our steering method answers the question: \textit{How to locally navigate comple
 LEAS takes as input a desired direction and a local height map of its surrounding terrain, to generate a robot root trajectory.
 As many solutions exist to solve such a task, we provide an insight into our design choices and particularly why we use Reinforcement Learning.
 
-In this section, we focus on the implementation of LEAS, which will be reused and adapted for different contact planners through Chapters \ref{sec:CP-SB} and \ref{sec:CP-SL1M}.
+Here, we focus on the implementation of LEAS, which will be reused and adapted for different contact planners through Chapters \ref{sec:CP-SB} and \ref{sec:CP-SL1M}.
 
 This chapter is organized as follows: 
 In Section \ref{subsec:leas-motivation} we describe the context and the challenges we want to solve. In Section \ref{subsec:leas-RL} we present the specification of the problem and our solution LEAS \cite{LEAS}. We describe it as an RL agent and explain our design choices for its observation, control, and reward to achieve the desired navigation behavior.
@@ -34,11 +34,12 @@ Finally, we discuss the advantages, limitations, and potential improvements of o
 
 % Re-explain all the context with the division of the locomotion into three phases: Guide path planning - Contact planning - Whole body locomotion.
 %In this work, we place ourself in a multi-stage framework \cite{loco3d} that divides the locomotion problem into three sub-tasks as shown on Figure \ref{fig:pipeline}: first \stn{c est quoi p1 ? definis. tu devrais dire que chaque p est un probleme} $P1$ generates a root trajectory, also referred as \qq{guide path}, then $P2$ generates a sequence of contacts on this guide, and finally $P3$ performs these contacts with a whole body controller on the robot.
-As discussed in the previous chapter, the most recent locomotion planners are structured in several hierarchical stages. Let us now present in detail how we structured our planner, based on the seminal work that drives the locomotion methodology in our team \cite{loco3d}.
+As discussed in the previous chapter, most of the recent locomotion planners are commonly structured in several hierarchical stages. 
+Let us now present in detail how we structured our planner, based on the seminal work that drives the locomotion methodology in our team \cite{loco3d}.
 The general organization is shown in Figure \ref{fig:pipeline}.
 
 % All pipeline
-The first stage generates a \textit{guide path} ($P1$), i.e. a trajectory in translation and rotation that we would like to follow with the main robot body, referred to as the \textit{root} (i.e. the basis of the torso for Talos). In the second stage, a contact planner ($P2$) computes the contacts along the guide path. In the last stage, a whole-body controller ($P3$) computes the control sent to the robot to perform these contacts.
+The first stage generates a \textit{guide path} ($P1$), i.e. a desired trajectory of the main robot body, referred to as the \textit{root} (i.e. the basis of the torso for Talos). In the second stage, a contact planner ($P2$) computes the contacts along the guide path. In the last stage, a whole-body controller ($P3$) computes the control sent to the robot to perform these contacts.
 
 % What we opt for: motion-before-contact
 The decoupling of $P1$ and $P2$ has proven successful in \cite{Escande2008Guide, bouyarmane2009} and later on in \cite{loco3d, RB-PRM}, where each sub-task can be solved independently from each other, thus reducing the complexity of the problem and allowing us to experiment and compare different module implementations. 
@@ -49,7 +50,7 @@ The decoupling of $P1$ and $P2$ has proven successful in \cite{Escande2008Guide,
 The first module $P1$ generates a guide path, defined in this thesis as a discrete sequence of configurations for the robot root in $SE(3)$ (i.e. position and orientation).
 % Division strategy of path planning
 This navigation module can be further divided into two parts: a Steering Method (SM) and a path planning algorithm.
-The SM locally navigates the terrain following a given direction, while path planning uses the SM to sequentially reach sub-goals (also called waypoints) up to a distant objective. 
+The SM locally navigates the terrain following a given direction, while the path planning uses the SM to sequentially reach sub-goals (also called waypoints) up to a distant objective. 
 On the resulting guide path, all configurations must respect two constraints as expressed in \cite{RB-PRM} and shown in figure \ref{fig:ROMs}.
 %\stn{ça va bien trop vite àa. C est un point important et differentiant. tu dois expliquer comment on fait du sampling based serieusement ici}
 %\textcolor{blue}{answer: Sampling-based for path planning you mean? Already done in the SOTA in the path planning section (but briefly). A REVOIR APRES L'ECRITURE DE LA SOTA.}
@@ -61,12 +62,12 @@ On the resulting guide path, all configurations must respect two constraints as 
     \label{fig:ROMs}
 \end{figure}
 
-The first constraint $\mathcal{R}$ is referred to as the \textit{reachability} and imposes that the robot, at a given root configuration, has a non-null contact reachable space (i.e must be able to touch the ground). 
+The first constraint $\mathcal{R}$ is referred to as the \textit{reachability} and imposes that the robot, for a given root configuration, has a non-null contact reachable space (i.e must be able to touch the ground). 
 This constraint is approximated as a reachability volume, which is a polytope representing the range of motion of one effector of the robot.
 As long as an intersection exists between the terrain and the reachability volume for a given configuration, we consider that this constraint is respected.
 For simplicity's sake, we consider in this thesis only one reachability volume as the union of both legs polytopes.
 The second constraint $\mathcal{C}$ is referred to as \textit{collision avoidance} and imposes that the robot must not be in contact with the terrain other than with its end effectors (foot and hands). This constraint is approximated as a polytope representing the robot trunk. If an intersection exists between this polytope and the terrain, the configuration is considered in collision.
-In this manuscript, we will consider a configuration as valid if it respects both constraints $\mathcal{R}$ and $\mathcal{C}$, that approximate the feasibility of the problem by the next module (the contact planner).
+In this manuscript, we will consider a configuration as valid if it respects both constraints $\mathcal{R}$ and $\mathcal{C}$. They both approximate the feasibility of the problem by the next module (the contact planner).
 % Steering methods at our disposal in Loco3D
 We have two Steering Methods at our disposal in \cite{loco3d}:
 \begin{itemize}
@@ -102,7 +103,7 @@ The first uses the guide path directly as an exact root trajectory to follow and
 % MIP
 The second uses the guide to get some candidate surfaces to step on, then solves a surface selection problem to have exactly one surface selected for each contact (Figure \ref{fig:strategies_cp_mip}).
 % Why this decomposition, benefits
-The decomposition of the contact planning problem in P1 and P2 (motion-before-contact) breaks the algorithm complexity \cite{AcyclicCP,sl1m_v2} of the contact planning problem, by constraining the search for contacts in the guide path vicinity.
+The decomposition of the contact planning problem in P1 and P2 (motion-before-contact) breaks the complexity of the contact planning problem, by constraining the search for contacts in the guide path vicinity \cite{AcyclicCP,sl1m_v2}.
 
 Lastly, the module $P3$ performs the contact sequence on the robot with a whole body controller \cite{loco3d, tsid_prete, deepLoco}. For future work, we also implemented an environment to learn such a whole-body controller via deep RL \cite{software_robot_RL}.
 In this thesis, we will not use the module $P3$ and focus on the contact planning problem ($P_1$ and $P_2$).
@@ -114,7 +115,7 @@ In this thesis, we will not use the module $P3$ and focus on the contact plannin
 In this context of division into two independent sub-tasks $P1$ and $P2$, the price to pay for the simplification of the contact planning problem is the absence of guarantees of feasibility between the different modules.
 In such a sequential framework, the success of a module is a necessary condition for the success of the next in the pipeline but not sufficient.
 
-That is why some approximations are required to increase the feasibility of the next module, such as the reachability condition $\mathcal{R}$ in $P1$. The guide path planner assumes that if the ground is reachable at all times along the path, then it is possible to generate a contact sequence. 
+That is why, to address this issue, some approximations have been made to improve the feasibility of the problem ($P1$) by the next module ($P2$), such as the reachability condition $\mathcal{R}$. The guide path planner assumes that if the ground is reachable at all times along the path, then it is possible to generate a contact sequence. 
 This strategy has been proven effective in many scenarios \cite{AcyclicCP}, but can still fail as we will see in the next chapters, weakly approximating the capabilities of the contact planner plugged in. Each contact planner behaves differently as seen in Figure \ref{fig:strategies_cp} and we do not know what makes a feasible guide path for it. As a consequence, it is difficult to define new additional constraints or heuristics in our navigation module ($P1$) to better approximate the contact planning feasibility ($P2$).
 
 % Given the previous context, what do we want ?
