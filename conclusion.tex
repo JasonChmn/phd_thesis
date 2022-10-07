@@ -15,7 +15,7 @@
 
 % 1e CP: Pas une methode complete mais multi-contact qui a été testé beaucoup dans la these de Pierre. Il dit que ce qui est critique c'est l'heuristique et parce que la methode n'est pas complete, il faut la relancer plusieurs fois avant de trouver une solution.
 % Limitation du rb-rrt comme dit chez pierre: la méthode de planification locale est complète mais le RB-RRT kinodynamique n’est pas complet à cause des heuristiques et des approximations utilisées.
-% Le principal problème de la méthode RB-RRT Kinodynamique est que la méthode de planification locale nécessite de connaître exactement les contacts entre le robot et l’environnement mais que cette information n’est pas disponible durant la résolution de P1. (...) Une approche qui nous semble prometteuse serait d’utiliser des méthodes d’apprentissage afin d’apprendre la distribution de probabilité du placement des contacts en fonction de l’état courant, de l’environnement proche et de la direction de déplacement future.
+% Le principal problème de la méthode RB-RRT Kinodynamique est que la méthode de planification locale nécessite de connaître exactement les contacts entre le robot et l’environnement mais que cette information n’est pas disponible durant la résolution de $P1$. (...) Une approche qui nous semble prometteuse serait d’utiliser des méthodes d’apprentissage afin d’apprendre la distribution de probabilité du placement des contacts en fonction de l’état courant, de l’environnement proche et de la direction de déplacement future.
 
 % ============================================
 
@@ -23,16 +23,16 @@
 
 This thesis explored a new approach for \textbf{legged character navigation} in complex terrains. At the core of our research dominated the question of the \textbf{feasibility}: \textit{How to plan feasible paths for our robot?}
 
-Our work is part of the Loco3D framework whose architecture divides the locomotion problem into three sequentially solved sub-problems. First is the planning of the robot \textbf{guide path} to navigate the terrain (P1), second is the \textbf{contact planning} along this guide (P2), and third is the whole body movement performing these contacts (P3).
-Our research thus focused on the critical problem at top of the chain of this architecture, that is the feasibility of (P1) by (P2).
-We progressed one step beyond the previous work \cite{RB-PRM} that introduced the \textbf{reachability} condition, necessary but insufficient to fully capture the contact planner capabilities (P2) and the closely related concept of terrain \textbf{traversability}.
+Our work is part of the Loco3D framework whose architecture divides the locomotion problem into three sequentially solved sub-problems. First is the planning of the robot \textbf{guide path} to navigate the terrain ($P1$), second is the \textbf{contact planning} along this guide ($P2$), and third is the whole body movement performing these contacts ($P3$).
+Our research thus focused on the critical problem at top of the chain of this architecture, that is the feasibility of ($P1$) by ($P2$).
+We progressed one step beyond the previous work \cite{RB-PRM} that introduced the \textbf{reachability} condition, necessary but insufficient to fully capture the contact planner capabilities ($P2$) and the closely related concept of terrain \textbf{traversability}.
 
 \hfill \break
 
 \noindent\textbf{Research contribution.}\\
 
 The main contribution of this thesis is a \textbf{reinforcement learning} local steering method, called LEAS. We first demonstrated its navigation skills in complex environments, while being subject to collision-avoidance and reachability constraints, hence already providing a ready-to-use navigation method.
-Then we have shown how our solution can approximate the feasibility space of (P1) by (P2) through trial and error using a contact planner (P2) as a validation oracle.
+Then we have shown how our solution can approximate the feasibility space of ($P1$) by ($P2$) through trial and error using a contact planner ($P2$) as a validation oracle.
 Whereas other work approached the problem via heuristics to approximate this feasibility or via terrain traversability estimation, i.e. a guide planned with these artificial criteria is more likely to succeed in contact planning, our contribution is to directly learn how to grasp both concepts from the principal concerned, the contact planner.
 Our method was learned with three different contact planners of our team, for which LEAS learned how to generate feasible guide paths, hence increasing their contact planning success rate or reducing their computation time.
 
