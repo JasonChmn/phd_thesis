@@ -338,9 +338,9 @@ with $w_{dir}$, $w_{ori}$, $w_{\omega}$, $w_{acc}$ and $w_{alive}$ some user-spe
 
 \hfill %\break
 
-Another possible reward design is to let $R_{dir}$ be positive as done for the High-level controller of DeepLoco \cite{deepLoco}. 
-For example, we can set $R_{dir}=-(||\overrightarrow{v} - \overrightarrow{v*}||/(2 v_{max}))^2 + 1$ and remove $R_{alive}$, which in that case is strictly equivalent to our formulation above with $R_{alive}=1$ and $w_{alive}=1$.
-That is why for more convenience, we separate these two rewards. 
+Another possible reward design is to let $R_{dir}$ be positive and remove $R_{alive}$ as done for the High-level controller of DeepLoco \cite{deepLoco}. 
+%For example, we can set $R_{dir}=-(||\overrightarrow{v} - \overrightarrow{v*}||/(2 v_{max}))^2 + 1$ and remove $R_{alive}$, which in that case is strictly equivalent to our formulation above with $R_{alive}=1$ and $w_{alive}=1$.
+However, we separate these two rewards for ease of use.
 An advantage of this separation is that we can increase $w_{alive}$, relative to the other reward weights, to further force the agent to act carefully and stay away from dangerous situations like staying too close to an obstacle. 
 In our experiments, keeping $w_{alive}=1$ is sufficient to get the desired behavior (C), but setting it too high as $w_{alive}=2$ can make the agent act too safely and stay idle instead of crossing difficult obstacles.
 

@@ -1,21 +1,7 @@
 \chapter{Conclusion}
 \label{sec:conclusion}
 
-% https://reussirsathese.com/comment-ecrire-la-conclusion-de-sa-these
-% Réfléchissez :  quel est le message le plus important, le plus innovant de votre thèse ? Quel phénomène central avez-vous décrit qui n’avait pas été décrit ainsi auparavant? Et quelles conséquences cela peut-il avoir pour ceux qui feront de la recherche après vous ?
 
-% J'ai approche la notion de traversabilite directement a travers les contact planners.
-% A partir de tres peu d'observation de l'environnement (petite HM), on est capable d'avoir des info suffisantes pour approximer leur faisabilite.
-% Au final, meme l'echec a la fin avec SL1M => Il a reussit a apprendre quelque chose, c'est qu'il ne pouvait rien y faire.
-% Prendre une approche haut niveau comme ca en essayant de trouver des inputs qui font fonctionner les modules suivant du pipeline permet d'avoir pas mal d'insight sur eux.
-
-
-% These de pierre: La vision à long terme du projet Loco-3D [Carpentier 2017b] dans lequel s’inscrit cette thèse est d’embarquer cette architecture de planification dans le robot et de la connecter aux méthodes de perception en entrée et de contrôle en sortie. Le résultat serait un robot pouvant effectuer des tâches de locomotion dans un environnement quelconque et inconnu, capable de produire des mouvements en multi-contact sans interventions humaines.
-
-
-% 1e CP: Pas une methode complete mais multi-contact qui a été testé beaucoup dans la these de Pierre. Il dit que ce qui est critique c'est l'heuristique et parce que la methode n'est pas complete, il faut la relancer plusieurs fois avant de trouver une solution.
-% Limitation du rb-rrt comme dit chez pierre: la méthode de planification locale est complète mais le RB-RRT kinodynamique n’est pas complet à cause des heuristiques et des approximations utilisées.
-% Le principal problème de la méthode RB-RRT Kinodynamique est que la méthode de planification locale nécessite de connaître exactement les contacts entre le robot et l’environnement mais que cette information n’est pas disponible durant la résolution de $P1$. (...) Une approche qui nous semble prometteuse serait d’utiliser des méthodes d’apprentissage afin d’apprendre la distribution de probabilité du placement des contacts en fonction de l’état courant, de l’environnement proche et de la direction de déplacement future.
 
 % ============================================
 
@@ -23,7 +9,7 @@
 
 This thesis explored a new approach for \textbf{legged navigation} in complex terrains. 
 %At the core of our research dominated the question of the path \textbf{feasibility}.
-The question of the path \textbf{feasibility} was the the core of our resarch.
+The question of the \textbf{path feasibility} was the core of our research.
 %: \textit{How to plan feasible paths?}
 % Question pas assez precise, donc il faut donner une phrase de plus de contexte. Legged character navigation non plus, redire ce qui defini la "faisabilite".
 This very broad concept has been narrowed down to our context of legged robot locomotion, where we defined the path feasibility as follows:
@@ -31,7 +17,7 @@ This very broad concept has been narrowed down to our context of legged robot lo
 
 \hfill \break
 
-Our work is part of the Loco3D framework whose architecture divides the locomotion problem into three sequentially solved sub-problems. ($P1$) is the planning of the robot \textbf{guide path} to navigate the terrain, ($P2$) is the \textbf{contact planning} along this guide, and ($P3$) is the whole body movement performing these contacts.
+Our work is part of the Loco3D framework whose architecture divides the locomotion problem into three sequentially solved sub-problems: ($P1$) is the planning of the robot \textbf{guide path} to navigate the terrain, ($P2$) is the \textbf{contact planning} along the guide, and ($P3$) is the whole body movement performing the contacts.
 Our research thus focused on the critical problem at the top of this architecture, that is the feasibility of the guide paths ($P1$) by a given contact planner ($P2$). We progressed one step beyond the previous work \cite{RB-PRM} that introduced the \textbf{reachability} condition, necessary but insufficient to fully capture the contact planner capability and its closely related concept of terrain \textbf{traversability}.
 
 \hfill \break
@@ -39,13 +25,13 @@ Our research thus focused on the critical problem at the top of this architectur
 
 \noindent\textbf{Research contribution}\\
 
-The main contribution of this thesis is a \textbf{reinforcement learning} local steering method, called LEAS. We first demonstrated its navigation skills in complex environments, subject to collision-avoidance and reachability conditions, hence already providing a ready-to-use navigation method ($P1$).
+The main contribution of this thesis is a \textbf{reinforcement learning} steering method, called LEAS. We first demonstrated its navigation skills in complex environments, subject to collision-avoidance and reachability conditions, hence already providing a ready-to-use navigation method ($P1$).
 
 % We learn the legged navigation task using the contact planner as an external oracle rewarding the navigation system for feasible guidance.
 
-We used our steering method to address the feasibility issue between ($P1$) and ($P2$).
-Whereas other works approached the problem via various heuristics or via terrain traversability estimation, our contribution is to directly learn what is a feasible path from the main concerned: the contact planner.
-We have shown that LEAS can learn a navigation task while using the contact planner as a validation oracle.
+We then used our steering method to address the feasibility issue between ($P1$) and ($P2$).
+Whereas other works approached the problem via various heuristics or terrain traversability estimation, our contribution is to directly learn what is a feasible path from the main concerned: the contact planner.
+We have shown that LEAS can learn a navigation task while using the contact planner as a validator.
 %As a result, it can learn how to generate more likely feasible paths for it.
 
 %\hfill \break
@@ -54,11 +40,11 @@ We have shown that LEAS can learn a navigation task while using the contact plan
 
 % Ma question de recherche: How to learn by reinforcement a navigation task for a better contact planning feasibility?
 % How to generate feasible guide paths?
-Our steering method answers our research question: \textit{How to learn by reinforcement a navigation task for better contact planning feasibility?}
+Our steering method thus answered our research question: \textit{How to learn by reinforcement a navigation task for better contact planning feasibility?}
 We have explored the answers with our three different contact planning strategies.
 Our results demonstrated that navigating with only a simple local height map of the terrain was sufficient to approximate a part, if not all, of their feasibility space.
 Our steering method can be readily used jointly with our sample-based and MIP contact planners, which shows its versatility. 
-Even though the mixed results we had with SL1M, we observed that our steering method was still able to find some strategies to increase its success rate within the limit of its controls.
+Even though we had mixed results with SL1M, we observed that our steering method was still able to find some strategies to increase its success rate within the limit of its controls.
 Interpreting the strategies learned by LEAS is promising to have further insight into our contact planners and improve them.
 
 % ====== Limitations de ma recherche. Il y a toujours des points que vous avez moins bien traités ou que vous avez décidé de ne pas traiter. Si cela vous semble important rappelez pourquoi, mais ne soyez pas négatif envers votre travail.
@@ -68,19 +54,19 @@ Interpreting the strategies learned by LEAS is promising to have further insight
 
 \noindent\textbf{Limitations of the study}\\
 
-This thesis employed the contact planners as a black box with their original formulation. Consequently, several implementations and parameter choices were made relative to their connection to the guide path.
+This thesis employed the contact planners as black boxes with their original formulation. Consequently, several implementations and parameter choices were made relative to their connection to the guide path.
 
 % Acyclic => La question de la discretisation du guide qu'on a pas pu faire à cause des temps de calcul. Après plus d'optimisation du côté du guide + du contact planner, ça pourrait être possible.
-On the sampling-based planner (Chapter \ref{sec:CP-SB}), we fixed a desired configuration step along the guide to cope with its relatively high computation time. 
+On the sampling-based planner (Chapter \ref{sec:CP-SB}), we fixed a desired configuration step along the guide to balance its relatively high computation time and its success rate. 
 Consequently, we did not investigate the guide discretization as done with the MIP contact planner.
 At the moment, the contact planner generates many key contact postures along the guide, that are then filtered by manually designed heuristics. 
-However, these heuristics often present unpredictable performance regarding the contacts quality.
+However, these heuristics often present unpredictable performance regarding the quality of the contacts.
 That is why directly adopting a sufficiently high discretization step would be desirable to avoid using such heuristics.
 
 % MIP
-The MIP contact planner (Section \ref{sub:mip:mip}) used jointly with a guide is, currently, our most efficient solution for motion-before-contact planning.
-While we demonstrated how LEAS can be used to generate feasible and efficiently solved problems, additional tests may be required on different MIP solvers to validate
-the advantages of reducing as best the number of steps along the guide.
+The MIP contact planner (Section \ref{sub:mip:mip}) used jointly with a guide is currently our most efficient solution for motion-before-contact planning.
+While we demonstrated how LEAS can be used to generate feasible and efficiently solved problems, additional tests are required on different MIP solvers to validate
+its advantages over our other steering methods on the problem complexity.
 
 % SL1M => L'aspect geometrique est super intéressant. Les observations et actions de LEAS ne lui permettaient pas d'avoir assez d'impact dessus. Ca pourrait être de bonnes idées pour plus tard, mais après SL1M en général j'y crois pas trop.
 The relaxed formulation SL1M (Section \ref{sub:mip:sl1m}) raises a very complex combinatorial and geometric problem.
