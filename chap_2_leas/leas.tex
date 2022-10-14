@@ -6,13 +6,13 @@
 \bigskip
 
 %\textcolor{blue}{A REVOIR MAINTENANT COMME ON A ECRIT LA SOTA + INTRO}
-In this chapter, we present our method to Learn To Steer a locomotion contact planner \qq{LEAS}, the core module of this thesis. 
+In this chapter, we present a general approach to learn to steer a locomotion contact planner \qq{LEAS}, the core module of this thesis. 
 Our steering method answers the question: \textit{How to locally navigate complex and unknown terrains subject to validity and collision constraints?}
 % Input / Output
 LEAS takes as input a desired direction and a local height map of its surrounding terrain, to generate a robot root trajectory.
-As many solutions exist to solve such a task, we provide an insight into our design choices and particularly why we use Reinforcement Learning.
+As many different approaches have been tried to solve such a task, we provide an insight into our design choices and particularly why we use Reinforcement Learning.
 
-Here, we focus on the implementation of LEAS, which will be reused and adapted for different contact planners through Chapters \ref{sec:CP-SB} and \ref{sec:CP-SL1M}.
+Here, we focus on the formulation basis of LEAS, which will be reused and adapted for different contact planners through Chapters \ref{sec:CP-SB} and \ref{sec:CP-SL1M}.
 
 This chapter is organized as follows: 
 In Section \ref{subsec:leas-motivation} we describe the context and the challenges we want to solve. In Section \ref{subsec:leas-RL} we present the specification of the problem and our solution LEAS \cite{LEAS}. We describe it as an RL agent and explain our design choices for its observation, control, and reward to achieve the desired navigation behavior.
@@ -27,7 +27,7 @@ Finally, we discuss the advantages, limitations, and potential improvements of o
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{Figures/Chapter_LEAS/pipeline.png}
-    \caption{Pipeline of the Loco3D project addressing the locomotion with a multi-stage approach.}
+    \caption{Pipeline of the Loco3D framework addressing the locomotion with a multi-stage approach.}
     \label{fig:pipeline}
 \end{figure}
 
@@ -146,7 +146,7 @@ In the next chapters, we use a contact planner as an oracle to validate the traj
 \section{LEAS: an RL Steering Method\label{subsec:leas-RL}}
 % What behaviour do we want for the SM ?
 Given initial and goal configurations, we learn by reinforcement a steering method generating a guide path in a given direction while respecting both reachability and collision constraints ($\mathcal{R}$ and $\mathcal{C}$). 
-To that end, we designed LEAS \cite{LEAS}, an RL agent that learns by trial and error how to perform this task and to generalize to unknown environments. An overview of our method is presented in figure \ref{fig:LEAS}. The main idea behind LEAS is that for each action taken in the environment, the configuration in $SE(3)$ of the robot will be modified and stored in a list: the guide path.
+To that end, we designed LEAS \cite{LEAS}, an RL agent that learns by trial and error how to perform this task and to generalize to unknown environments. An overview of our method is presented in Figure \ref{fig:LEAS}. The main idea behind LEAS is that for each action taken in the environment, the configuration in $SE(3)$ of the robot will be modified and stored in a list: the guide path.
 
 \begin{figure}
     \centering
@@ -156,7 +156,7 @@ To that end, we designed LEAS \cite{LEAS}, an RL agent that learns by trial and 
 \end{figure}
 
 In this section, we will take a look at the result of LEAS without plugging it to a contact planner.
-Explanations on how LEAS can improve the success rate of a given contact planner will be left for chapters \ref{sec:CP-SB} and \ref{sec:CP-SL1M}.
+Explanations on how LEAS can improve the success rate of a given contact planner will be left for Chapters \ref{sec:CP-SB} and \ref{sec:CP-SL1M}.
 
 \subsection{Specifications \label{subsubsec:specifications}}
 % What behaviour do we want LEAS to have.
@@ -197,11 +197,11 @@ We can add two optional conditions to stop the episode, depending on the scenari
     \label{fig:LEAS_states}
 \end{figure}
 
-The robot configuration can be seen in figure \ref{fig:LEAS_states}, from which we can get the observable states driving the actions of LEAS. The desired velocity and orientation are represented by the same vector and expressed implicitly in our states.
+The robot configuration can be seen in Figure \ref{fig:LEAS_states}, from which we can get the observable states driving the actions of LEAS. The desired velocity and orientation are represented by the same vector and expressed implicitly in our states.
 
 The observable state is a set: 
 \begin{equation}
-s=\{v_{o}, o_{target}, h_{o}\}
+\mbox{s}= [ v_{o}, o_{target}, h_{o} ]
 \end{equation}
 with $v_{0}$ the velocity of the robot relative to its orientation, $o_{target}$ the angle between its actual and desired orientations (yaw), and $h_{o}$ a local height map of the terrain relative to its root configuration.
 
@@ -222,14 +222,14 @@ with $v_{0}$ the velocity of the robot relative to its orientation, $o_{target}$
 
 % - height map for the agent to understand locally its surrounding. 
 % Explain the dimensions, the number of dots, the space between them. 
-The dimensions of the height map are 7 values in front of the robot, 3 in the back, and 7 values on each side with a discretization step (rounded) of $15$ cm, $17$ cm, and $9$ cm respectively. This roughly corresponds to a short vision range of $110$ cm in the front, $50$ cm in the back, and $60$ cm on each side of the robot (figure \ref{fig:vision_hm_size_short}).
+The dimensions of the height map are 7 values in front of the robot, 3 in the back, and 7 values on each side with a discretization step (rounded) of $15$ cm, $17$ cm, and $9$ cm respectively. This roughly corresponds to a short vision range of $110$ cm in the front, $50$ cm in the back, and $60$ cm on each side of the robot (Figure \ref{fig:vision_hm_size_short}).
 
 % Why not bigger ?
 The observable height map is small on purpose as we desire a steering method with the behavior (D), to navigate locally. Increasing its visual field leads to an over-fitting on our training terrain and the emergence of path planning behavior.
-Indeed, if we give too much information about the surrounding terrain (figure \ref{fig:vision_hm_size_big}), one could memorize its topography, guess its global position on it and plan its path through it, as done in \cite{rl_navigation_video_game_2020}.
+Indeed, if we give too much information about the surrounding terrain (Figure \ref{fig:vision_hm_size_big}), one could memorize its topography, guess its global position on it and plan its path through it, as done in \cite{rl_navigation_video_game_2020}.
 Empirically, we found that $110$ cm in front and $60$ cm on each side of the robot was enough for LEAS to detect the obstacles and react in consequence.
 % Is this discretization enough ?
-The height map resolution of LEAS is $15$ cm, compared to previous works as \cite{RLOC, deepGait, deepLoco} that have a resolution of 2cm, 4cm, and 34cm respectively, and is sufficient to navigate the training ground and to generalize to unknown terrains. 
+The height map resolution is $15$ cm, compared to previous works as \cite{RLOC, deepGait, deepLoco} that have a resolution of 2cm, 4cm, and 34cm respectively, and is sufficient to navigate the training ground and to generalize to unknown terrains. 
 Increasing its resolution did not improve the learning or navigation skill of LEAS for our test scenarios, but may be required in the future for more complex scenes with elements of smaller surfaces (handrails detection for example).
 
 \begin{figure}
@@ -251,14 +251,14 @@ Increasing its resolution did not improve the learning or navigation skill of LE
 All $z$ values in the local height map are bounded between $[z_{min}, z_{max}]$. 
 The tuning of these bounds depends on the topography of the terrain where LEAS will navigate. 
 Indeed, a wider interval means that the RL agents will better dissociate higher height variations (stairs and obstacles) at the cost of a lower resolution for small variations (rubbles and small slopes).
-This is illustrated in figure \ref{fig:height map_bounds} where wider bounds (a) are a better representation for obstacle detection, and smaller bounds (b) make the agent more sensitive to small height variations but may mistake the distant obstacle as a stair. 
+This is illustrated in Figure \ref{fig:height map_bounds} where wider bounds (a) are a better representation for obstacle detection, and smaller bounds (b) make the agent more sensitive to small height variations but may mistake the distant obstacle as a stair. 
 Empirically, we find a right balance $z_{max}= -0.2$ and $z_{min}= -1.4$ meters from the robot root (usually located at 1 meter from the ground), to be sufficient for LEAS to visualize both small and high variations during a pure navigation task.
 
 \subsection{Actions\label{subsubsec:actions}}
 At each step, the RL agent takes action in the environment based on the observed state. 
 Our policy returns a set of actions: 
 \begin{equation}
-a = \{ a_x, a_y, a_z, \omega \}
+\mbox{a} = [ a_x, a_y, a_z, \omega ]
 \end{equation}
 with $a_x, a_y, a_z$ the accelerations of the robot on each axis, and $\omega$ the angular velocity of the robot on the yaw axis. At each step $i$, the robot position q$_{pos}$, velocity q$_{vel}$ and orientation q$_{ori}$ are modified in the following order:
 \begin{equation}
@@ -287,7 +287,7 @@ The position of the robot is updated with the previous velocity (1), then the ac
 %In RL, problems where the actions are not instantly applied to the states or captured by the observations have been termed as Delayed MDPs \cite{RL_delayed}. 
 %Our control does not fall directly into this category as the agent can see its actions directly on the velocity. 
 One can ask if inverting the order of (1) and (2), hence removing this delay on the position could improve the learning and results of our agent. 
-In practice with recent RL algorithms, fixed delays of one or two steps do not matter \cite{RL_delayed_explanation} as long as the agent has enough steps left to react to an event. We verify it in figure \ref{fig:control_LEAS_learning_curves} that shows no difference in the learning of both controls with our parameters.
+In practice with recent RL algorithms, fixed delays of one or two steps do not matter \cite{RL_delayed_explanation} as long as the agent has enough steps left to react to an event. We verify it in Figure \ref{fig:control_LEAS_learning_curves} that shows no difference in the learning of both controls with our parameters.
 
 % Controls: why control in acceleration ?
 We choose an acceleration control for LEAS, where velocity changes along the trajectory are limited by $a_{max}$, the maximum acceleration.
@@ -341,7 +341,7 @@ with $w_{dir}$, $w_{ori}$, $w_{\omega}$, $w_{acc}$ and $w_{alive}$ some user-spe
 Another possible reward design is to let $R_{dir}$ be positive and remove $R_{alive}$ as done for the High-level controller of DeepLoco \cite{deepLoco}. 
 %For example, we can set $R_{dir}=-(||\overrightarrow{v} - \overrightarrow{v*}||/(2 v_{max}))^2 + 1$ and remove $R_{alive}$, which in that case is strictly equivalent to our formulation above with $R_{alive}=1$ and $w_{alive}=1$.
 However, we separate these two rewards for ease of use.
-Indeed, an advantage of this separation is that we can increase $w_{alive}$, relative to the other reward weights, to further force the agent to act carefully and stay away from dangerous situations like staying too close to an obstacle. 
+Indeed, an advantage of this separation is that we can increase $w_{alive}$, relative to the other reward weights, to further encourage the agent to act carefully and stay away from dangerous situations like staying too close to an obstacle. 
 In our experiments, keeping $w_{alive}=1$ is sufficient to get the desired behavior (C), but setting it too high as $w_{alive}=2$ can make the agent act too safely and stay idle instead of crossing difficult obstacles.
 
 \section{Implementation Details\label{subsec:leas-implementation}}
@@ -411,8 +411,8 @@ These approximations require the robot root to only rotate on the yaw axis when 
 
 One drawback of using a single-layer height map for this validity condition is its limitation to environments without an upper floor or ceiling.
 % Collision detection
-Regarding $\tilde{\mathcal{C}}$ constraint, the trivial case is that if a point $p_i$ lies inside this volume, there is a collision (figure \ref{fig:approximation_validity_2}). However, we do not know if there is a collision if a $p_i$ lies right above the robot. 
-There are two cases: first, the robot is under an object (ceiling) and not in collision; second, the robot is inside the object (e.g. wall) and so is in collision (figure \ref{fig:approximation_validity_3}).
+Regarding $\tilde{\mathcal{C}}$ constraint, the trivial case is that if a point $p_i$ lies inside this volume, there is a collision (Figure \ref{fig:approximation_validity_2}). However, we do not know if there is a collision if a $p_i$ lies right above the robot. 
+There are two cases: first, the robot is under an object (ceiling) and not in collision; second, the robot is inside the object (e.g. wall) and so is in collision (Figure \ref{fig:approximation_validity_3}).
 From the height map, we cannot distinguish these cases and thus we choose to consider both as a collision.
 % Conclusion of this drawback
 As all our test terrains do not contain an upper floor and we do not perform any locomotion task like passing under a gate, such an approximation is sufficient. 
@@ -476,7 +476,7 @@ To improve its generalization capability, our RL agent has to learn on various t
 To that end, we extended the library used in \cite{sl1m_v2} to generate random terrains composed of rubbles, stairs, bridges, and obstacles. The code is available on GitHub \cite{random_scene_gen}.
 
 This library generates a terrain that we can divide into tiles. 
-Each tile belong to two categories: \textit{Initial} or \textit{Transition} (figure \ref{fig:random_scene_gene_tiles_example}). 
+Each tile belong to two categories: \textit{Initial} or \textit{Transition} (Figure \ref{fig:random_scene_gene_tiles_example}). 
 The first category \textit{Initial} contains two types of tiles: flat ground with or without obstacles. 
 The second category \textit{Transition} connects two \textit{Initial} tiles and contains three types: rubbles, bridge and stairs.
 
@@ -589,7 +589,7 @@ With setup (b), we will now perform several tests on basic scenarios with LEAS w
 \caption{Parameters}
 \begin{tabular}{|c|c| c |c|c|}
  State & $81$ && Max Episode Length & $800$\\
- Actions & $4$ && Parallel agents & $6$\\
+ Actions & $4$ && Parallel agents $M$ & $6$\\
  $a_{max}$ & $0.08$ m/s$^2$ && Workers & $0$ \: or \: $6+$ \\
  $v_{max}$ & $0.2$ m/s && Batch size & $4096*M$\\
  $v_{desired}$ & $0.1$ m/s && Mini-Batch size & $256$\\
@@ -638,13 +638,13 @@ The distance traveled by the RL agent after 33 steps is equal to 66 cm and 132 c
 We emphasize that we want to learn a steering method to navigate locally and that the agent only needs to think about its very near future. For example the detection of an obstacle should impact its action only when close to the robot (distance inferior to 1 meter).
 
 % Number of workers
-In this chapter, the number of workers planning contacts is set to 0 as we train LEAS for a pure navigation task without a contact planner. In our experiment, the number of parallel agents is limited to 6 due to hardware limitations.
+In this chapter, the number of workers planning contacts is set to 0 as we train LEAS for a pure navigation task without a contact planner. In our experiment, the number of parallel agents $M$ is limited to 6 due to hardware limitations.
 
 % Explain choices for the RL parameters used:
 % - size of network with PPO : 256x128x64
 The PPO actor and critic are two distinct networks with hidden layers of size 128x64x32. Tuning the number of nodes and hidden layers in the machine is empirical and depend on the task to perform. In general, deeper networks with more nodes means a better capability to solve very complex tasks and less under-fitting. However, it also means more parameters to train and can be prone to over-fitting. In our experiments on LEAS, we found no noticeable difference between 2 or 3 hidden layers and nodes number ranging from 64-256. However, we increased the network size of 64x64 from the first version of LEAS \cite{LEAS} for more potential scalability in our tests in terms of observations and contact planners.
 
-We train LEAS without a contact planner and evaluate the model after 12 million steps corresponding to around 2 hour of training on a PC with an Intel Core i7-8700 (12 cores, 3.20Ghz, 16GB ram). Learning curves can be seen in figure \ref{fig:control_LEAS_learning_curves}.
+We train LEAS without a contact planner and evaluate the model after 12 million steps corresponding to around 2 hour of training on a PC with an Intel Core i7-8700 (12 cores, 3.20Ghz, 16GB ram). Learning curves can be seen in Figure \ref{fig:control_LEAS_learning_curves}.
 
 \begin{figure}[ht]
     \centering
@@ -1013,5 +1013,6 @@ We presented LEAS, an RL steering method to locally navigate complex terrains an
 Such terrain-aware steering methods remove the need for a path planning algorithm, expensive to compute, in most of our basic scenarios.
 As a result, LEAS can directly be integrated as the module P1 of our locomotion pipeline (Figure \ref{fig:pipeline}).
 
-Yet, we did not solve the feasibility problem between our navigation task ($P1$) and the contact planner ($P2$), and that is why in the next chapters we answer the following question: 
-\textit{can LEAS navigate complex terrains while generating feasible guide paths by a given contact planner?}
+Yet, we did not solve the feasibility problem between our navigation task ($P1$) and the contact planner ($P2$), but solely a surrogate approximation of it. The next two chapters will then extend LEAS training to adapt it to the exact feasibility of the contact planner.
+
+%, and that is why in the next chapters we answer the following question: \textit{can LEAS navigate complex terrains while generating feasible guide paths by a given contact planner?}

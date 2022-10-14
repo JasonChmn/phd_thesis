@@ -14,18 +14,19 @@
 
 
 
-In this chapter, we will use two contact planners formulated with a Mixed-Integer Programming (MIP) approach.
+In this chapter, we will explore the training of LEAS using two contact planners formulated with a Mixed-Integer Programming (MIP) approach.
+The main objective is to find possible extension of the previous method that would lead to valid contact sequences, using contact planners that consider better the robot capabilities to connect two successive contacts with the whole-body movement ($P3$).
 %we plug our steering method LEAS into two contact planners with a Mixed-Integer Programming (MIP) approach.
 
 %\textcolor{red}{Steve: il manquait une intro et dire pourquoi on utilise ces contact planners.}
 %\textcolor{blue}{J'ai ajouté la phrase d'en dessous, qui mérite surement d'être revue.}
 
-The sampling contact planner presented in the previous section relies on heuristics to search for contacts in the robot environment.
+The sampling contact planner presented in the previous chapter relies on heuristics to search for contacts in the robot environment.
 While it can efficiently solve the contact planning problem, its sampling approach cannot guarantee its completeness.
 Optimization-based approaches are an appealing approach to solve this limitation. However, they have to handle both the discrete choice of contact surfaces and the continuous optimization of placing contacts on them.
 Previous works on contact planning \cite{deits2014FootPlanMI, sl1m_v2} solved this problem using a MIP approach or its relaxed form respectively.
 We will explain both approaches and further investigate if our method LEAS can generate feasible guide path by them.
-Specifically, we will answer the question: \textit{how can LEAS improve their solving through guide path generation?}
+Specifically, we will answer the question: \textit{how can LEAS improve the MIP-based optimization of contact sequences through guide path generation?}
 %such contact planners have been used to solve both the discrete choice of selecting a sequence of surfaces to step on, and the continuous problem of placing contacts on these surfaces.
 
 % What's the difference with the previous chapter
@@ -43,6 +44,7 @@ We will explain the advantage of using a guide path in this formulation, along w
 We then show how LEAS can learn to alleviate these limitations.
 Section \ref{sub:mip:sl1m} explains the reformulation of the MIP into a feasibility linear program, called SL1M \cite{sl1m_v1}. 
 We will present further insight into this reformulation, as well as the experiments conducted with LEAS to improve its convergence.
+This insight will be used to give further research directions to improve the behavior of LEAS trained with SL1M.
 
 \section{Notations}
 \label{sub:mip:notations}

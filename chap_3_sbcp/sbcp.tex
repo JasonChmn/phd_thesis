@@ -21,19 +21,19 @@
 We have defined in the previous chapter a methodology to learn by reinforcement a local navigation method.
 At evaluation time, our method LEAS produces a guide path along which we want to compute a contact sequence.
 
-In a first phase, we used simple termination conditions during the training: the reachability $\tilde{\mathcal{R}^*}$ and the collision-free $\tilde{\mathcal{C}}$ conditions.
+Chapter \ref{sec:LEAS} only proposed to use simple termination conditions during the training: the reachability $\tilde{\mathcal{R}^*}$ and the collision-free $\tilde{\mathcal{C}}$ conditions.
 Yet those approximated conditions are necessary but not sufficient to guarantee the existence of a feasible contact sequence along the guide.
 
 We now propose to explore the following question: \textit{What is a good guide path to generate a valid contact sequence ?}
-For that, we will rely on an existing implementation of a contact planner, which we refer to as the second stage of our framework (P2). 
+For that, we will rely on an existing implementation of a contact planner, which we refer to as the second stage of our framework ($P2$). 
 In this chapter, we use an acyclic Sample-Based Contact Planner \cite{AcyclicCP} for multiped robot locomotion, which for convenience we will refer to as SBCP.
 As discussed in Chapter \ref{sec:LEAS}, we want LEAS to achieve two objectives:
 \begin{itemize}
     \item Navigating using a local height map of the terrain toward a goal direction subject to some reachability and collision constraints;
-    \item Generating guide paths (P1) maximizing the likelihood of finding feasible contact sequences along it with a contact planner (P2).
+    \item Generating guide paths ($P1$) maximizing the likelihood of finding feasible contact sequences along it with a contact planner ($P2$).
 \end{itemize}
 % What is the problem solved
-In the context of Motion-before-Contact, LEAS learns to address by reinforcement one of the key limitations of this strategy: the non-guarantee of the feasibility of the guide (P1) by a contact planner (P2).
+In the context of Motion-before-Contact, we will show how LEAS learns to address by reinforcement one of the key limitations of this strategy: the non-guarantee of the feasibility of the guide ($P1$) by a contact planner ($P2$).
 
 This chapter is organized as follows:
 %section \ref{sub:cp-sb:implementation} we describe how the contact planner is implemented with the offline sampling of limb configurations, the contact generation and their solution to break down the combinatorics.
@@ -97,7 +97,7 @@ We will discuss the heuristics used to search and select contact configurations,
 \end{figure}
 
 % Role of the guide, SBCP follows exactly it and try to reach the next position on it.
-Starting from a robot configuration $\mbox{q}^i$ in contact whose root is at q$_{base}^i$, the contact planner moves the robot root to the next position on the guide q$_{base}^{i+1}$. To do so, the contact planner performs the following steps (See figure \ref{fig:overview_sbcp}):
+Starting from a robot configuration $\mbox{q}^i$ in contact whose root is at q$_{base}^i$, the contact planner moves the robot root to the next position on the guide q$_{base}^{i+1}$. To do so, the contact planner performs the following steps (See Figure \ref{fig:overview_sbcp}):
 \begin{itemize}
     \item Maintain previous contacts: we check kinematically if the contact with the terrain on limb $k$ can be maintained from the next root position q$_{base}^{i+1}$. If not, the contact is broken.
     \item Repositioning: if more than one contact is broken in the previous step, one or more configurations in contact are added at q$_{base}^i$, to ensure that at most one contact is broken between $\mbox{q}^i$ and $\mbox{q}^{i+1}$. 
@@ -133,7 +133,7 @@ Finally we recall the motion-before-contact strategy of SBCP in Figure \ref{fig:
 
 In Chapter \ref{sec:LEAS}, we have shown how LEAS generates guide paths subject to reachability and collision constraints ($\tilde{\mathcal{R}^*}$ and $\tilde{\mathcal{C}}$) for configuration validity. 
 
-We now raise the key problem of the motion-before-contact strategy that is the non-guaranteed feasibility of the guide (P1) by the contact planner (P2).
+We now raise the key problem of the motion-before-contact strategy that is the non-guaranteed feasibility of the guide ($P1$) by the contact planner ($P2$).
 % which hints us to some limitations of computing a contact sequence with SBCP using such guide paths.
 %This limitation is encountered in many scenarios with our contact planner that can fail to compute a contact sequence following exactly a root trajectory.
 % Our conclusion
@@ -142,7 +142,7 @@ Our experiments will show that the major factor impacting the contact planning s
 The problem is that we do not know what is a good guide path for this contact planner. 
 The reachability and collision conditions introduced for configuration validity are necessary but not sufficient to generate guide paths feasible by this contact planner. 
 %\textcolor{red}{Il faut que le sol soit atteignable et que la tronc ne soit pas en collision, sinon on ne peut pas faire de contact.}
-As a consequence, it is difficult to define new additional constraints or heuristics to our guide path generator (P1) to better approximate the contact planning feasibility (P2).
+As a consequence, it is difficult to define new additional constraints or heuristics to our guide path generator ($P1$) to better approximate the contact planning feasibility ($P2$).
 
 Our solution to solve such a feasibility problem is to learn with LEAS how to validate its guide paths with SBCP, which computes the contact sequence along them. In other words, we want LEAS to answer the question: \textit{What is a feasible guide path for this contact planner ?}
 
@@ -231,7 +231,7 @@ On all our steering methods, we further discretize the guide when required to ob
 % Conclusion
 % We said all the possibilities in hpp, say the one that is actually chosen in most of their scenario and what could have been nice to work on.
 %We presented the general concept behind our sample-based contact planner (P2) computing a contact sequence following exactly the guide in input (P1). We then presented some parameters to analyze the critical part of such contact planning strategy and conclude it to be the input guide path, that is the focus of our research.
-We presented the general concept behind our sample-based contact planner (P2) computing a contact sequence following exactly the guide path in input (P1), and our design choice for two critical parameters.
+We presented the general concept behind our sample-based contact planner ($P2$) computing a contact sequence following exactly the guide path in input ($P1$), and our design choice for two critical parameters.
 % Modif of nicolas
 As we have seen, it is important to design the guide path to have good properties with respect to the contact planner. 
 However, these properties are difficult to express explicitly, making it difficult to build heuristics or a more optimal decision process for computing the guide path. 
@@ -294,7 +294,7 @@ To do so, we further discretize the guide path before giving it to the contact p
     \label{fig:cp-sb:remove_fail_path}
 \end{figure}
 % What will happen ?
-During the learning, the workers perform contact planning with SBCP to validate the trajectories generated by LEAS. Therefore, it learns how to generate feasible guide paths according to the validity conditions $\tilde{\mathcal{R}^*}$ and $\tilde{\mathcal{C}}$, plus the contact planner (P2).
+During the learning, the workers perform contact planning with SBCP to validate the trajectories generated by LEAS. Therefore, it learns how to generate feasible guide paths according to the validity conditions $\tilde{\mathcal{R}^*}$ and $\tilde{\mathcal{C}}$, plus the contact planner ($P2$).
 % What is the validation by SBCP
 Our contact planner returns the contact sequence along the guide, up to the last successful root configuration q$_{base}^i$.
 The index of this configuration is retrieved and sent back to the master that prunes the section of the guide path that failed as depicted in Figure \ref{fig:cp-sb:remove_fail_path}.
@@ -409,7 +409,7 @@ Then we compare LEAS-P1 and LEAS-P2 that have been trained with and without feed
 % What these two agents share in common and do not.
 LEAS-P1 is subject to two major rewards motivating its behavior: $R_{ori}$, encouraging him to be oriented to the target and $R_{dir}$ to move toward it at $v_{desired}$. 
 As a result, LEAS-P1 balances these two rewards by moving and rotating at the same time. 
-Additionally, LEAS-P2 is subject to another constraint that is to succeed with the contact planner (P2).
+Additionally, LEAS-P2 is subject to another constraint that is to succeed with the contact planner ($P2$).
 
 % Results of LEAS-P1
 The results show that LEAS-P1 works for all initial orientations in $[0,30]$ degrees but may fail for initial orientations superior to $60^{\circ}$.
@@ -801,7 +801,7 @@ However, a higher timestep leads to actions with a bigger impact on the system, 
 Another point to consider is the impact of such change on the reward, and so the navigation results presented in the previous chapter and the need to retrain a new policy for this new timestep value.
 
 That is why we opted for a less intrusive method by further discretizing the guide generated by LEAS, keeping 1 out of 5 five root configurations on it, resulting in $\Delta D=2 \times 5=10$cm.
-This enabled us to use the same policy LEAS-P1 for our comparisons, trained in the previous chapter, and to retrain a new policy from scratch, LEAS-P2, on the same reward basis but adding the contact planning validation (P2).
+This enabled us to use the same policy LEAS-P1 for our comparisons, trained in the previous chapter, and to retrain a new policy from scratch, LEAS-P2, on the same reward basis but adding the contact planning validation ($P2$).
 
 %\textcolor{blue}{CHECK WHAT I WROTE HERE AND CORRECT}
 A question one could ask is if a fixed discretization step $\Delta D$ along the guide is desirable. 
@@ -856,17 +856,20 @@ However, such pretraining from demonstrations can lead to the \textit{catastroph
 This problem has been alleviated somehow in recent works \cite{DDPGfd,pretraining_BC} that needs to be investigated, and especially learning from non-expert demonstration \cite{learning_from_non_expert, meta_learning_from_demo} that could potentially improve the learning of LEAS-P2.
 
 \subsection{Conclusion}
-We used our RL steering method LEAS with our sample-based contact planner.
-This contact planner (P2) generates configurations in contact with the terrain following exactly a root trajectory given in input by the guide path planner (P1).
+We used our RL steering method LEAS to properly takes into account the feasibility of our sample-based contact planner.
+This contact planner ($P2$) generates configurations in contact with the terrain following exactly a root trajectory given in input by the guide path planner ($P1$).
 
-Such decomposition lowers the complexity of the path planning problem but suffers from the non-guarantee of the feasibility of the guide with the contact planner.
-We observed such phenomena through the success rates of our previous methods, RB-Kino and RB-Lin with SBCP.
-LEAS-P1 trained without a contact planner and with the approximated validity constraints ($\tilde{\mathcal{R}^*}$ and $\tilde{\mathcal{C}}$), for a pure navigation task, presents a high success rate on SBCP on most of our test scenarios, but still suffers from this feasibility problem, especially on the rotation and wall scenarios.
+As discussed in our literature review, such decomposition lowers the complexity of the path planning problem but suffers from the non-guarantee of the feasibility of the guide with the contact planner.
+In this chapter, we have experimentally emphasized such phenomena through the success rates of our previous methods, RB-Kino and RB-Lin with SBCP.
+We have shown that the basic training introduced in Chapter \ref{sec:LEAS}, LEAS-P1, that did not used a contact planner but only the approximated validity constraints ($\tilde{\mathcal{R}^*}$ and $\tilde{\mathcal{C}}$), despite its high success rate on most of our test scenarios, still suffers from this feasibility problem, especially on the rotation and wall scenarios.
 
-In contrast, LEAS-P2 learns how to generate guide paths fitting the contact planner, reaching a near 100\% success rate in most of our scenarios. Learning this steering method by reinforcement answers the question \textit{What is a feasible guide path for this contact planner?} and thus solves the limitation of previous motion-before-contact strategies.
+In contrast, LEAS-P2 learns how to generate guide paths directly fitting the contact planner, reaching a near 100\% success rate in most of our scenarios. Learning this steering method by reinforcement answers the question "\textit{What is a feasible guide path for this contact planner?}" and thus solves the limitation of previous motion-before-contact strategies.
 We then analyzed the solutions of LEAS-P2 for these scenarios and developed additional constraints to approximate the feasible region of SBCP.
 
 In this work, it is important to note that our strategy with LEAS-P2 was sufficient to solve the feasibility of the guide with this contact planner used as a black box.
-Our experiments provide further insight into why our methods succeeded, but we can wonder if such a strategy could be applied to other contact planners.
+Our experiments provide further insight into why our methods succeeded.
+Yet, it suffers from the limitations inherited from our contact planner ($P2$), which we know do not systematically leads to valid whole-body locomotion trajectories ($P3$).
+In the following chapter, we will investigate the generalization of LEAS to more advanced planners.
+%, but we can wonder if such a strategy could be applied to other contact planners.
 
 %Finally we discussed about our implementation choices and further improvements that could be applied in a future work.
