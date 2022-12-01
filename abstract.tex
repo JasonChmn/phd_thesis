@@ -6,12 +6,20 @@
 
 \paragraph{Abstract}~
 
-Work in progress.
+This thesis explores how to generate paths for legged robot locomotion.
+
+One approach to tackle the locomotion problem is its division into three sequential modules: navigation to generate a guide path that the robot has to follow, contact planning along this guide path, and finally the robot whole-body motion. This division greatly reduces the locomotion problem complexity, but raises the critical question of the \qq{feasibility} between the different modules. In this context, this thesis explores the feasibility problem between the navigation and the next modules, in other words: \qq{How to generate feasible paths by the robot?}
+
+A naive approach is to use a reduced model of the robot with two conditions: the robot trunk must not collide with the environment, and the robot feet must be able to reach the ground all along the path. But these two conditions are not sufficient to approximate path feasibility. To refine these conditions, another approach is to consider the traversability of the terrain, to generate more likely easier paths for the robot. This thesis explores a different approach that is to learn by reinforcement how to generate feasible paths directly from the contact planner.
+
+My contribution is a local steering method, named Leas, which locally navigates the terrain in the desired direction using a height map. Leas learns from the contact planner validation what is a feasible path by it, and consequently adapts its navigation behavior.
+
+This steering method has been connected to three contact planners, each having different strategies. I will explain its results and limitations for legged robot locomotion in complex environments.
 
 
 \paragraph{Keywords}~
 
-Locomotion, Command, Robot, Quadruped
+Reinforcement learning, Navigation, Locomotion, Robotics, Humanoids
 
 \noindent\makebox[\linewidth]{\rule{0.6\textwidth}{2pt}}
 
@@ -25,12 +33,18 @@ Locomotion, Command, Robot, Quadruped
 
 \paragraph{Résumé}~
 
-En cours d'ecriture.
+Le but de ma thèse est d’apprendre comment générer des chemins pour la locomotion de robots à pattes.
+
+Une approche possible au problème de la locomotion est une division en trois modules séquentiels qui sont: la navigation pour générer un chemin (ou guide) que le robot devra suivre, la planification de ses pas tout le long du chemin, puis enfin le mouvement corps complet du robot pour les réaliser. Cette division permet de réduire la complexité du problème, mais amène la question critique de la \qq{faisabilité} entre les différents modules. Dans ce contexte, cette thèse s'intéresse à la question de la faisabilité entre le module de navigation et les autres modules, autrement dit: \qq{Comment générer des chemins faisables par le robot?}
+
+Une approche naïve repose sur un modèle réduit du robot apportant deux conditions: le tronc du robot ne soit pas en collision avec l'environnement, et les pieds du robot doivent pouvoir atteindre le sol tout le long du chemin. Mais ces deux conditions ne sont pas suffisantes pour approximer la faisabilité des chemins. Pour raffiner ces conditions, une deuxième approche est de s'intéresser au concept de traversabilité des terrains, afin de de générer des chemins plus faciles pour le robot. Cette thèse explore une autre approche qui est d'apprendre par renforcement à générer des chemins faisables directement via le planificateur de contact.
+
+Ma contribution est une méthode de pilotage, nommée Leas, qui grâce à une carte d'élévation locale navigue le terrain dans une direction désirée. Leas apprend via la validation par le planificateur de contact ce qu'est un chemin faisable par lui, et modifie ses comportements de navigation en conséquence. Cette méthode de pilotage a été connectée à trois planificateurs de contacts ayant des stratégies différentes. Je vais montrer ses résultats et ses limitations pour la locomotion de robot à pattes dans des environnements complexes.
 
 
 \paragraph{Mots clefs} ~
 
-Locomotion, Commande, Robot, Quadrupède
+Apprentissage par renforcement, Navigation, Locomotion, Robotique, Humanoïde
 
 
 \noindent\makebox[\linewidth]{\rule{0.6\textwidth}{2pt}}

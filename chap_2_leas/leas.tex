@@ -172,7 +172,7 @@ Following this design, we desire LEAS to have the following list of behaviours:
   \item Move in the goal direction at a fixed desired velocity.
   \item Respect the reachability and collision constraints, $\mathcal{R}$ and $\mathcal{C}$. 
   \item Stop if it can not go further (i.e keep a valid state).
-  \item Navigate locally without the help of path planning, meaning that LEAS should only act based on a very short vision range.
+  \item Navigate locally without the help of path planning, meaning that LEAS should only act based on a very short visual range.
   \item Orientate its root in the desired goal direction. This design choice can be limiting in cluttered environments where side walking is required, but was necessary for our experiments to obtain a straight walk (sidewalking was a predominant locomotion strategy without this specification, as we will discuss in the next chapters).
 \label{list:leas:specifications}
 \end{enumerate}
